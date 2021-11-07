@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.luoboduner.moo.info</groupId>
+    <artifactId>MooInfo</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>MooInfo</name>
+    <url>http://www.luoboduner.com</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <java.version>1.8</java.version>
+        <logback.version>1.2.3</logback.version>
+        <forms_rt.version>7.0.3</forms_rt.version>
+        <AppleJavaExtensions.version>1.4</AppleJavaExtensions.version>
+        <lombok.version>1.18.20</lombok.version>
+        <junit-jupiter-api.version>5.8.1</junit-jupiter-api.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <guava.version>29.0-jre</guava.version>
+        <okhttp.version>4.9.0</okhttp.version>
+        <flatlaf.version>1.6.1</flatlaf.version>
+        <flatlaf-extras.version>1.6.1</flatlaf-extras.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+        <!--GUI Designer -> binary class files-->
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>forms_rt</artifactId>
+            <version>${forms_rt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.apple</groupId>
+            <artifactId>AppleJavaExtensions</artifactId>
+            <version>${AppleJavaExtensions.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>${flatlaf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>${flatlaf-extras.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>1.6.2</version>
+                <configuration>
+                    <bundleJre>true</bundleJre>
+                    <mainClass>com.luoboduner.moo.info.App</mainClass>
+                    <generateInstaller>true</generateInstaller>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundling-for-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>windows</platform>
+                            <createZipball>true</createZipball>
+                            <administratorRequired>true</administratorRequired>
+                            <winConfig>
+
+                                <!-- general properties -->
+                                <generateSetup>true</generateSetup>
+                                <generateMsi>true</generateMsi>
+                                <generateMsm>true</generateMsm>
+
+                                <!-- setup generation properties -->
+                                <setupMode>installForAllUsers</setupMode>
+                                <!--                                <createDesktopIconTask>true</createDesktopIconTask>-->
+                                <disableDirPage>false</disableDirPage>
+                                <disableFinishedPage>false</disableFinishedPage>
+                                <setupLanguages>
+                                    <english>compiler:Default.isl</english>
+                                    <!--                                    <spanish>compiler:Languages\Chinese.isl</spanish>-->
+                                </setupLanguages>
+                            </winConfig>
+                        </configuration>
+                    </execution>
+                    <!--                    <execution>-->
+                    <!--                        <id>bundling-for-linux</id>-->
+                    <!--                        <phase>package</phase>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>package</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <configuration>-->
+                    <!--                            <platform>linux</platform>-->
+                    <!--                            <createTarball>true</createTarball>-->
+                    <!--                            <jdkPath>X:\\path\to\linux\jdk</jdkPath>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
+                    <!--                                        <execution>-->
+                    <!--                                            <id>bundling-for-mac</id>-->
+                    <!--                                            <phase>package</phase>-->
+                    <!--                                            <goals>-->
+                    <!--                                                <goal>package</goal>-->
+                    <!--                                            </goals>-->
+                    <!--                                            <configuration>-->
+                    <!--                                                <platform>mac</platform>-->
+                    <!--                                                <createTarball>true</createTarball>-->
+                    <!--&lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
+                    <!--                                            </configuration>-->
+                    <!--                                        </execution>-->
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
