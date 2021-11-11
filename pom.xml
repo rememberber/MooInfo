@@ -31,6 +31,7 @@
         <flatlaf-extras.version>1.6.2</flatlaf-extras.version>
         <hutool-all.version>5.6.3</hutool-all.version>
         <fastjson.version>1.2.74</fastjson.version>
+        <oshi-core.version>5.8.3</oshi-core.version>
     </properties>
 
     <dependencies>
@@ -107,6 +108,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>${oshi-core.version}</version>
         </dependency>
     </dependencies>
 

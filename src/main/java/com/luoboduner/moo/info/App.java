@@ -23,6 +23,7 @@ public class App {
 
     public static MainFrame mainFrame;
 
+    public static oshi.SystemInfo si = new oshi.SystemInfo();
 
     public static void main(String[] args) {
 

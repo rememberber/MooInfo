@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
         TopMenuBar topMenuBar = TopMenuBar.getInstance();
         topMenuBar.init();
         setJMenuBar(topMenuBar);
-        ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.8, 0.88);
+        ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.6, 0.66);
     }
 
     /**

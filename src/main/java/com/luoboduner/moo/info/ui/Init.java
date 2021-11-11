@@ -1,11 +1,13 @@
 package com.luoboduner.moo.info.ui;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
+import com.luoboduner.moo.info.ui.form.OverviewForm;
 import com.luoboduner.moo.info.util.SystemUtil;
 import com.luoboduner.moo.info.util.UIUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
@@ -197,6 +199,8 @@ public class Init {
      * init all tab
      */
     public static void initAllTab() {
+
+        ThreadUtil.execute(OverviewForm::init);
 
         // Check the new version
         if (App.config.isAutoCheckUpdate()) {

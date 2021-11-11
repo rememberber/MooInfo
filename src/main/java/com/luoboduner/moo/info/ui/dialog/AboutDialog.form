@@ -179,7 +179,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c28d7" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="c28d7" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="5" left="3" bottom="20" right="0"/>
                 <constraints>
                   <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -197,9 +197,17 @@
                       <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/JFormDesigner/FlatLaf&quot;&gt;FlatLaf&lt;/a&gt;&lt;/html&gt;"/>
                     </properties>
                   </component>
-                  <component id="c3231" class="javax.swing.JLabel" binding="hutoolLabel">
+                  <component id="c00ad" class="javax.swing.JLabel" binding="oshiLabel" default-binding="true">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/oshi/oshi&quot;&gt;oshi&lt;/a&gt;&lt;/html&gt;"/>
+                    </properties>
+                  </component>
+                  <component id="c3231" class="javax.swing.JLabel" binding="hutoolLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="&lt;html&gt;&lt;a href=&quot;https://hutool.cn/&quot;&gt;Hutool&lt;/a&gt;&lt;/html&gt;"/>
@@ -207,7 +215,7 @@
                   </component>
                   <component id="6b692" class="javax.swing.JLabel" binding="vsCodeIconsLabel">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/microsoft/vscode-icons&quot;&gt;vscode-icons&lt;/a&gt;&lt;/html&gt;"/>
