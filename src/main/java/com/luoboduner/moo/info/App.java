@@ -23,7 +23,7 @@ public class App {
 
     public static MainFrame mainFrame;
 
-    public static oshi.SystemInfo si = new oshi.SystemInfo();
+    public static oshi.SystemInfo si;
 
     public static void main(String[] args) {
 
@@ -52,6 +52,9 @@ public class App {
         UpgradeUtil.smoothUpgrade();
 
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        si = new oshi.SystemInfo();
+
         Init.initGlobalFont();
         mainFrame.setContentPane(MainWindow.getInstance().getMainPanel());
         MainWindow.getInstance().init();

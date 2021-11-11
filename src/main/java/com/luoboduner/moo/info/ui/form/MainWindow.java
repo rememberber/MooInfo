@@ -18,6 +18,7 @@ public class MainWindow {
     private JTabbedPane tabbedPane;
     private JPanel mainPanel;
     private JPanel overviewPanel;
+    private JPanel networkPanel;
 
     private static MainWindow mainWindow;
 
@@ -36,6 +37,7 @@ public class MainWindow {
     public void init() {
         mainWindow = getInstance();
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getNetworkPanel().add(NetworkForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getMainPanel().updateUI();
     }
 
@@ -74,18 +76,18 @@ public class MainWindow {
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Disk", panel4);
+        networkPanel = new JPanel();
+        networkPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Network", networkPanel);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Network", panel5);
+        tabbedPane.addTab("Variables", panel5);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Variables", panel6);
+        tabbedPane.addTab("Processes", panel6);
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Processes", panel7);
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("USB Devices", panel8);
+        tabbedPane.addTab("USB Devices", panel7);
     }
 
     /**
