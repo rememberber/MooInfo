@@ -7,6 +7,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
+import com.luoboduner.moo.info.ui.form.DetailForm;
 import com.luoboduner.moo.info.ui.form.NetworkForm;
 import com.luoboduner.moo.info.ui.form.OverviewForm;
 import com.luoboduner.moo.info.util.SystemUtil;
@@ -202,6 +203,7 @@ public class Init {
     public static void initAllTab() {
 
         ThreadUtil.execute(OverviewForm::init);
+        ThreadUtil.execute(DetailForm::init);
         ThreadUtil.execute(NetworkForm::init);
 
         // Check the new version

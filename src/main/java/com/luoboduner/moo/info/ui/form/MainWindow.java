@@ -19,6 +19,7 @@ public class MainWindow {
     private JPanel mainPanel;
     private JPanel overviewPanel;
     private JPanel networkPanel;
+    private JPanel detailPanel;
 
     private static MainWindow mainWindow;
 
@@ -37,6 +38,7 @@ public class MainWindow {
     public void init() {
         mainWindow = getInstance();
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getDetailPanel().add(DetailForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getNetworkPanel().add(NetworkForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getMainPanel().updateUI();
     }
@@ -64,30 +66,30 @@ public class MainWindow {
         overviewPanel = new JPanel();
         overviewPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Overview", overviewPanel);
+        detailPanel = new JPanel();
+        detailPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Detail", detailPanel);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Detail", panel1);
+        tabbedPane.addTab("Memory", panel1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Memory", panel2);
+        tabbedPane.addTab("CPU", panel2);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("CPU", panel3);
-        final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Disk", panel4);
+        tabbedPane.addTab("Disk", panel3);
         networkPanel = new JPanel();
         networkPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Network", networkPanel);
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Variables", panel4);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Variables", panel5);
+        tabbedPane.addTab("Processes", panel5);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Processes", panel6);
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("USB Devices", panel7);
+        tabbedPane.addTab("USB Devices", panel6);
     }
 
     /**
