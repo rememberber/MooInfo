@@ -9,6 +9,8 @@ import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.Map;
 import java.util.Properties;
@@ -27,6 +29,8 @@ public class VariablesForm {
     private JPanel mainPanel;
     private JTable sysEnvVarTable;
     private JTable javaPropsTable;
+
+    private static final double[] COLUMN_WIDTH_PERCENT = {0.3, 0.7};
 
     public static VariablesForm getInstance() {
         if (variablesForm == null) {
@@ -65,7 +69,9 @@ public class VariablesForm {
             model.addRow(data);
         }
 
-        getInstance().getSysEnvVarTable().setModel(model);
+        JTable sysEnvVarTable = getInstance().getSysEnvVarTable();
+        sysEnvVarTable.setModel(model);
+        resizeColumns(sysEnvVarTable.getColumnModel());
     }
 
     public static void initJavaPropsTable() {
@@ -81,7 +87,20 @@ public class VariablesForm {
             model.addRow(data);
         }
 
-        getInstance().getJavaPropsTable().setModel(model);
+        JTable javaPropsTable = getInstance().getJavaPropsTable();
+        javaPropsTable.setModel(model);
+        resizeColumns(javaPropsTable.getColumnModel());
+    }
+
+    private static void resizeColumns(TableColumnModel tableColumnModel) {
+        TableColumn column;
+        int tW = tableColumnModel.getTotalColumnWidth();
+        int cantCols = tableColumnModel.getColumnCount();
+        for (int i = 0; i < cantCols; i++) {
+            column = tableColumnModel.getColumn(i);
+            int pWidth = (int) Math.round(COLUMN_WIDTH_PERCENT[i] * tW);
+            column.setPreferredWidth(pWidth);
+        }
     }
 
     {
