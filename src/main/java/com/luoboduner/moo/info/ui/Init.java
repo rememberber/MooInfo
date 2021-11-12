@@ -7,10 +7,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
-import com.luoboduner.moo.info.ui.form.DetailForm;
-import com.luoboduner.moo.info.ui.form.NetworkForm;
-import com.luoboduner.moo.info.ui.form.OverviewForm;
-import com.luoboduner.moo.info.ui.form.UsbForm;
+import com.luoboduner.moo.info.ui.form.*;
 import com.luoboduner.moo.info.util.SystemUtil;
 import com.luoboduner.moo.info.util.UIUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
@@ -207,6 +204,7 @@ public class Init {
         ThreadUtil.execute(DetailForm::init);
         ThreadUtil.execute(NetworkForm::init);
         ThreadUtil.execute(UsbForm::init);
+        ThreadUtil.execute(VariablesForm::init);
 
         // Check the new version
         if (App.config.isAutoCheckUpdate()) {
