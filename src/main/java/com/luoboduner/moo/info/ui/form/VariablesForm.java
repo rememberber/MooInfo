@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * VariablesForm
@@ -25,6 +26,7 @@ public class VariablesForm {
     private static VariablesForm variablesForm;
     private JPanel mainPanel;
     private JTable sysEnvVarTable;
+    private JTable javaPropsTable;
 
     public static VariablesForm getInstance() {
         if (variablesForm == null) {
@@ -42,13 +44,15 @@ public class VariablesForm {
 
     private static void initUi() {
         getInstance().getSysEnvVarTable().setShowGrid(true);
+        getInstance().getJavaPropsTable().setShowGrid(true);
     }
 
     private static void initInfo() {
-        initListTable();
+        initSysEnvVarTable();
+        initJavaPropsTable();
     }
 
-    public static void initListTable() {
+    public static void initSysEnvVarTable() {
         String[] headerNames = {"Key", "Value"};
         DefaultTableModel model = new DefaultTableModel(null, headerNames);
 
@@ -62,6 +66,22 @@ public class VariablesForm {
         }
 
         getInstance().getSysEnvVarTable().setModel(model);
+    }
+
+    public static void initJavaPropsTable() {
+        String[] headerNames = {"Key", "Value"};
+        DefaultTableModel model = new DefaultTableModel(null, headerNames);
+
+        Properties properties = System.getProperties();
+        Object[] data;
+        for (Map.Entry<Object, Object> objectObjectEntry : properties.entrySet()) {
+            data = new Object[2];
+            data[0] = objectObjectEntry.getKey();
+            data[1] = objectObjectEntry.getValue();
+            model.addRow(data);
+        }
+
+        getInstance().getJavaPropsTable().setModel(model);
     }
 
     {
@@ -82,7 +102,7 @@ public class VariablesForm {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.setLayout(new GridLayoutManager(4, 1, new Insets(10, 10, 10, 10), -1, -1));
         mainPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -96,6 +116,18 @@ public class VariablesForm {
         panel1.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         sysEnvVarTable = new JTable();
         scrollPane1.setViewportView(sysEnvVarTable);
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.add(panel3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Java properties");
+        panel3.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel3.add(spacer2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JScrollPane scrollPane2 = new JScrollPane();
+        panel1.add(scrollPane2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        javaPropsTable = new JTable();
+        scrollPane2.setViewportView(javaPropsTable);
     }
 
     /**
