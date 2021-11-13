@@ -33,6 +33,7 @@ public class App {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.application.name", "MooInfo");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MooInfo");
+            System.setProperty("apple.awt.application.appearance", "system");
         }
 
         Init.initTheme();
