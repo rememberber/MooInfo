@@ -14,10 +14,7 @@ import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +64,11 @@ public class ProcessesForm {
         JTable procTable = getInstance().getProcessTable();
         procTable.setModel(model);
         resizeColumns(procTable.getColumnModel());
+
+        DefaultTableCellRenderer hr = (DefaultTableCellRenderer) procTable.getTableHeader()
+                .getDefaultRenderer();
+        // The name of header column turn to left
+        hr.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 
         Timer timer = new Timer(UiConsts.REFRESH_SLOW, e -> {
             DefaultTableModel tableModel = (DefaultTableModel) procTable.getModel();
@@ -164,7 +166,7 @@ public class ProcessesForm {
      */
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
         mainPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         processTable = new JTable();
