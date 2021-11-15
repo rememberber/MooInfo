@@ -5,6 +5,7 @@ import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.luoboduner.moo.info.App;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -30,7 +31,7 @@ public class VariablesForm {
     private JTable sysEnvVarTable;
     private JTable javaPropsTable;
 
-    private static final double[] COLUMN_WIDTH_PERCENT = {0.3, 0.7};
+    private static final double[] COLUMN_WIDTH_PERCENT = {0.38, 0.62};
 
     public static VariablesForm getInstance() {
         if (variablesForm == null) {
@@ -94,7 +95,7 @@ public class VariablesForm {
 
     private static void resizeColumns(TableColumnModel tableColumnModel) {
         TableColumn column;
-        int tW = tableColumnModel.getTotalColumnWidth();
+        int tW = App.mainFrame.getWidth() - 20;
         int cantCols = tableColumnModel.getColumnCount();
         for (int i = 0; i < cantCols; i++) {
             column = tableColumnModel.getColumn(i);
