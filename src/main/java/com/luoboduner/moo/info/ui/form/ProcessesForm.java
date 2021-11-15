@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * NetworkForm
+ * ProcessesForm
  *
  * @author <a href="https://github.com/rememberber">RememBerBer</a>
  * @since 2021/11/15.
@@ -64,6 +64,7 @@ public class ProcessesForm {
         JTable procTable = getInstance().getProcessTable();
         procTable.setModel(model);
         resizeColumns(procTable.getColumnModel());
+        procTable.setShowGrid(true);
 
         DefaultTableCellRenderer hr = (DefaultTableCellRenderer) procTable.getTableHeader()
                 .getDefaultRenderer();

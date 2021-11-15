@@ -23,6 +23,7 @@ public class MainWindow {
     private JPanel usbPanel;
     private JPanel VariablesPanel;
     private JPanel processesPanel;
+    private JPanel diskPanel;
 
     private static MainWindow mainWindow;
 
@@ -46,6 +47,7 @@ public class MainWindow {
         mainWindow.getUsbPanel().add(UsbForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getVariablesPanel().add(VariablesForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getProcessesPanel().add(ProcessesForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getDiskPanel().add(DiskForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getMainPanel().updateUI();
     }
 
@@ -81,9 +83,9 @@ public class MainWindow {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("CPU", panel2);
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Disk", panel3);
+        diskPanel = new JPanel();
+        diskPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Disk", diskPanel);
         networkPanel = new JPanel();
         networkPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Network", networkPanel);
