@@ -205,6 +205,7 @@ public class Init {
         ThreadUtil.execute(NetworkForm::init);
         ThreadUtil.execute(UsbForm::init);
         ThreadUtil.execute(VariablesForm::init);
+        ThreadUtil.execute(ProcessesForm::init);
 
         // Check the new version
         if (App.config.isAutoCheckUpdate()) {

@@ -74,5 +74,10 @@ public class UiConsts {
      */
     public static final String CHECK_VERSION_URL = "https://gitee.com/zhoubochina/MooInfo/raw/master/src/main/resources/version_summary.json";
 
+    public static final int REFRESH_FAST = 1000;
+    public static final int REFRESH_SLOW = 5000;
+
+    public static final int REFRESH_SLOWER = 15_000;
+
 
 }
