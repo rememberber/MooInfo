@@ -61,7 +61,7 @@ public class DiskForm {
             OSFileStore store = fileStores.get(i);
 
             JPanel diskPanel = new JPanel();
-            diskPanel.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 10, 0), -1, -1));
+            diskPanel.setLayout(new GridLayoutManager(3, 3, new Insets(10, 0, 10, 0), -1, -1));
             JLabel title = new JLabel();
             StringBuilder titleBuilder = new StringBuilder();
             titleBuilder.append(store.getName());
@@ -70,13 +70,13 @@ public class DiskForm {
                 titleBuilder.append(store.getLabel());
             }
             title.setText(titleBuilder.toString());
-            Font font = new Font(diskListPanel.getFont().getName(), Font.BOLD, diskListPanel.getFont().getSize());
+            Font font = new Font(diskListPanel.getFont().getName(), Font.BOLD, diskListPanel.getFont().getSize() + 2);
             title.setFont(font);
 
-            diskPanel.add(title, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            diskPanel.add(title, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JProgressBar spacePercent = new JProgressBar();
-            diskPanel.add(spacePercent, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            diskPanel.add(spacePercent, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
             JLabel subTitle = new JLabel();
             long usable = store.getUsableSpace();
             long total = store.getTotalSpace();
@@ -84,8 +84,14 @@ public class DiskForm {
             int usagePercent = (int) ((total - usable) * 100 / total);
             spacePercent.setValue(usagePercent);
             spacePercent.setToolTipText(usagePercent + "%");
-            subTitle.setText("Available: " + DataSizeUtil.format(usable) + "/" + DataSizeUtil.format(total));
+            subTitle.setText("Used " + DataSizeUtil.format(total - usable) + "/" + DataSizeUtil.format(total));
             diskPanel.add(subTitle, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JLabel available = new JLabel();
+            available.setText(DataSizeUtil.format(usable) + "/" + DataSizeUtil.format(total) + " Available");
+            diskPanel.add(available, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            final Spacer spacer1 = new Spacer();
+            diskPanel.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
 
             diskListPanel.add(diskPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

@@ -33,6 +33,7 @@ public class DiskFormLayoutDesign {
     private JLabel disk3Label1;
     private JLabel disk3Label2;
     private JPanel diskListPanel;
+    private JLabel disk1Label3;
 
     private static final Log logger = LogFactory.get();
 
@@ -85,16 +86,21 @@ public class DiskFormLayoutDesign {
         diskListPanel.setLayout(new GridLayoutManager(4, 1, new Insets(0, 10, 0, 10), -1, -1));
         scrollPane1.setViewportView(diskListPanel);
         disk1Panel = new JPanel();
-        disk1Panel.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 10, 0), -1, -1));
+        disk1Panel.setLayout(new GridLayoutManager(3, 3, new Insets(10, 0, 10, 0), -1, -1));
         diskListPanel.add(disk1Panel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         disk1Label1 = new JLabel();
         disk1Label1.setText("Label");
-        disk1Panel.add(disk1Label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        disk1Panel.add(disk1Label1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         disk1ProgressBar = new JProgressBar();
-        disk1Panel.add(disk1ProgressBar, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        disk1Panel.add(disk1ProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         disk1Label2 = new JLabel();
         disk1Label2.setText("Label");
         disk1Panel.add(disk1Label2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        disk1Label3 = new JLabel();
+        disk1Label3.setText("Label");
+        disk1Panel.add(disk1Label3, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        disk1Panel.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         disk2Panel = new JPanel();
         disk2Panel.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 10, 0), -1, -1));
         diskListPanel.add(disk2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -117,8 +123,8 @@ public class DiskFormLayoutDesign {
         disk3Label2 = new JLabel();
         disk3Label2.setText("Label");
         disk3Panel.add(disk3Label2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        diskListPanel.add(spacer1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        diskListPanel.add(spacer2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
