@@ -77,15 +77,17 @@ public class DiskForm {
 
             JProgressBar spacePercent = new JProgressBar();
             diskPanel.add(spacePercent, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-            JLabel subTitle = new JLabel();
+
             long usable = store.getUsableSpace();
             long total = store.getTotalSpace();
             spacePercent.setMaximum(100);
             int usagePercent = (int) ((total - usable) * 100 / total);
             spacePercent.setValue(usagePercent);
             spacePercent.setToolTipText(usagePercent + "%");
-            subTitle.setText("Used " + DataSizeUtil.format(total - usable) + "/" + DataSizeUtil.format(total));
-            diskPanel.add(subTitle, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JLabel used = new JLabel();
+            used.setText("Used " + DataSizeUtil.format(total - usable) + "/" + DataSizeUtil.format(total));
+            diskPanel.add(used, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JLabel available = new JLabel();
             available.setText(DataSizeUtil.format(usable) + "/" + DataSizeUtil.format(total) + " Available");
@@ -93,14 +95,11 @@ public class DiskForm {
             final Spacer spacer1 = new Spacer();
             diskPanel.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-
             diskListPanel.add(diskPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-
         }
 
         final Spacer spacer1 = new Spacer();
         diskListPanel.add(spacer1, new GridConstraints(fileStores.size(), 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-
     }
 
     {
