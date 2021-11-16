@@ -202,6 +202,8 @@ public class Init {
 
         ThreadUtil.execute(OverviewForm::init);
         ThreadUtil.execute(DetailForm::init);
+        ThreadUtil.execute(MemoryForm::init);
+        ThreadUtil.execute(CpuForm::init);
         ThreadUtil.execute(NetworkForm::init);
         ThreadUtil.execute(UsbForm::init);
         ThreadUtil.execute(VariablesForm::init);

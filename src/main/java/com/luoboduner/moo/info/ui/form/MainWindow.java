@@ -24,6 +24,8 @@ public class MainWindow {
     private JPanel VariablesPanel;
     private JPanel processesPanel;
     private JPanel diskPanel;
+    private JPanel memoryPanel;
+    private JPanel cpuPanel;
 
     private static MainWindow mainWindow;
 
@@ -43,6 +45,8 @@ public class MainWindow {
         mainWindow = getInstance();
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getDetailPanel().add(DetailForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getMemoryPanel().add(MemoryForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getCpuPanel().add(CpuForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getNetworkPanel().add(NetworkForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getUsbPanel().add(UsbForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getVariablesPanel().add(VariablesForm.getInstance().getMainPanel(), gridConstraints);
@@ -77,12 +81,12 @@ public class MainWindow {
         detailPanel = new JPanel();
         detailPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Detail", detailPanel);
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Memory", panel1);
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("CPU", panel2);
+        memoryPanel = new JPanel();
+        memoryPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Memory", memoryPanel);
+        cpuPanel = new JPanel();
+        cpuPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("CPU", cpuPanel);
         diskPanel = new JPanel();
         diskPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Disk", diskPanel);
