@@ -42,6 +42,10 @@ public class MemoryForm {
     private JProgressBar swapProgressBar;
     private JLabel swapAvailableLabel;
     private JLabel swapTitle;
+    private JLabel jvmMemoryTitle;
+    private JProgressBar jvmProgressBar;
+    private JLabel jvmUsedLabel;
+    private JLabel jvmAvailableLabel;
 
     public static MemoryForm getInstance() {
         if (memoryForm == null) {
@@ -67,6 +71,10 @@ public class MemoryForm {
         memoryForm.getPhysicalMemoryTitle().setFont(emphaticFont);
         memoryForm.getVirtualMemoryTitle().setFont(emphaticFont);
         memoryForm.getSwapTitle().setFont(emphaticFont);
+        memoryForm.getJvmMemoryTitle().setFont(emphaticFont);
+
+        Dimension d = new Dimension(-1, 100);
+        memoryForm.getPhysicalMemoryProgressBar().setMinimumSize(d);
     }
 
     private static void initInfo() {
@@ -80,7 +88,10 @@ public class MemoryForm {
         physicalMemoryProgressBar.setMaximum(100);
         int usagePercent = (int) ((total - available) * 100 / total);
         physicalMemoryProgressBar.setValue(usagePercent);
-        physicalMemoryProgressBar.setToolTipText(usagePercent + "%");
+        String progressStr = usagePercent + "%";
+        physicalMemoryProgressBar.setToolTipText(progressStr);
+        physicalMemoryProgressBar.setStringPainted(true);
+        physicalMemoryProgressBar.setString(progressStr);
 
         memoryForm.getPhysicalMemoryUsed().setText("Used " + DataSizeUtil.format(total - available) + "/" + DataSizeUtil.format(total));
         memoryForm.getPhysicalMemoryAvailable().setText(DataSizeUtil.format(available) + "/" + DataSizeUtil.format(total) + " Available");
@@ -105,8 +116,21 @@ public class MemoryForm {
         int swapUsagePercent = (int) (swapUsed * 100 / swapTotal);
         swapProgressBar.setValue(swapUsagePercent);
         swapProgressBar.setToolTipText(swapUsagePercent + "%");
-        memoryForm.getSwapUsedLabel().setText("Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal));
+        memoryForm.getSwapUsedLabel().setText("Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " | page in " + virtualMemory.getSwapPagesIn() + " page out " + virtualMemory.getSwapPagesOut());
         memoryForm.getSwapAvailableLabel().setText(DataSizeUtil.format(swapTotal - swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " Available");
+
+        long jvmTotal = Runtime.getRuntime().totalMemory();
+        long jvmMax = Runtime.getRuntime().maxMemory();
+        long jvmFree = Runtime.getRuntime().freeMemory();
+        long jvmUsed = jvmTotal - jvmFree;
+
+        JProgressBar jvmProgressBar = memoryForm.getJvmProgressBar();
+        jvmProgressBar.setMaximum(100);
+        int jvmUsagePercent = (int) (jvmUsed * 100 / jvmTotal);
+        jvmProgressBar.setValue(jvmUsagePercent);
+        jvmProgressBar.setToolTipText(jvmUsagePercent + "%");
+        memoryForm.getJvmUsedLabel().setText("Used " + DataSizeUtil.format(jvmUsed) + " / Total " + DataSizeUtil.format(jvmTotal) + " / Max " + DataSizeUtil.format(jvmMax));
+        memoryForm.getJvmAvailableLabel().setText("");
 
         List<PhysicalMemory> physicalMemory = memory.getPhysicalMemory();
     }
@@ -132,7 +156,7 @@ public class MemoryForm {
         mainPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane1.setViewportView(panel1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
@@ -182,8 +206,24 @@ public class MemoryForm {
         panel4.add(swapAvailableLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         panel4.add(spacer3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.add(panel5, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        jvmMemoryTitle = new JLabel();
+        jvmMemoryTitle.setText("Java Runtime Memory of MooInfo");
+        panel5.add(jvmMemoryTitle, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jvmProgressBar = new JProgressBar();
+        panel5.add(jvmProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jvmUsedLabel = new JLabel();
+        jvmUsedLabel.setText("Used -");
+        panel5.add(jvmUsedLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jvmAvailableLabel = new JLabel();
+        jvmAvailableLabel.setText("- Available");
+        panel5.add(jvmAvailableLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        panel1.add(spacer4, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel5.add(spacer4, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer5 = new Spacer();
+        panel1.add(spacer5, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
