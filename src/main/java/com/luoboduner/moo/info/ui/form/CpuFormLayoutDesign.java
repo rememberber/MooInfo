@@ -2,19 +2,13 @@ package com.luoboduner.moo.info.ui.form;
 
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import cn.hutool.system.oshi.CpuInfo;
-import cn.hutool.system.oshi.OshiUtil;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.luoboduner.moo.info.App;
-import com.luoboduner.moo.info.ui.UiConsts;
 import lombok.Getter;
-import oshi.hardware.CentralProcessor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.DecimalFormat;
 
 /**
  * CpuForm
@@ -23,25 +17,21 @@ import java.text.DecimalFormat;
  * @since 2021/11/16.
  */
 @Getter
-public class CpuForm {
+public class CpuFormLayoutDesign {
     private JPanel mainPanel;
     private JProgressBar scuProgressBar;
     private JProgressBar progressBar2;
     private JProgressBar progressBar3;
     private JProgressBar progressBar4;
-    private JPanel pcuPanel;
-    private JPanel scuPanel;
     private JPanel pcuProgressBarPanel;
-    private JLabel scuTitleLabel;
-    private JLabel pcuTitleLabel;
 
     private static final Log logger = LogFactory.get();
 
-    private static CpuForm cpuForm;
+    private static CpuFormLayoutDesign cpuForm;
 
-    public static CpuForm getInstance() {
+    public static CpuFormLayoutDesign getInstance() {
         if (cpuForm == null) {
-            cpuForm = new CpuForm();
+            cpuForm = new CpuFormLayoutDesign();
         }
         return cpuForm;
     }
@@ -50,36 +40,13 @@ public class CpuForm {
         cpuForm = getInstance();
 
         initUi();
-        Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
-            initInfo();
-        });
-        timer.start();
+        initInfo();
     }
 
     private static void initUi() {
-        CpuForm cpuForm = getInstance();
-        Dimension d = new Dimension(-1, 100);
-        cpuForm.getScuProgressBar().setMinimumSize(d);
-
-        CentralProcessor cpu = App.si.getHardware().getProcessor();
-        int logicalProcessorCount = cpu.getLogicalProcessorCount();
     }
 
     private static void initInfo() {
-        CpuInfo cpuInfo = OshiUtil.getCpuInfo();
-        DecimalFormat format = new DecimalFormat("#.00");
-        double cpuUsage = Double.parseDouble(format.format((100 - cpuInfo.getFree())));
-
-        CpuForm cpuForm = getInstance();
-        cpuForm.getScuProgressBar().setMaximum(100);
-        int cpuUsagePercent = (int) cpuUsage;
-        cpuForm.getScuProgressBar().setValue(cpuUsagePercent);
-        cpuForm.getScuProgressBar().setStringPainted(true);
-        cpuForm.getScuProgressBar().setString(cpuUsagePercent + "%");
-
-        Integer cpuNum = cpuInfo.getCpuNum();
-
-        CentralProcessor cpu = App.si.getHardware().getProcessor();
     }
 
     {
@@ -110,23 +77,23 @@ public class CpuForm {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane1.setViewportView(panel2);
-        scuPanel = new JPanel();
-        scuPanel.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
-        panel2.add(scuPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        scuTitleLabel = new JLabel();
-        scuTitleLabel.setText("System CPU Usage");
-        scuPanel.add(scuTitleLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel2.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("System CPU Usage");
+        panel3.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         scuProgressBar = new JProgressBar();
-        scuPanel.add(scuProgressBar, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pcuPanel = new JPanel();
-        pcuPanel.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
-        panel2.add(pcuPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        pcuTitleLabel = new JLabel();
-        pcuTitleLabel.setText("Processor CPU Usage");
-        pcuPanel.add(pcuTitleLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel3.add(scuProgressBar, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel2.add(panel4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Processor CPU Usage");
+        panel4.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pcuProgressBarPanel = new JPanel();
         pcuProgressBarPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
-        pcuPanel.add(pcuProgressBarPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel4.add(pcuProgressBarPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         progressBar2 = new JProgressBar();
         pcuProgressBarPanel.add(progressBar2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         progressBar3 = new JProgressBar();
@@ -135,9 +102,9 @@ public class CpuForm {
         pcuProgressBarPanel.add(progressBar4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel2.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        splitPane1.setRightComponent(panel3);
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        splitPane1.setRightComponent(panel5);
     }
 
     /**
