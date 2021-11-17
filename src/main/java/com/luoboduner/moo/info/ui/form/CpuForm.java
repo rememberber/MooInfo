@@ -33,6 +33,7 @@ public class CpuForm {
     private JPanel pcuProgressBarPanel;
     private JLabel scuTitleLabel;
     private JLabel pcuTitleLabel;
+    private JTextPane cpuInfoTextPane;
 
     private static final Log logger = LogFactory.get();
 
@@ -49,6 +50,8 @@ public class CpuForm {
         cpuForm = getInstance();
 
         initUi();
+        initCpuInfo();
+
         Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
             initInfo();
         });
@@ -78,6 +81,15 @@ public class CpuForm {
             pcuProgressBarPanel.add(progressBar, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         }
 
+    }
+
+    private static void initCpuInfo() {
+        CpuForm cpuForm = getInstance();
+        JTextPane cpuInfoTextPane = cpuForm.getCpuInfoTextPane();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(App.si.getHardware().getProcessor());
+        cpuInfoTextPane.setText(sb.toString());
     }
 
     private static void initInfo() {
@@ -115,7 +127,9 @@ public class CpuForm {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         final JSplitPane splitPane1 = new JSplitPane();
+        splitPane1.setContinuousLayout(true);
         splitPane1.setDividerLocation(300);
+        splitPane1.setDividerSize(14);
         mainPanel.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 0), -1, -1));
@@ -146,8 +160,16 @@ public class CpuForm {
         final Spacer spacer1 = new Spacer();
         panel2.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel3.setLayout(new GridLayoutManager(2, 1, new Insets(10, 0, 10, 10), -1, -1));
         splitPane1.setRightComponent(panel3);
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel3.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        cpuInfoTextPane = new JTextPane();
+        cpuInfoTextPane.setEditable(false);
+        panel4.add(cpuInfoTextPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel3.add(spacer2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
