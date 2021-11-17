@@ -13,6 +13,7 @@ import lombok.Getter;
 import oshi.hardware.CentralProcessor;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.text.DecimalFormat;
 
@@ -26,9 +27,6 @@ import java.text.DecimalFormat;
 public class CpuForm {
     private JPanel mainPanel;
     private JProgressBar scuProgressBar;
-    private JProgressBar progressBar2;
-    private JProgressBar progressBar3;
-    private JProgressBar progressBar4;
     private JPanel pcuPanel;
     private JPanel scuPanel;
     private JPanel pcuProgressBarPanel;
@@ -63,6 +61,18 @@ public class CpuForm {
 
         CentralProcessor cpu = App.si.getHardware().getProcessor();
         int logicalProcessorCount = cpu.getLogicalProcessorCount();
+
+        JPanel pcuProgressBarPanel = cpuForm.getPcuProgressBarPanel();
+        pcuProgressBarPanel.setLayout(new GridLayoutManager(logicalProcessorCount, 2, new Insets(0, 0, 0, 0), -1, -1));
+        for (int i = 0; i < logicalProcessorCount; i++) {
+            JLabel label = new JLabel();
+            label.setText("CPU" + i);
+            pcuProgressBarPanel.add(label, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JProgressBar progressBar = new JProgressBar();
+            pcuProgressBarPanel.add(progressBar, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        }
+
     }
 
     private static void initInfo() {
@@ -75,7 +85,7 @@ public class CpuForm {
         int cpuUsagePercent = (int) cpuUsage;
         cpuForm.getScuProgressBar().setValue(cpuUsagePercent);
         cpuForm.getScuProgressBar().setStringPainted(true);
-        cpuForm.getScuProgressBar().setString(cpuUsagePercent + "%");
+        cpuForm.getScuProgressBar().setString(cpuUsage + "%");
 
         Integer cpuNum = cpuInfo.getCpuNum();
 
@@ -107,6 +117,7 @@ public class CpuForm {
         splitPane1.setLeftComponent(panel1);
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane1.setViewportView(panel2);
@@ -125,14 +136,8 @@ public class CpuForm {
         pcuTitleLabel.setText("Processor CPU Usage");
         pcuPanel.add(pcuTitleLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pcuProgressBarPanel = new JPanel();
-        pcuProgressBarPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        pcuProgressBarPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         pcuPanel.add(pcuProgressBarPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        progressBar2 = new JProgressBar();
-        pcuProgressBarPanel.add(progressBar2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        progressBar3 = new JProgressBar();
-        pcuProgressBarPanel.add(progressBar3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        progressBar4 = new JProgressBar();
-        pcuProgressBarPanel.add(progressBar4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel2.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
