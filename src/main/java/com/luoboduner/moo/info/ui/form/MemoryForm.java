@@ -60,11 +60,15 @@ public class MemoryForm {
         memoryForm = getInstance();
 
         initUi();
+        initPhysicalMemoryInfo();
         Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
-            initInfo();
-            memoryForm.getPhysicalMemoryInfoTextPane().setText(updateMemoryText());
+            initMemoryProgressInfo();
         });
         timer.start();
+    }
+
+    private static void initPhysicalMemoryInfo() {
+        memoryForm.getPhysicalMemoryInfoTextPane().setText(updateMemoryText());
     }
 
     private static void initUi() {
@@ -82,7 +86,7 @@ public class MemoryForm {
 
     }
 
-    private static void initInfo() {
+    private static void initMemoryProgressInfo() {
         GlobalMemory memory = App.si.getHardware().getMemory();
 
         // global memory
