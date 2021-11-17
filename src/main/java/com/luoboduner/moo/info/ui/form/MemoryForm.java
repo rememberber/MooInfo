@@ -1,17 +1,20 @@
 package com.luoboduner.moo.info.ui.form;
 
+import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
+import com.luoboduner.moo.info.ui.UiConsts;
 import lombok.Getter;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.PhysicalMemory;
 import oshi.hardware.VirtualMemory;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -27,14 +30,18 @@ public class MemoryForm {
 
     private static MemoryForm memoryForm;
     private JPanel mainPanel;
-    private JProgressBar pysicalMemoryProgressBar;
+    private JProgressBar physicalMemoryProgressBar;
     private JProgressBar virtualMemoryProgressBar;
-    private JLabel pysicalMemoryTitle;
-    private JLabel pysicalMemoryUsed;
-    private JLabel pysicalMemoryAvailable;
+    private JLabel physicalMemoryTitle;
+    private JLabel physicalMemoryUsed;
+    private JLabel physicalMemoryAvailable;
     private JLabel virtualMemoryTitle;
     private JLabel virtualMemoryUsed;
     private JLabel virtualMemoryAvailable;
+    private JLabel swapUsedLabel;
+    private JProgressBar swapProgressBar;
+    private JLabel swapAvailableLabel;
+    private JLabel swapTitle;
 
     public static MemoryForm getInstance() {
         if (memoryForm == null) {
@@ -47,17 +54,61 @@ public class MemoryForm {
         memoryForm = getInstance();
 
         initUi();
-        initInfo();
+        Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
+            initInfo();
+        });
+        timer.start();
     }
 
     private static void initUi() {
+        MemoryForm memoryForm = getInstance();
+        JPanel mainPanel = memoryForm.getMainPanel();
+        Font emphaticFont = new Font(mainPanel.getFont().getName(), Font.BOLD, mainPanel.getFont().getSize() + 2);
+        memoryForm.getPhysicalMemoryTitle().setFont(emphaticFont);
+        memoryForm.getVirtualMemoryTitle().setFont(emphaticFont);
+        memoryForm.getSwapTitle().setFont(emphaticFont);
     }
 
     private static void initInfo() {
         GlobalMemory memory = App.si.getHardware().getMemory();
 
-        List<PhysicalMemory> physicalMemory = memory.getPhysicalMemory();
+        // global memory
+        long total = memory.getTotal();
+        long available = memory.getAvailable();
+        MemoryForm memoryForm = getInstance();
+        JProgressBar physicalMemoryProgressBar = memoryForm.getPhysicalMemoryProgressBar();
+        physicalMemoryProgressBar.setMaximum(100);
+        int usagePercent = (int) ((total - available) * 100 / total);
+        physicalMemoryProgressBar.setValue(usagePercent);
+        physicalMemoryProgressBar.setToolTipText(usagePercent + "%");
+
+        memoryForm.getPhysicalMemoryUsed().setText("Used " + DataSizeUtil.format(total - available) + "/" + DataSizeUtil.format(total));
+        memoryForm.getPhysicalMemoryAvailable().setText(DataSizeUtil.format(available) + "/" + DataSizeUtil.format(total) + " Available");
+
+        // virtual memory
         VirtualMemory virtualMemory = memory.getVirtualMemory();
+        long virtualMax = virtualMemory.getVirtualMax();
+        long virtualInUse = virtualMemory.getVirtualInUse();
+        JProgressBar virtualMemoryProgressBar = memoryForm.getVirtualMemoryProgressBar();
+        virtualMemoryProgressBar.setMaximum(100);
+        int virtualUsagePercent = (int) (virtualInUse * 100 / virtualMax);
+        virtualMemoryProgressBar.setValue(virtualUsagePercent);
+        virtualMemoryProgressBar.setToolTipText(virtualUsagePercent + "%");
+        memoryForm.getVirtualMemoryUsed().setText("Used " + DataSizeUtil.format(virtualInUse) + "/" + DataSizeUtil.format(virtualMax));
+        memoryForm.getVirtualMemoryAvailable().setText(DataSizeUtil.format(virtualMax - virtualInUse) + "/" + DataSizeUtil.format(virtualMax) + " Available");
+
+        // swap memory
+        long swapTotal = virtualMemory.getSwapTotal();
+        long swapUsed = virtualMemory.getSwapUsed();
+        JProgressBar swapProgressBar = memoryForm.getSwapProgressBar();
+        swapProgressBar.setMaximum(100);
+        int swapUsagePercent = (int) (swapUsed * 100 / swapTotal);
+        swapProgressBar.setValue(swapUsagePercent);
+        swapProgressBar.setToolTipText(swapUsagePercent + "%");
+        memoryForm.getSwapUsedLabel().setText("Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal));
+        memoryForm.getSwapAvailableLabel().setText(DataSizeUtil.format(swapTotal - swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " Available");
+
+        List<PhysicalMemory> physicalMemory = memory.getPhysicalMemory();
     }
 
     {
@@ -76,33 +127,34 @@ public class MemoryForm {
      */
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
         mainPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane1.setViewportView(panel1);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        pysicalMemoryTitle = new JLabel();
-        pysicalMemoryTitle.setText("Pysical Memory");
-        panel2.add(pysicalMemoryTitle, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pysicalMemoryProgressBar = new JProgressBar();
-        panel2.add(pysicalMemoryProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pysicalMemoryUsed = new JLabel();
-        pysicalMemoryUsed.setText("Used -");
-        panel2.add(pysicalMemoryUsed, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pysicalMemoryAvailable = new JLabel();
-        pysicalMemoryAvailable.setText("- Available");
-        panel2.add(pysicalMemoryAvailable, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        physicalMemoryTitle = new JLabel();
+        physicalMemoryTitle.setText("Physical Memory");
+        panel2.add(physicalMemoryTitle, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        physicalMemoryProgressBar = new JProgressBar();
+        panel2.add(physicalMemoryProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        physicalMemoryUsed = new JLabel();
+        physicalMemoryUsed.setText("Used -");
+        panel2.add(physicalMemoryUsed, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        physicalMemoryAvailable = new JLabel();
+        physicalMemoryAvailable.setText("- Available");
+        panel2.add(physicalMemoryAvailable, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel2.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel3.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(panel3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         virtualMemoryTitle = new JLabel();
-        virtualMemoryTitle.setText("Virtual Memory(Swap)");
+        virtualMemoryTitle.setText("Virtual Memory");
         panel3.add(virtualMemoryTitle, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         virtualMemoryProgressBar = new JProgressBar();
         panel3.add(virtualMemoryProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -114,8 +166,24 @@ public class MemoryForm {
         panel3.add(virtualMemoryAvailable, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panel3.add(spacer2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.add(panel4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        swapTitle = new JLabel();
+        swapTitle.setText("Swap");
+        panel4.add(swapTitle, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        swapProgressBar = new JProgressBar();
+        panel4.add(swapProgressBar, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        swapUsedLabel = new JLabel();
+        swapUsedLabel.setText("Used -");
+        panel4.add(swapUsedLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        swapAvailableLabel = new JLabel();
+        swapAvailableLabel.setText("- Available");
+        panel4.add(swapAvailableLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        panel1.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel4.add(spacer3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        panel1.add(spacer4, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
