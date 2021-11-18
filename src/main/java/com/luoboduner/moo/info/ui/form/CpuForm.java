@@ -2,8 +2,6 @@ package com.luoboduner.moo.info.ui.form;
 
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import cn.hutool.system.oshi.CpuInfo;
-import cn.hutool.system.oshi.OshiUtil;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -38,6 +36,8 @@ public class CpuForm {
     private static final Log logger = LogFactory.get();
 
     private static CpuForm cpuForm;
+
+    private static long[] prevTicks;
 
     public static CpuForm getInstance() {
         if (cpuForm == null) {
@@ -93,9 +93,29 @@ public class CpuForm {
     }
 
     private static void initInfo() {
-        CpuInfo cpuInfo = OshiUtil.getCpuInfo();
+        CentralProcessor processor = App.si.getHardware().getProcessor();
         DecimalFormat format = new DecimalFormat("#.00");
-        double cpuUsage = Double.parseDouble(format.format((100 - cpuInfo.getFree())));
+
+        if (prevTicks == null) {
+            prevTicks = processor.getSystemCpuLoadTicks();
+        }
+
+        long[] ticks = processor.getSystemCpuLoadTicks();
+        long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
+        long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
+        long cSys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()] - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
+        long ioWait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
+        long idle = ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
+        long irq = ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
+        long softIrq = ticks[CentralProcessor.TickType.SOFTIRQ.getIndex()] - prevTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()];
+        long steal = ticks[CentralProcessor.TickType.STEAL.getIndex()] - prevTicks[CentralProcessor.TickType.STEAL.getIndex()];
+        long totalCpu = Math.max(user + nice + cSys + idle + ioWait + irq + softIrq + steal, 0);
+
+        prevTicks = ticks;
+
+        double free = Double.parseDouble(format.format(idle <= 0 ? 0 : (100d * idle / totalCpu)));
+
+        double cpuUsage = Double.parseDouble(format.format((100 - free)));
 
         CpuForm cpuForm = getInstance();
         cpuForm.getScuProgressBar().setMaximum(100);
@@ -104,9 +124,6 @@ public class CpuForm {
         cpuForm.getScuProgressBar().setStringPainted(true);
         cpuForm.getScuProgressBar().setString(cpuUsage + "%");
 
-        Integer cpuNum = cpuInfo.getCpuNum();
-
-        CentralProcessor cpu = App.si.getHardware().getProcessor();
     }
 
     {
