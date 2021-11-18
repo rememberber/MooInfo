@@ -15,6 +15,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CpuForm
@@ -38,6 +40,10 @@ public class CpuForm {
     private static CpuForm cpuForm;
 
     private static long[] prevTicks;
+
+    private static long[][] preProcessorTicks;
+
+    private static List<JProgressBar> processorProgressBars;
 
     public static CpuForm getInstance() {
         if (cpuForm == null) {
@@ -72,6 +78,8 @@ public class CpuForm {
 
         JPanel pcuProgressBarPanel = cpuForm.getPcuProgressBarPanel();
         pcuProgressBarPanel.setLayout(new GridLayoutManager(logicalProcessorCount, 2, new Insets(0, 0, 0, 0), -1, -1));
+
+        processorProgressBars = new ArrayList<>();
         for (int i = 0; i < logicalProcessorCount; i++) {
             JLabel label = new JLabel();
             label.setText("CPU" + i);
@@ -79,6 +87,8 @@ public class CpuForm {
 
             JProgressBar progressBar = new JProgressBar();
             pcuProgressBarPanel.add(progressBar, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            processorProgressBars.add(progressBar);
         }
 
     }
@@ -96,11 +106,11 @@ public class CpuForm {
         CentralProcessor processor = App.si.getHardware().getProcessor();
         DecimalFormat format = new DecimalFormat("#.00");
 
+        long[] ticks = processor.getSystemCpuLoadTicks();
         if (prevTicks == null) {
-            prevTicks = processor.getSystemCpuLoadTicks();
+            prevTicks = ticks;
         }
 
-        long[] ticks = processor.getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
         long cSys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()] - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
@@ -118,11 +128,47 @@ public class CpuForm {
         double cpuUsage = Double.parseDouble(format.format((100 - free)));
 
         CpuForm cpuForm = getInstance();
-        cpuForm.getScuProgressBar().setMaximum(100);
+        JProgressBar scuProgressBar = cpuForm.getScuProgressBar();
+        scuProgressBar.setMaximum(100);
         int cpuUsagePercent = (int) cpuUsage;
-        cpuForm.getScuProgressBar().setValue(cpuUsagePercent);
-        cpuForm.getScuProgressBar().setStringPainted(true);
-        cpuForm.getScuProgressBar().setString(cpuUsage + "%");
+        scuProgressBar.setValue(cpuUsagePercent);
+        scuProgressBar.setStringPainted(true);
+        scuProgressBar.setString(cpuUsage + "%");
+
+        long[][] processorTicks = processor.getProcessorCpuLoadTicks();
+        if (preProcessorTicks == null) {
+            preProcessorTicks = processorTicks;
+        }
+
+        for (int i = 0; i < processorTicks.length; i++) {
+            long[] pTicks = processorTicks[i];
+            long[] prePTicks = preProcessorTicks[i];
+
+            long pUser = pTicks[CentralProcessor.TickType.USER.getIndex()] - prePTicks[CentralProcessor.TickType.USER.getIndex()];
+            long pNice = pTicks[CentralProcessor.TickType.NICE.getIndex()] - prePTicks[CentralProcessor.TickType.NICE.getIndex()];
+            long pCSys = pTicks[CentralProcessor.TickType.SYSTEM.getIndex()] - prePTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
+            long pIoWait = pTicks[CentralProcessor.TickType.IOWAIT.getIndex()] - prePTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
+            long pIdle = pTicks[CentralProcessor.TickType.IDLE.getIndex()] - prePTicks[CentralProcessor.TickType.IDLE.getIndex()];
+            long pIrq = pTicks[CentralProcessor.TickType.IRQ.getIndex()] - prePTicks[CentralProcessor.TickType.IRQ.getIndex()];
+            long pSoftIrq = pTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()] - prePTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()];
+            long pSteal = pTicks[CentralProcessor.TickType.STEAL.getIndex()] - prePTicks[CentralProcessor.TickType.STEAL.getIndex()];
+            long pTotalCpu = Math.max(pUser + pNice + pCSys + pIdle + pIoWait + pIrq + pSoftIrq + pSteal, 0);
+
+            double pFree = Double.parseDouble(format.format(pIdle <= 0 ? 0 : (100d * pIdle / pTotalCpu)));
+
+            double pCpuUsage = Double.parseDouble(format.format((100 - pFree)));
+
+            JProgressBar jProgressBar = processorProgressBars.get(i);
+            jProgressBar.setMaximum(100);
+            int pCpuUsagePercent = (int) pCpuUsage;
+            jProgressBar.setValue(pCpuUsagePercent);
+            jProgressBar.setStringPainted(true);
+            jProgressBar.setString(pCpuUsage + "%");
+            jProgressBar.setToolTipText(pCpuUsage + "%");
+
+        }
+
+        preProcessorTicks = processorTicks;
 
     }
 
