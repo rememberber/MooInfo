@@ -67,8 +67,8 @@ public class CpuForm {
     private static void initUi() {
         CpuForm cpuForm = getInstance();
 
-        Style.emphaticFont(cpuForm.getScuTitleLabel());
-        Style.emphaticFont(cpuForm.getPcuTitleLabel());
+        Style.emphaticTitleFont(cpuForm.getScuTitleLabel());
+        Style.emphaticTitleFont(cpuForm.getPcuTitleLabel());
 
         Dimension d = new Dimension(-1, 100);
         cpuForm.getScuProgressBar().setMinimumSize(d);

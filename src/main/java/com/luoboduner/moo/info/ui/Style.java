@@ -18,8 +18,18 @@ public class Style {
      *
      * @param component
      */
-    public static void emphaticFont(JComponent component) {
+    public static void emphaticTitleFont(JComponent component) {
         Font font = MainWindow.getInstance().getMainPanel().getFont();
         component.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 2));
+    }
+
+    /**
+     * emphatic font for indicator
+     *
+     * @param component
+     */
+    public static void emphaticIndicatorFont(JComponent component) {
+        Font font = MainWindow.getInstance().getMainPanel().getFont();
+        component.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 8));
     }
 }
