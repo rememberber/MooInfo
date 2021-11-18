@@ -148,7 +148,7 @@ public class MemoryForm {
         GlobalMemory memory = App.si.getHardware().getMemory();
         List<PhysicalMemory> pmList = memory.getPhysicalMemory();
         for (PhysicalMemory pm : pmList) {
-            sb.append('\n').append(pm.toString());
+            sb.append(pm.toString()).append('\n');
         }
         return sb.toString();
     }

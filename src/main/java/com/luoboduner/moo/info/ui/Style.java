@@ -30,6 +30,6 @@ public class Style {
      */
     public static void emphaticIndicatorFont(JComponent component) {
         Font font = MainWindow.getInstance().getMainPanel().getFont();
-        component.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 8));
+        component.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 12));
     }
 }
