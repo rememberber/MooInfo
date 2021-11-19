@@ -24,6 +24,16 @@ public class Style {
     }
 
     /**
+     * emphatic font for label
+     *
+     * @param component
+     */
+    public static void emphaticLabelFont(JComponent component) {
+        Font font = MainWindow.getInstance().getMainPanel().getFont();
+        component.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
+    }
+
+    /**
      * emphatic font for indicator
      *
      * @param component

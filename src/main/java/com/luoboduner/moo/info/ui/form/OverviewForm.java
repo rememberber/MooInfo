@@ -1,5 +1,6 @@
 package com.luoboduner.moo.info.ui.form;
 
+import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -8,13 +9,20 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import oshi.hardware.ComputerSystem;
+import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.PhysicalMemory;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OverviewForm
@@ -31,9 +39,9 @@ public class OverviewForm {
     private JLabel deviceNameLabel;
     private JLabel osNameLabel;
     private JLabel cpuLabel;
-    private JLabel cpuName;
+    private JLabel cpuInfo;
     private JLabel memoryLabel;
-    private JLabel memoryName;
+    private JLabel memoryInfo;
 
     public static OverviewForm getInstance() {
         if (overviewForm == null) {
@@ -51,8 +59,12 @@ public class OverviewForm {
 
     private static void initUi() {
         OverviewForm overviewForm = getInstance();
+
         Style.emphaticIndicatorFont(overviewForm.getDeviceNameLabel());
         Style.emphaticIndicatorFont(overviewForm.getOsNameLabel());
+
+        Style.emphaticLabelFont(overviewForm.getCpuLabel());
+        Style.emphaticLabelFont(overviewForm.getMemoryLabel());
     }
 
     private static void initInfo() {
@@ -66,14 +78,37 @@ public class OverviewForm {
         OperatingSystem operatingSystem = App.si.getOperatingSystem();
         overviewForm.getOsNameLabel().setText(operatingSystem.toString());
 
-        overviewForm.getCpuName().setText(hardware.getProcessor().getProcessorIdentifier().getName());
-        System.err.println(hardware.toString());
-        System.err.println();
-        System.err.println(hardware.getProcessor().toString());
-        System.err.println();
-        System.err.println(hardware.getMemory().toString());
-        System.err.println(hardware.getMemory().getPhysicalMemory().get(0).toString());
-        System.err.println(hardware.getMemory().getPhysicalMemory().get(0).getCapacity() + hardware.getMemory().getPhysicalMemory().get(1).getCapacity());
+        overviewForm.getCpuInfo().setText(hardware.getProcessor().getProcessorIdentifier().getName());
+        overviewForm.getMemoryInfo().setText(getMemoryInfo(hardware.getMemory()));
+    }
+
+    /**
+     * memory info text,like:"16 GB (SamSung DDR4 3200MHZ 8GB + SamSung DDR4 3200MHZ 8GB)"
+     *
+     * @param memory
+     * @return
+     */
+    private static String getMemoryInfo(GlobalMemory memory) {
+        StringBuilder memoryInfoBuilder = new StringBuilder();
+
+        long totalCapacity = 0;
+        List<String> detailList = new ArrayList<>();
+
+        List<PhysicalMemory> physicalMemories = memory.getPhysicalMemory();
+        StringBuilder detailBuilder;
+        for (PhysicalMemory physicalMemory : physicalMemories) {
+            detailBuilder = new StringBuilder();
+            totalCapacity += physicalMemory.getCapacity();
+            detailBuilder.append(physicalMemory.getManufacturer());
+            detailBuilder.append(" ").append(physicalMemory.getMemoryType());
+            detailBuilder.append(" ").append(new BigDecimal(physicalMemory.getClockSpeed()).divide(new BigDecimal(1000000), 0, RoundingMode.HALF_UP)).append("MHZ");
+            detailBuilder.append(" ").append(DataSizeUtil.format(physicalMemory.getCapacity()));
+            detailList.add(detailBuilder.toString());
+        }
+        memoryInfoBuilder.append(DataSizeUtil.format(totalCapacity));
+        memoryInfoBuilder.append(" (").append(StringUtils.join(detailList, " + ")).append(")");
+
+        return memoryInfoBuilder.toString();
     }
 
     {
@@ -131,12 +166,12 @@ public class OverviewForm {
         memoryLabel = new JLabel();
         memoryLabel.setText("Memory");
         panel5.add(memoryLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cpuName = new JLabel();
-        cpuName.setText("cpu name");
-        panel5.add(cpuName, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        memoryName = new JLabel();
-        memoryName.setText("memory name");
-        panel5.add(memoryName, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cpuInfo = new JLabel();
+        cpuInfo.setText("cpu name");
+        panel5.add(cpuInfo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        memoryInfo = new JLabel();
+        memoryInfo.setText("memory name");
+        panel5.add(memoryInfo, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         panel5.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
