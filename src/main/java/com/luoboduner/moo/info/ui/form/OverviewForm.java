@@ -73,6 +73,7 @@ public class OverviewForm {
         System.err.println();
         System.err.println(hardware.getMemory().toString());
         System.err.println(hardware.getMemory().getPhysicalMemory().get(0).toString());
+        System.err.println(hardware.getMemory().getPhysicalMemory().get(0).getCapacity() + hardware.getMemory().getPhysicalMemory().get(1).getCapacity());
     }
 
     {
