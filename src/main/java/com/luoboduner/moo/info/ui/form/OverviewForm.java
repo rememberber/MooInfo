@@ -10,10 +10,7 @@ import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.PhysicalMemory;
+import oshi.hardware.*;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
@@ -42,6 +39,10 @@ public class OverviewForm {
     private JLabel cpuInfo;
     private JLabel memoryLabel;
     private JLabel memoryInfo;
+    private JLabel graphicsCardLabel;
+    private JLabel graphicsCardInfo;
+    private JLabel baseBoardLabel;
+    private JLabel baseBoardInfoLabel;
 
     public static OverviewForm getInstance() {
         if (overviewForm == null) {
@@ -65,6 +66,8 @@ public class OverviewForm {
 
         Style.emphaticLabelFont(overviewForm.getCpuLabel());
         Style.emphaticLabelFont(overviewForm.getMemoryLabel());
+        Style.emphaticLabelFont(overviewForm.getGraphicsCardLabel());
+        Style.emphaticLabelFont(overviewForm.getBaseBoardLabel());
     }
 
     private static void initInfo() {
@@ -80,6 +83,8 @@ public class OverviewForm {
 
         overviewForm.getCpuInfo().setText(hardware.getProcessor().getProcessorIdentifier().getName());
         overviewForm.getMemoryInfo().setText(getMemoryInfo(hardware.getMemory()));
+        overviewForm.getGraphicsCardInfo().setText(getGraphicsCardInfo(hardware));
+        overviewForm.getBaseBoardInfoLabel().setText(getBaseBoardInfo(hardware.getComputerSystem().getBaseboard()));
     }
 
     /**
@@ -109,6 +114,41 @@ public class OverviewForm {
         memoryInfoBuilder.append(" (").append(StringUtils.join(detailList, " + ")).append(")");
 
         return memoryInfoBuilder.toString();
+    }
+
+    /**
+     * GraphicsCard info text,like:"NVIDIA GeForce MX450 8 GB + Intel(R) Iris(R) Xe Graphics 8 GB"
+     *
+     * @param hardware
+     * @return
+     */
+    private static String getGraphicsCardInfo(HardwareAbstractionLayer hardware) {
+        List<String> detailList = new ArrayList<>();
+        StringBuilder detailBuilder;
+        List<GraphicsCard> graphicsCards = hardware.getGraphicsCards();
+        for (GraphicsCard graphicsCard : graphicsCards) {
+            detailBuilder = new StringBuilder();
+            detailBuilder.append(graphicsCard.getName());
+            detailBuilder.append(" ").append(DataSizeUtil.format(graphicsCard.getVRam()));
+
+            detailList.add(detailBuilder.toString());
+        }
+        return StringUtils.join(detailList, " + ");
+    }
+
+    /**
+     * @return
+     */
+    private static String getBaseBoardInfo(Baseboard baseboard) {
+        StringBuilder detailBuilder = new StringBuilder();
+        detailBuilder.append(baseboard.getManufacturer());
+        if (!"unknown".equals(baseboard.getModel())) {
+            detailBuilder.append(" ").append(baseboard.getModel());
+        }
+        if (!"unknown".equals(baseboard.getVersion())) {
+            detailBuilder.append(" ").append(baseboard.getVersion());
+        }
+        return detailBuilder.toString();
     }
 
     {
@@ -158,7 +198,7 @@ public class OverviewForm {
         final JSeparator separator1 = new JSeparator();
         panel1.add(separator1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(2, 3, new Insets(10, 10, 10, 10), -1, -1));
+        panel5.setLayout(new GridLayoutManager(4, 3, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(panel5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         cpuLabel = new JLabel();
         cpuLabel.setText("CPU");
@@ -166,12 +206,24 @@ public class OverviewForm {
         memoryLabel = new JLabel();
         memoryLabel.setText("Memory");
         panel5.add(memoryLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        graphicsCardLabel = new JLabel();
+        graphicsCardLabel.setText("GraphicsCard");
+        panel5.add(graphicsCardLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        baseBoardLabel = new JLabel();
+        baseBoardLabel.setText("BaseBoard");
+        panel5.add(baseBoardLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cpuInfo = new JLabel();
-        cpuInfo.setText("cpu name");
+        cpuInfo.setText("CPU info");
         panel5.add(cpuInfo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         memoryInfo = new JLabel();
-        memoryInfo.setText("memory name");
+        memoryInfo.setText("Memory info");
         panel5.add(memoryInfo, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        graphicsCardInfo = new JLabel();
+        graphicsCardInfo.setText("GraphicsCard info");
+        panel5.add(graphicsCardInfo, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        baseBoardInfoLabel = new JLabel();
+        baseBoardInfoLabel.setText("BaseBoard info");
+        panel5.add(baseBoardInfoLabel, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         panel5.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
