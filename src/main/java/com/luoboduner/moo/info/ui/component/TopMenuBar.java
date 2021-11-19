@@ -1,5 +1,6 @@
 package com.luoboduner.moo.info.ui.component;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.luoboduner.moo.info.App;
@@ -9,6 +10,7 @@ import com.luoboduner.moo.info.ui.dialog.SettingDialog;
 import com.luoboduner.moo.info.ui.dialog.SystemEnvResultDialog;
 import com.luoboduner.moo.info.ui.form.MainWindow;
 import com.luoboduner.moo.info.util.SystemUtil;
+import com.luoboduner.moo.info.util.UpgradeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -98,6 +100,19 @@ public class TopMenuBar extends JMenuBar {
         settingMenuItem.setText("Settings");
         settingMenuItem.addActionListener(e -> settingActionPerformed());
         appMenu.add(settingMenuItem);
+
+        // Show logs
+        JMenuItem logMenuItem = new JMenuItem();
+        logMenuItem.setText("Show logs");
+        logMenuItem.addActionListener(e -> logActionPerformed());
+        appMenu.add(logMenuItem);
+
+        // System environment variables
+        JMenuItem sysEnvMenuItem = new JMenuItem();
+        sysEnvMenuItem.setText("System environment variables");
+        sysEnvMenuItem.addActionListener(e -> sysEnvActionPerformed());
+        appMenu.add(sysEnvMenuItem);
+
         // Exit
         JMenuItem exitMenuItem = new JMenuItem();
         exitMenuItem.setText("Exit");
@@ -154,26 +169,16 @@ public class TopMenuBar extends JMenuBar {
         appearanceMenu.add(fontSizeMenu);
 
         topMenuBar.add(appearanceMenu);
-        // ---------Debug
-        JMenu debugMenu = new JMenu();
-        debugMenu.setText("Debug");
-        // Show logs
-        JMenuItem logMenuItem = new JMenuItem();
-        logMenuItem.setText("Show logs");
-        logMenuItem.addActionListener(e -> logActionPerformed());
 
-        debugMenu.add(logMenuItem);
-        // System environment variables
-        JMenuItem sysEnvMenuItem = new JMenuItem();
-        sysEnvMenuItem.setText("System environment variables");
-        sysEnvMenuItem.addActionListener(e -> sysEnvActionPerformed());
-
-        debugMenu.add(sysEnvMenuItem);
-
-        topMenuBar.add(debugMenu);
         // ---------About
         JMenu aboutMenu = new JMenu();
         aboutMenu.setText("About");
+
+        // Check for Updates
+        JMenuItem checkForUpdatesItem = new JMenuItem();
+        checkForUpdatesItem.setText("Check for Updates");
+        checkForUpdatesItem.addActionListener(e -> checkForUpdatesActionPerformed());
+        aboutMenu.add(checkForUpdatesItem);
 
         // About
         JMenuItem aboutMenuItem = new JMenuItem();
@@ -182,6 +187,10 @@ public class TopMenuBar extends JMenuBar {
         aboutMenu.add(aboutMenuItem);
 
         topMenuBar.add(aboutMenu);
+    }
+
+    private void checkForUpdatesActionPerformed() {
+        ThreadUtil.execute(() -> UpgradeUtil.checkUpdate(false));
     }
 
     public void initFontSizeMenu() {
