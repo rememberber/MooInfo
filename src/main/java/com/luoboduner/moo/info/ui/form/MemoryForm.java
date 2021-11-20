@@ -122,7 +122,12 @@ public class MemoryForm {
         long swapUsed = virtualMemory.getSwapUsed();
         JProgressBar swapProgressBar = memoryForm.getSwapProgressBar();
         swapProgressBar.setMaximum(100);
-        int swapUsagePercent = (int) (swapUsed * 100 / swapTotal);
+
+        int swapUsagePercent = 0;
+        if (swapTotal != 0) {
+            swapUsagePercent = (int) (swapUsed * 100 / swapTotal);
+
+        }
         swapProgressBar.setValue(swapUsagePercent);
         swapProgressBar.setToolTipText(swapUsagePercent + "%");
         memoryForm.getSwapUsedLabel().setText("Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " | page in " + virtualMemory.getSwapPagesIn() + " page out " + virtualMemory.getSwapPagesOut());
