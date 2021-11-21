@@ -17,6 +17,9 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MemoryForm
@@ -61,10 +64,10 @@ public class MemoryForm {
 
         initUi();
         initPhysicalMemoryInfo();
-        Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
-            initMemoryProgressInfo();
-        });
-        timer.start();
+
+        ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
+        serviceStartPerSecond.scheduleAtFixedRate(MemoryForm::initMemoryProgressInfo, 0, 1, TimeUnit.SECONDS);
+
     }
 
     private static void initPhysicalMemoryInfo() {

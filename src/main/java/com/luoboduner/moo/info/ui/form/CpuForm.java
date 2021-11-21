@@ -17,6 +17,9 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CpuForm
@@ -58,10 +61,9 @@ public class CpuForm {
         initUi();
         initCpuInfo();
 
-        Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
-            initInfo();
-        });
-        timer.start();
+        ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
+        serviceStartPerSecond.scheduleAtFixedRate(CpuForm::initInfo, 0, 1, TimeUnit.SECONDS);
+
     }
 
     private static void initUi() {

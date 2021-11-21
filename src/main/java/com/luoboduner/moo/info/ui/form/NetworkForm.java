@@ -26,6 +26,9 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * NetworkForm
@@ -79,10 +82,8 @@ public class NetworkForm {
         initParameters();
         initInterfaces();
 
-        Timer timer = new Timer(UiConsts.REFRESH_FAST, e -> {
-            initNetworkSpeed();
-        });
-        timer.start();
+        ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
+        serviceStartPerSecond.scheduleAtFixedRate(NetworkForm::initNetworkSpeed, 0, 1, TimeUnit.SECONDS);
     }
 
     private static void initInterfaces() {
