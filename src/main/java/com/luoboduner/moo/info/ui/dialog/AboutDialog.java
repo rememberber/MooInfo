@@ -1,6 +1,7 @@
 package com.luoboduner.moo.info.ui.dialog;
 
 import cn.hutool.core.thread.ThreadUtil;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -56,6 +57,7 @@ public class AboutDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onOK(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        logoLabel.setIcon(new FlatSVGIcon("icons/logo-128.svg"));
         versionLabel.setText(UiConsts.APP_VERSION);
 
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);

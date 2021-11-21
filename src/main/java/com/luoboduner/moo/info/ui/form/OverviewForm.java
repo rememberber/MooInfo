@@ -3,6 +3,7 @@ package com.luoboduner.moo.info.ui.form;
 import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.google.common.collect.Maps;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -87,6 +88,8 @@ public class OverviewForm {
         Style.emphaticLabelFont(overviewForm.getSoundCardLabel());
         Style.emphaticLabelFont(overviewForm.getPowerSourceLabel());
         Style.emphaticLabelFont(overviewForm.getFirmwareLabel());
+
+//        overviewForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg"));
     }
 
     private static void initInfo() {
