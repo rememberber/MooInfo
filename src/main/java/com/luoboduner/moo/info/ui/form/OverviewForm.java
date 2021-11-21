@@ -110,15 +110,6 @@ public class OverviewForm {
         overviewForm.getPowerSourceInfoLabel().setText(getPowerSourceInfo(hardware));
         overviewForm.getFirmwareInfoLabel().setText(getFirmware(hardware));
 
-        List<NetworkIF> networkIFs = hardware.getNetworkIFs();
-        for (NetworkIF networkIF : networkIFs) {
-            System.err.println(networkIF.toString());
-            System.err.println(networkIF.getName());
-        }
-
-        Firmware firmware = hardware.getComputerSystem().getFirmware();
-        System.err.println(firmware.toString());
-
     }
 
     /**
