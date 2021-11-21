@@ -26,6 +26,7 @@ public class MainWindow {
     private JPanel diskPanel;
     private JPanel memoryPanel;
     private JPanel cpuPanel;
+    private JPanel powerPanel;
 
     private static MainWindow mainWindow;
 
@@ -52,6 +53,7 @@ public class MainWindow {
         mainWindow.getVariablesPanel().add(VariablesForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getProcessesPanel().add(ProcessesForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getDiskPanel().add(DiskForm.getInstance().getMainPanel(), gridConstraints);
+        mainWindow.getPowerPanel().add(PowerSourceForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getMainPanel().updateUI();
     }
 
@@ -102,6 +104,9 @@ public class MainWindow {
         usbPanel = new JPanel();
         usbPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("USB Devices", usbPanel);
+        powerPanel = new JPanel();
+        powerPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Power", powerPanel);
     }
 
     /**

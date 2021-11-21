@@ -209,6 +209,7 @@ public class Init {
         ThreadUtil.execute(VariablesForm::init);
         ThreadUtil.execute(ProcessesForm::init);
         ThreadUtil.execute(DiskForm::init);
+        ThreadUtil.execute(PowerSourceForm::init);
 
         // Check the new version
         if (App.config.isAutoCheckUpdate()) {
