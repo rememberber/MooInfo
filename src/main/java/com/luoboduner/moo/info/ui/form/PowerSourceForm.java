@@ -4,11 +4,15 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+import com.luoboduner.moo.info.App;
 import lombok.Getter;
+import oshi.hardware.PowerSource;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.List;
 
 /**
  * NetworkForm
@@ -19,6 +23,9 @@ import java.awt.*;
 @Getter
 public class PowerSourceForm {
     private JPanel mainPanel;
+    private JPanel powerBasePanel;
+    private JPanel powerInfoPanel;
+    private JTextPane textPane1;
 
     private static final Log logger = LogFactory.get();
 
@@ -34,8 +41,66 @@ public class PowerSourceForm {
     public static void init() {
         powerSourceForm = getInstance();
 
-//        initUi();
-//        initInfo();
+        initUi();
+        initInfo();
+    }
+
+    private static void initUi() {
+
+    }
+
+    private static void initInfo() {
+        List<PowerSource> powerSources = App.si.getHardware().getPowerSources();
+        JPanel powerBasePanel = getInstance().getPowerBasePanel();
+
+        powerBasePanel.setLayout(new GridLayoutManager(powerSources.size(), 1, new Insets(0, 0, 0, 0), -1, -1));
+
+        for (int i = 0; i < powerSources.size(); i++) {
+            PowerSource powerSource = powerSources.get(i);
+
+            JPanel powerPanel = new JPanel();
+            powerPanel.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
+
+            JLabel powerNameLabel = new JLabel();
+            StringBuilder powerNameBuilder = new StringBuilder();
+            powerNameBuilder.append(powerSource.getName());
+            powerNameBuilder.append(" ").append(powerSource.getManufacturer());
+            powerNameBuilder.append(" ").append(powerSource.getDeviceName());
+            powerNameBuilder.append(" ").append(powerSource.getChemistry());
+            powerNameLabel.setText(powerNameBuilder.toString());
+            powerPanel.add(powerNameLabel, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JProgressBar progressBar1 = new JProgressBar();
+            progressBar1.setMaximum(100);
+            double remainingCapacityPercent = powerSource.getRemainingCapacityPercent();
+            int remainingCapacityPercentInt = (int) (remainingCapacityPercent * 100);
+            progressBar1.setValue(remainingCapacityPercentInt);
+            progressBar1.setStringPainted(true);
+            progressBar1.setString(String.valueOf(remainingCapacityPercentInt));
+            Dimension d = new Dimension(-1, 100);
+            progressBar1.setMinimumSize(d);
+            powerPanel.add(progressBar1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JLabel capacityLabel = new JLabel();
+
+            StringBuilder capacityBuilder = new StringBuilder();
+            capacityBuilder.append("Current ").append(powerSource.getCurrentCapacity());
+            capacityBuilder.append(" / ").append("Max ").append(powerSource.getMaxCapacity());
+            capacityBuilder.append(" / ").append("Design ").append(powerSource.getDesignCapacity());
+            capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(")");
+            capacityLabel.setText(capacityBuilder.toString());
+            powerPanel.add(capacityLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            JLabel temperatureLabel = new JLabel();
+            temperatureLabel.setText(String.valueOf(String.format("Temperature: %.1f°C", powerSource.getTemperature())));
+            powerPanel.add(temperatureLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+            final Spacer spacer2 = new Spacer();
+            powerPanel.add(spacer2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+
+            powerBasePanel.add(powerPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        }
+
     }
 
     {
@@ -59,8 +124,18 @@ public class PowerSourceForm {
         mainPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 10, 10), -1, -1));
         scrollPane1.setViewportView(panel1);
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        powerBasePanel = new JPanel();
+        powerBasePanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.add(powerBasePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        powerInfoPanel = new JPanel();
+        powerInfoPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.add(powerInfoPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        textPane1 = new JTextPane();
+        powerInfoPanel.add(textPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
     }
 
     /**

@@ -278,10 +278,12 @@ public class OverviewForm {
             detailBuilder = new StringBuilder();
             detailBuilder.append(powerSource.getName());
             detailBuilder.append(" ").append(powerSource.getManufacturer());
+            detailBuilder.append(" ").append(powerSource.getDeviceName());
             if (!"unknown".equals(powerSource.getChemistry())) {
                 detailBuilder.append(" ").append(powerSource.getChemistry());
             }
             detailBuilder.append(" ").append(powerSource.getMaxCapacity()).append("/").append(powerSource.getDesignCapacity());
+            detailBuilder.append("(").append(powerSource.getCapacityUnits()).append(")");
 
             detailList.add(detailBuilder.toString());
         }
