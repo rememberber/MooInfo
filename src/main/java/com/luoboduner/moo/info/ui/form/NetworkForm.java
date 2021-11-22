@@ -8,19 +8,14 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
-import com.luoboduner.moo.info.ui.UiConsts;
 import lombok.Getter;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.NetworkParams;
 import oshi.software.os.OperatingSystem;
 import oshi.util.Constants;
 
-import javax.swing.Timer;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -94,6 +89,11 @@ public class NetworkForm {
         TableModel model = new DefaultTableModel(parseInterfaces(networkIfList), COLUMNS);
         interfacesTable.setModel(model);
         resizeColumns(interfacesTable.getColumnModel());
+
+        DefaultTableCellRenderer hr = (DefaultTableCellRenderer) interfacesTable.getTableHeader()
+                .getDefaultRenderer();
+        // The name of header column turn to left
+        hr.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
         interfacesTable.setShowGrid(true);
     }
 

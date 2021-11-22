@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
+import com.luoboduner.moo.info.ui.Style;
 import lombok.Getter;
 import oshi.hardware.PowerSource;
 
@@ -63,18 +64,15 @@ public class PowerSourceForm {
 
         powerBasePanel.setLayout(new GridLayoutManager(powerSources.size(), 1, new Insets(0, 0, 0, 0), -1, -1));
 
-        StringBuilder powerSourceInfoTextBuilder = new StringBuilder();
         for (int i = 0; i < powerSources.size(); i++) {
 
             PowerSource powerSource = powerSources.get(i);
-
-            powerSourceInfoTextBuilder.append(powerSource.toString());
-            powerSourceInfoTextBuilder.append("\n");
 
             JPanel powerPanel = new JPanel();
             powerPanel.setLayout(new GridLayoutManager(3, 4, new Insets(10, 10, 10, 10), -1, -1));
 
             JLabel powerNameLabel = new JLabel();
+            Style.emphaticTitleFont(powerNameLabel);
             StringBuilder powerNameBuilder = new StringBuilder();
             powerNameBuilder.append(powerSource.getName());
             powerNameBuilder.append(" ").append(powerSource.getManufacturer());
@@ -127,8 +125,36 @@ public class PowerSourceForm {
         }
 
         // info textPane
-        powerSourceForm.getPowerInfoTextPane().setText(powerSourceInfoTextBuilder.toString());
+        powerSourceForm.getPowerInfoTextPane().setContentType("text/html; charset=utf-8");
+        powerSourceForm.getPowerInfoTextPane().setText(getPowerInfoText(powerSources));
 
+    }
+
+    private static String getPowerInfoText(List<PowerSource> powerSources) {
+        StringBuilder powerInfoBuilder = new StringBuilder();
+
+        for (PowerSource powerSource : powerSources) {
+            powerInfoBuilder.append("<b>Name: </b>").append(powerSource.getName());
+            powerInfoBuilder.append("<br/><b>Device Name: </b>").append(powerSource.getDeviceName());
+            powerInfoBuilder.append("<br/><b>Remaining Capacity Percent: </b>").append(powerSource.getRemainingCapacityPercent() * 100).append("%");
+            powerInfoBuilder.append("<br/><b>Time Remaining: </b>").append(powerSource.getTimeRemainingEstimated());
+            powerInfoBuilder.append("<br/><b>Time Remaining Instant: </b>").append(powerSource.getTimeRemainingInstant());
+            powerInfoBuilder.append("<br/><b>Power Usage Rate: </b>").append(powerSource.getPowerUsageRate());
+            powerInfoBuilder.append("<br/><b>Voltage: </b>").append(powerSource.getVoltage());
+            powerInfoBuilder.append("<br/><b>Amperage: </b>").append(powerSource.getAmperage());
+            powerInfoBuilder.append("<br/><b>Power OnLine: </b>").append(powerSource.isPowerOnLine());
+            powerInfoBuilder.append("<br/><b>Charging: </b>").append(powerSource.isCharging());
+            powerInfoBuilder.append("<br/><b>Discharging: </b>").append(powerSource.isDischarging());
+            powerInfoBuilder.append("<br/><b>Cycle Count: </b>").append(powerSource.getCycleCount());
+            powerInfoBuilder.append("<br/><b>Chemistry: </b>").append(powerSource.getChemistry());
+            powerInfoBuilder.append("<br/><b>Manufacturer: </b>").append(powerSource.getManufacturer());
+            powerInfoBuilder.append("<br/><b>Manufacture Date: </b>").append(powerSource.getManufactureDate());
+            powerInfoBuilder.append("<br/><b>Serial Number: </b>").append(powerSource.getSerialNumber());
+
+            powerInfoBuilder.append("<br/");
+        }
+
+        return powerInfoBuilder.toString();
     }
 
     {
