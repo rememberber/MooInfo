@@ -47,7 +47,7 @@ public class PowerSourceForm {
 
         initUi();
         ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
-        serviceStartPerSecond.scheduleAtFixedRate(PowerSourceForm::initInfo, 0, 30, TimeUnit.SECONDS);
+        serviceStartPerSecond.scheduleAtFixedRate(PowerSourceForm::initInfo, 0, 10, TimeUnit.SECONDS);
     }
 
     private static void initUi() {
@@ -58,6 +58,8 @@ public class PowerSourceForm {
         List<PowerSource> powerSources = App.si.getHardware().getPowerSources();
         PowerSourceForm powerSourceForm = getInstance();
         JPanel powerBasePanel = powerSourceForm.getPowerBasePanel();
+
+        powerBasePanel.removeAll();
 
         powerBasePanel.setLayout(new GridLayoutManager(powerSources.size(), 1, new Insets(0, 0, 0, 0), -1, -1));
 

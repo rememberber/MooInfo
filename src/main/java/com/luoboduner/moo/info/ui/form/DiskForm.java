@@ -17,6 +17,9 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * DiskForm
@@ -44,7 +47,9 @@ public class DiskForm {
         diskForm = getInstance();
 
         initUi();
-        initInfo();
+
+        ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
+        serviceStartPerSecond.scheduleAtFixedRate(DiskForm::initInfo, 0, 10, TimeUnit.SECONDS);
     }
 
     private static void initUi() {
@@ -54,6 +59,8 @@ public class DiskForm {
         FileSystem fileSystem = App.si.getOperatingSystem().getFileSystem();
         List<OSFileStore> fileStores = fileSystem.getFileStores();
         JPanel diskListPanel = getInstance().getDiskListPanel();
+
+        diskListPanel.removeAll();
 
         diskListPanel.setLayout(new GridLayoutManager(fileStores.size() + 1, 1, new Insets(0, 10, 0, 10), -1, -1));
 
