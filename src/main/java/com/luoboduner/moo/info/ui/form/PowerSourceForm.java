@@ -92,6 +92,11 @@ public class PowerSourceForm {
             powerPanel.add(capacityLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JLabel temperatureLabel = new JLabel();
+            double powerUsageRate = powerSource.getPowerUsageRate();
+            double amperage = powerSource.getAmperage();
+            double voltage = powerSource.getVoltage();
+            boolean charging = powerSource.isCharging();
+            int cycleCount = powerSource.getCycleCount();
             temperatureLabel.setText(String.valueOf(String.format("Temperature: %.1f°C", powerSource.getTemperature())));
             powerPanel.add(temperatureLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
