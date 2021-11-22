@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * NetworkForm
@@ -43,7 +46,8 @@ public class PowerSourceForm {
         powerSourceForm = getInstance();
 
         initUi();
-        initInfo();
+        ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
+        serviceStartPerSecond.scheduleAtFixedRate(PowerSourceForm::initInfo, 0, 30, TimeUnit.SECONDS);
     }
 
     private static void initUi() {
