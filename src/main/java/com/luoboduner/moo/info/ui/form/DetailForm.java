@@ -9,10 +9,7 @@ import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
-import oshi.hardware.Baseboard;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.*;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
@@ -114,7 +111,7 @@ public class DetailForm {
         detailForm.getOsTextPane().setText(getOsInfo());
         detailForm.getComputerTextPane().setText(getComputerInfo());
         detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
-        detailForm.getCpuTextPane().setText(getCpuInfo());
+        detailForm.getCpuTextPane().setText(CpuForm.getCpuInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -168,30 +165,14 @@ public class DetailForm {
         return builder.toString();
     }
 
-    private static String getCpuInfo() {
+    /**
+     * @return
+     */
+    private static String getMemoryInfo() {
         StringBuilder builder = new StringBuilder();
-        CentralProcessor processor = App.si.getHardware().getProcessor();
-
-        CentralProcessor.ProcessorIdentifier processorIdentifier = processor.getProcessorIdentifier();
-        builder.append("<b>Name: </b>").append(processorIdentifier.getName());
-        builder.append("<br/><b>Identifier: </b>").append(processorIdentifier.getIdentifier());
-        builder.append("<br/><b>Micro Architecture: </b>").append(processorIdentifier.getMicroarchitecture());
-        builder.append("<br/><b>Model: </b>").append(processorIdentifier.getModel());
-        builder.append("<br/><b>Family: </b>").append(processorIdentifier.getFamily());
-        builder.append("<br/><b>Processor ID: </b>").append(processorIdentifier.getProcessorID());
-        builder.append("<br/><b>Vendor: </b>").append(processorIdentifier.getVendor());
-        builder.append("<br/><b>Vendor Freq: </b>").append(processorIdentifier.getVendorFreq());
-        builder.append("<br/><b>Stepping: </b>").append(processorIdentifier.getStepping());
-        builder.append("<br/>");
-        builder.append("<br/><b>Physical Package Count: </b>").append(processor.getPhysicalPackageCount());
-        builder.append("<br/><b>Physical Processor Count: </b>").append(processor.getPhysicalProcessorCount());
-        builder.append("<br/><b>Logical Processor Count: </b>").append(processor.getLogicalProcessorCount());
-        builder.append("<br/><b>Max Freq: </b>").append(processor.getMaxFreq());
-        builder.append("<br/><b>Interrupts: </b>").append(processor.getInterrupts());
-        builder.append("<br/><b>Context Switches: </b>").append(processor.getContextSwitches());
+        GlobalMemory globalMemory = App.si.getHardware().getMemory();
 
         return builder.toString();
-
     }
 
     {

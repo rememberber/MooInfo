@@ -97,13 +97,35 @@ public class CpuForm {
     private static void initCpuInfo() {
         CpuForm cpuForm = getInstance();
         JTextPane cpuInfoTextPane = cpuForm.getCpuInfoTextPane();
+        String contentType = "text/html; charset=utf-8";
+        cpuInfoTextPane.setContentType(contentType);
+        cpuInfoTextPane.setText(getCpuInfo());
+    }
 
-        CentralProcessor cpu = App.si.getHardware().getProcessor();
-        StringBuilder sb = new StringBuilder();
-        sb.append(cpu);
-        sb.append(cpu.getProcessorIdentifier());
-        cpuInfoTextPane.setText(sb.toString());
-//        cpu.getCurrentFreq()
+    public static String getCpuInfo() {
+        StringBuilder builder = new StringBuilder();
+        CentralProcessor processor = App.si.getHardware().getProcessor();
+
+        CentralProcessor.ProcessorIdentifier processorIdentifier = processor.getProcessorIdentifier();
+        builder.append("<b>Name: </b>").append(processorIdentifier.getName());
+        builder.append("<br/><b>Identifier: </b>").append(processorIdentifier.getIdentifier());
+        builder.append("<br/><b>Micro Architecture: </b>").append(processorIdentifier.getMicroarchitecture());
+        builder.append("<br/><b>Model: </b>").append(processorIdentifier.getModel());
+        builder.append("<br/><b>Family: </b>").append(processorIdentifier.getFamily());
+        builder.append("<br/><b>Processor ID: </b>").append(processorIdentifier.getProcessorID());
+        builder.append("<br/><b>Vendor: </b>").append(processorIdentifier.getVendor());
+        builder.append("<br/><b>Vendor Freq: </b>").append(processorIdentifier.getVendorFreq());
+        builder.append("<br/><b>Stepping: </b>").append(processorIdentifier.getStepping());
+        builder.append("<br/>");
+        builder.append("<br/><b>Physical Package Count: </b>").append(processor.getPhysicalPackageCount());
+        builder.append("<br/><b>Physical Processor Count: </b>").append(processor.getPhysicalProcessorCount());
+        builder.append("<br/><b>Logical Processor Count: </b>").append(processor.getLogicalProcessorCount());
+        builder.append("<br/><b>Max Freq: </b>").append(processor.getMaxFreq());
+        builder.append("<br/><b>Interrupts: </b>").append(processor.getInterrupts());
+        builder.append("<br/><b>Context Switches: </b>").append(processor.getContextSwitches());
+
+        return builder.toString();
+
     }
 
     private static void initInfo() {
