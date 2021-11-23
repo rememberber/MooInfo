@@ -10,6 +10,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
+import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import oshi.hardware.*;
@@ -58,6 +59,7 @@ public class OverviewForm {
     private JLabel powerSourceInfoLabel;
     private JLabel firmwareInfoLabel;
     private JLabel firmwareLabel;
+    private JScrollPane scrollPane;
 
     public static OverviewForm getInstance() {
         if (overviewForm == null) {
@@ -98,6 +100,8 @@ public class OverviewForm {
         overviewForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg"));
         overviewForm.getPowerSourceLabel().setIcon(new FlatSVGIcon("icons/battery.svg"));
         overviewForm.getFirmwareLabel().setIcon(new FlatSVGIcon("icons/firmware.svg"));
+
+        ScrollUtil.smoothPane(overviewForm.getScrollPane());
     }
 
     private static void initInfo() {
@@ -327,12 +331,12 @@ public class OverviewForm {
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        mainPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        scrollPane = new JScrollPane();
+        mainPanel.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(4, 1, new Insets(10, 10, 10, 10), -1, -1));
-        scrollPane1.setViewportView(panel1);
+        scrollPane.setViewportView(panel1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
