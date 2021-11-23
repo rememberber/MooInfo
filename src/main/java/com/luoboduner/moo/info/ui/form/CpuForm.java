@@ -41,6 +41,10 @@ public class CpuForm {
     private JPanel panel1;
     private JPanel pcfPanel;
     private JLabel pcfLabel;
+    private JLabel usageLabel;
+    private JLabel freqLabel;
+    private JLabel InterruptsLabel;
+    private JLabel contextSwitchesLabel;
 
     private static final Log logger = LogFactory.get();
 
@@ -70,6 +74,7 @@ public class CpuForm {
         serviceStartPerSecond.scheduleAtFixedRate(() -> {
             initPcuInfo();
             initPcfInfo();
+            initIndicatorInfo();
         }, 0, 1, TimeUnit.SECONDS);
 
     }
@@ -80,6 +85,11 @@ public class CpuForm {
         Style.emphaticTitleFont(cpuForm.getScuTitleLabel());
         Style.emphaticTitleFont(cpuForm.getPcuTitleLabel());
         Style.emphaticTitleFont(cpuForm.getPcfLabel());
+
+        Style.emphaticIndicatorFont(cpuForm.getUsageLabel());
+        Style.emphaticIndicatorFont(cpuForm.getFreqLabel());
+        Style.emphaticIndicatorFont(cpuForm.getInterruptsLabel());
+        Style.emphaticIndicatorFont(cpuForm.getContextSwitchesLabel());
 
         Dimension d = new Dimension(-1, 100);
         cpuForm.getScuProgressBar().setMinimumSize(d);
@@ -111,6 +121,7 @@ public class CpuForm {
 
             JTextField textField = new JTextField();
             textField.setEditable(false);
+            textField.setForeground(progressBar.getForeground());
             pcfPanel.add(textField, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             processorTextFields.add(textField);
@@ -145,8 +156,6 @@ public class CpuForm {
         builder.append("<br/><b>Physical Processor Count: </b>").append(processor.getPhysicalProcessorCount());
         builder.append("<br/><b>Logical Processor Count: </b>").append(processor.getLogicalProcessorCount());
         builder.append("<br/><b>Max Freq: </b>").append(new BigDecimal(processor.getMaxFreq()).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP)).append(" GHz");
-        builder.append("<br/><b>Interrupts: </b>").append(processor.getInterrupts());
-        builder.append("<br/><b>Context Switches: </b>").append(processor.getContextSwitches());
 
         return builder.toString();
 
@@ -183,7 +192,9 @@ public class CpuForm {
         int cpuUsagePercent = (int) cpuUsage;
         scuProgressBar.setValue(cpuUsagePercent);
         scuProgressBar.setStringPainted(true);
-        scuProgressBar.setString(cpuUsage + "%");
+        String cpuUsageStr = cpuUsage + "%";
+        scuProgressBar.setString(cpuUsageStr);
+        cpuForm.getUsageLabel().setText(cpuUsageStr);
 
         long[][] processorTicks = processor.getProcessorCpuLoadTicks();
         if (preProcessorTicks == null) {
@@ -223,6 +234,7 @@ public class CpuForm {
     }
 
     private static void initPcfInfo() {
+        CpuForm cpuForm = getInstance();
         CentralProcessor processor = App.si.getHardware().getProcessor();
 
         long[] currentFreq = processor.getCurrentFreq();
@@ -231,10 +243,18 @@ public class CpuForm {
 
             JTextField textField = processorTextFields.get(i);
             BigDecimal divide = new BigDecimal(currentFreq[i]).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP);
-            textField.setText(divide + " GHz");
-
+            String freqStr = divide + " GHz";
+            textField.setText(freqStr);
+            cpuForm.getFreqLabel().setText(freqStr);
         }
 
+    }
+
+    private static void initIndicatorInfo() {
+        CpuForm cpuForm = getInstance();
+        CentralProcessor processor = App.si.getHardware().getProcessor();
+        cpuForm.getInterruptsLabel().setText(String.valueOf(processor.getInterrupts()));
+        cpuForm.getContextSwitchesLabel().setText(String.valueOf(processor.getContextSwitches()));
     }
 
     {
@@ -297,16 +317,43 @@ public class CpuForm {
         final Spacer spacer1 = new Spacer();
         panel3.add(spacer1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 1, new Insets(10, 0, 10, 10), -1, -1));
+        panel4.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 10, 10), -1, -1));
         splitPane1.setRightComponent(panel4);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
-        panel4.add(panel5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel4.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         cpuInfoTextPane = new JTextPane();
         cpuInfoTextPane.setEditable(true);
         panel5.add(cpuInfoTextPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        panel4.add(spacer2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel4.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JPanel panel6 = new JPanel();
+        panel6.setLayout(new GridLayoutManager(2, 4, new Insets(10, 10, 10, 10), -1, -1));
+        panel4.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Usage");
+        panel6.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Freq");
+        panel6.add(label2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        usageLabel = new JLabel();
+        usageLabel.setText("Label");
+        panel6.add(usageLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        freqLabel = new JLabel();
+        freqLabel.setText("Label");
+        panel6.add(freqLabel, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Interrupts");
+        panel6.add(label3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        InterruptsLabel = new JLabel();
+        InterruptsLabel.setText("Label");
+        panel6.add(InterruptsLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Context Switches");
+        panel6.add(label4, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contextSwitchesLabel = new JLabel();
+        contextSwitchesLabel.setText("Label");
+        panel6.add(contextSwitchesLabel, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
