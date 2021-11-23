@@ -91,7 +91,7 @@ public class MainWindow {
         tabbedPane.addTab("CPU", cpuPanel);
         diskPanel = new JPanel();
         diskPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Disk", diskPanel);
+        tabbedPane.addTab("Storage", diskPanel);
         networkPanel = new JPanel();
         networkPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Network", networkPanel);

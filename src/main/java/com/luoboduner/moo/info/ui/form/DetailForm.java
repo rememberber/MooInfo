@@ -9,6 +9,7 @@ import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
+import oshi.hardware.Baseboard;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
@@ -76,19 +77,84 @@ public class DetailForm {
         ScrollUtil.smoothPane(detailForm.scrollPane);
 
         Style.emphaticTitleFont(detailForm.getOsLabel());
+        Style.emphaticTitleFont(detailForm.getComputerLabel());
+        Style.emphaticTitleFont(detailForm.getBaseBoardLabel());
+        Style.emphaticTitleFont(detailForm.getCpuLabel());
+        Style.emphaticTitleFont(detailForm.getMemoryLabel());
+        Style.emphaticTitleFont(detailForm.getStorageLabel());
+        Style.emphaticTitleFont(detailForm.getGraphicsCardLabel());
+        Style.emphaticTitleFont(detailForm.getDisplayLabel());
+        Style.emphaticTitleFont(detailForm.getSoundCardLabel());
+        Style.emphaticTitleFont(detailForm.getNetworkLabel());
         Style.emphaticTitleFont(detailForm.getPowerSourceLabel());
+        Style.emphaticTitleFont(detailForm.getSensorsLabel());
 
+        detailForm.getOsTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getComputerTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getBaseBoardTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getCpuTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getMemoryTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getStorageTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getGraphicsCardTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getDisplayTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getSoundCardTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getNetworkTextPane().setContentType("text/html; charset=utf-8");
         detailForm.getPowerSourceTextPane().setContentType("text/html; charset=utf-8");
+        detailForm.getSensorsTextPane().setContentType("text/html; charset=utf-8");
     }
 
     private static void initInfo() {
         DetailForm detailForm = getInstance();
 
-        OperatingSystem operatingSystem = App.si.getOperatingSystem();
         HardwareAbstractionLayer hardware = App.si.getHardware();
         ComputerSystem computerSystem = hardware.getComputerSystem();
 
+        detailForm.getOsTextPane().setText(getOsInfo());
+        detailForm.getComputerTextPane().setText(getComputerInfo());
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
+    }
+
+    private static String getOsInfo() {
+        StringBuilder builder = new StringBuilder();
+        OperatingSystem operatingSystem = App.si.getOperatingSystem();
+
+        builder.append("<b>Manufacturer: </b>").append(operatingSystem.getManufacturer());
+        builder.append("<br/><b>Family: </b>").append(operatingSystem.getFamily());
+        builder.append("<br/><b>Version: </b>").append(operatingSystem.getVersionInfo());
+        builder.append("<br/><b>Bitness: </b>").append(operatingSystem.getBitness());
+        builder.append("<br/><b>Max File Descriptors: </b>").append(operatingSystem.getFileSystem().getMaxFileDescriptors());
+        builder.append("<br/><b>Open File Descriptors: </b>").append(operatingSystem.getFileSystem().getOpenFileDescriptors());
+        builder.append("<br/><b>Thread Count: </b>").append(operatingSystem.getThreadCount());
+        builder.append("<br/><b>Process Count: </b>").append(operatingSystem.getProcessCount());
+        builder.append("<br/><b>System Boot Time: </b>").append(operatingSystem.getSystemBootTime());
+        builder.append("<br/><b>System Uptime: </b>").append(operatingSystem.getSystemUptime());
+
+        return builder.toString();
+    }
+
+    private static String getComputerInfo() {
+        StringBuilder builder = new StringBuilder();
+        ComputerSystem computerSystem = App.si.getHardware().getComputerSystem();
+
+        builder.append("<b>Manufacturer: </b>").append(computerSystem.getManufacturer());
+        builder.append("<br/><b>Model: </b>").append(computerSystem.getModel());
+        builder.append("<br/><b>Serial Number: </b>").append(computerSystem.getSerialNumber());
+        builder.append("<br/><b>Hardware UUID: </b>").append(computerSystem.getHardwareUUID());
+        builder.append("<br/><b>Firmware Manufacturer: </b>").append(computerSystem.getFirmware().getManufacturer());
+        builder.append("<br/><b>Firmware Name: </b>").append(computerSystem.getFirmware().getName());
+        builder.append("<br/><b>Firmware Description: </b>").append(computerSystem.getFirmware().getDescription());
+        builder.append("<br/><b>Firmware Version: </b>").append(computerSystem.getFirmware().getVersion());
+        builder.append("<br/><b>Firmware Release Date: </b>").append(computerSystem.getFirmware().getReleaseDate());
+
+        return builder.toString();
+    }
+
+    private static String getBaseBoardInfo() {
+        StringBuilder builder = new StringBuilder();
+        Baseboard baseboard = App.si.getHardware().getComputerSystem().getBaseboard();
+
+
+        return builder.toString();
     }
 
     {
