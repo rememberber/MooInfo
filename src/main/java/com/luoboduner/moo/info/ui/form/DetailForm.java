@@ -10,6 +10,7 @@ import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import oshi.hardware.Baseboard;
+import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
@@ -113,6 +114,8 @@ public class DetailForm {
         detailForm.getOsTextPane().setText(getOsInfo());
         detailForm.getComputerTextPane().setText(getComputerInfo());
         detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
+        detailForm.getCpuTextPane().setText(getCpuInfo());
+
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
 
@@ -154,12 +157,32 @@ public class DetailForm {
     private static String getBaseBoardInfo() {
         StringBuilder builder = new StringBuilder();
         Baseboard baseboard = App.si.getHardware().getComputerSystem().getBaseboard();
+
         builder.append("<b>Manufacturer: </b>").append(baseboard.getManufacturer());
         builder.append("<br/><b>Model: </b>").append(baseboard.getModel());
         builder.append("<br/><b>Version: </b>").append(baseboard.getVersion());
         builder.append("<br/><b>SerialNumber: </b>").append(baseboard.getSerialNumber());
 
         return builder.toString();
+    }
+
+    private static String getCpuInfo() {
+        StringBuilder builder = new StringBuilder();
+        CentralProcessor processor = App.si.getHardware().getProcessor();
+
+        CentralProcessor.ProcessorIdentifier processorIdentifier = processor.getProcessorIdentifier();
+        builder.append("<b>Name: </b>").append(processorIdentifier.getName());
+        builder.append("<br/><b>Identifier: </b>").append(processorIdentifier.getIdentifier());
+        builder.append("<br/><b>Micro Architecture: </b>").append(processorIdentifier.getMicroarchitecture());
+        builder.append("<br/><b>Model: </b>").append(processorIdentifier.getModel());
+        builder.append("<br/><b>Family: </b>").append(processorIdentifier.getFamily());
+        builder.append("<br/><b>Processor ID: </b>").append(processorIdentifier.getProcessorID());
+        builder.append("<br/><b>Vendor: </b>").append(processorIdentifier.getVendor());
+        builder.append("<br/><b>Vendor Freq: </b>").append(processorIdentifier.getVendorFreq());
+        builder.append("<br/><b>Stepping: </b>").append(processorIdentifier.getStepping());
+
+        return builder.toString();
+
     }
 
     {
