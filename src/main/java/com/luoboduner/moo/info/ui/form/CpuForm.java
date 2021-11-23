@@ -97,7 +97,7 @@ public class CpuForm {
         processorTextFields = new ArrayList<>();
         for (int i = 0; i < logicalProcessorCount; i++) {
             JLabel label = new JLabel();
-            label.setText("CPU" + i);
+            label.setText("CPU " + i);
             pcuProgressBarPanel.add(label, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JProgressBar progressBar = new JProgressBar();
@@ -106,7 +106,7 @@ public class CpuForm {
             processorProgressBars.add(progressBar);
 
             JLabel labelPcf = new JLabel();
-            labelPcf.setText("CPU" + i);
+            labelPcf.setText("CPU " + i);
             pcfPanel.add(labelPcf, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JTextField textField = new JTextField();
@@ -138,13 +138,13 @@ public class CpuForm {
         builder.append("<br/><b>Family: </b>").append(processorIdentifier.getFamily());
         builder.append("<br/><b>Processor ID: </b>").append(processorIdentifier.getProcessorID());
         builder.append("<br/><b>Vendor: </b>").append(processorIdentifier.getVendor());
-        builder.append("<br/><b>Vendor Freq: </b>").append(processorIdentifier.getVendorFreq());
+        builder.append("<br/><b>Vendor Freq: </b>").append(new BigDecimal(processorIdentifier.getVendorFreq()).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP)).append(" GHz");
         builder.append("<br/><b>Stepping: </b>").append(processorIdentifier.getStepping());
         builder.append("<br/>");
         builder.append("<br/><b>Physical Package Count: </b>").append(processor.getPhysicalPackageCount());
         builder.append("<br/><b>Physical Processor Count: </b>").append(processor.getPhysicalProcessorCount());
         builder.append("<br/><b>Logical Processor Count: </b>").append(processor.getLogicalProcessorCount());
-        builder.append("<br/><b>Max Freq: </b>").append(processor.getMaxFreq());
+        builder.append("<br/><b>Max Freq: </b>").append(new BigDecimal(processor.getMaxFreq()).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP)).append(" GHz");
         builder.append("<br/><b>Interrupts: </b>").append(processor.getInterrupts());
         builder.append("<br/><b>Context Switches: </b>").append(processor.getContextSwitches());
 
@@ -231,7 +231,7 @@ public class CpuForm {
 
             JTextField textField = processorTextFields.get(i);
             BigDecimal divide = new BigDecimal(currentFreq[i]).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP);
-            textField.setText(divide + " GHZ");
+            textField.setText(divide + " GHz");
 
         }
 
