@@ -7,7 +7,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
-import com.luoboduner.moo.info.ui.UiConsts;
 import lombok.Getter;
 import oshi.hardware.CentralProcessor;
 
@@ -99,9 +98,12 @@ public class CpuForm {
         CpuForm cpuForm = getInstance();
         JTextPane cpuInfoTextPane = cpuForm.getCpuInfoTextPane();
 
+        CentralProcessor cpu = App.si.getHardware().getProcessor();
         StringBuilder sb = new StringBuilder();
-        sb.append(App.si.getHardware().getProcessor());
+        sb.append(cpu);
+        sb.append(cpu.getProcessorIdentifier());
         cpuInfoTextPane.setText(sb.toString());
+//        cpu.getCurrentFreq()
     }
 
     private static void initInfo() {
@@ -231,7 +233,7 @@ public class CpuForm {
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         panel3.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         cpuInfoTextPane = new JTextPane();
-        cpuInfoTextPane.setEditable(false);
+        cpuInfoTextPane.setEditable(true);
         panel4.add(cpuInfoTextPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panel3.add(spacer2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
