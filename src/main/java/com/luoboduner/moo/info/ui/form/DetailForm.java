@@ -127,6 +127,7 @@ public class DetailForm {
         builder.append("<br/><b>Family: </b>").append(operatingSystem.getFamily());
         builder.append("<br/><b>Version: </b>").append(operatingSystem.getVersionInfo());
         builder.append("<br/><b>Bitness: </b>").append(operatingSystem.getBitness());
+        builder.append("<br/>");
         builder.append("<br/><b>Max File Descriptors: </b>").append(operatingSystem.getFileSystem().getMaxFileDescriptors());
         builder.append("<br/><b>Open File Descriptors: </b>").append(operatingSystem.getFileSystem().getOpenFileDescriptors());
         builder.append("<br/><b>Thread Count: </b>").append(operatingSystem.getThreadCount());
@@ -145,6 +146,7 @@ public class DetailForm {
         builder.append("<br/><b>Model: </b>").append(computerSystem.getModel());
         builder.append("<br/><b>Serial Number: </b>").append(computerSystem.getSerialNumber());
         builder.append("<br/><b>Hardware UUID: </b>").append(computerSystem.getHardwareUUID());
+        builder.append("<br/>");
         builder.append("<br/><b>Firmware Manufacturer: </b>").append(computerSystem.getFirmware().getManufacturer());
         builder.append("<br/><b>Firmware Name: </b>").append(computerSystem.getFirmware().getName());
         builder.append("<br/><b>Firmware Description: </b>").append(computerSystem.getFirmware().getDescription());
@@ -180,6 +182,13 @@ public class DetailForm {
         builder.append("<br/><b>Vendor: </b>").append(processorIdentifier.getVendor());
         builder.append("<br/><b>Vendor Freq: </b>").append(processorIdentifier.getVendorFreq());
         builder.append("<br/><b>Stepping: </b>").append(processorIdentifier.getStepping());
+        builder.append("<br/>");
+        builder.append("<br/><b>Physical Package Count: </b>").append(processor.getPhysicalPackageCount());
+        builder.append("<br/><b>Physical Processor Count: </b>").append(processor.getPhysicalProcessorCount());
+        builder.append("<br/><b>Logical Processor Count: </b>").append(processor.getLogicalProcessorCount());
+        builder.append("<br/><b>Max Freq: </b>").append(processor.getMaxFreq());
+        builder.append("<br/><b>Interrupts: </b>").append(processor.getInterrupts());
+        builder.append("<br/><b>Context Switches: </b>").append(processor.getContextSwitches());
 
         return builder.toString();
 
