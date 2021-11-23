@@ -89,18 +89,19 @@ public class DetailForm {
         Style.emphaticTitleFont(detailForm.getPowerSourceLabel());
         Style.emphaticTitleFont(detailForm.getSensorsLabel());
 
-        detailForm.getOsTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getComputerTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getBaseBoardTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getCpuTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getMemoryTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getStorageTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getGraphicsCardTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getDisplayTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getSoundCardTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getNetworkTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getPowerSourceTextPane().setContentType("text/html; charset=utf-8");
-        detailForm.getSensorsTextPane().setContentType("text/html; charset=utf-8");
+        String contentType = "text/html; charset=utf-8";
+        detailForm.getOsTextPane().setContentType(contentType);
+        detailForm.getComputerTextPane().setContentType(contentType);
+        detailForm.getBaseBoardTextPane().setContentType(contentType);
+        detailForm.getCpuTextPane().setContentType(contentType);
+        detailForm.getMemoryTextPane().setContentType(contentType);
+        detailForm.getStorageTextPane().setContentType(contentType);
+        detailForm.getGraphicsCardTextPane().setContentType(contentType);
+        detailForm.getDisplayTextPane().setContentType(contentType);
+        detailForm.getSoundCardTextPane().setContentType(contentType);
+        detailForm.getNetworkTextPane().setContentType(contentType);
+        detailForm.getPowerSourceTextPane().setContentType(contentType);
+        detailForm.getSensorsTextPane().setContentType(contentType);
     }
 
     private static void initInfo() {
@@ -111,6 +112,7 @@ public class DetailForm {
 
         detailForm.getOsTextPane().setText(getOsInfo());
         detailForm.getComputerTextPane().setText(getComputerInfo());
+        detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
 
@@ -152,7 +154,10 @@ public class DetailForm {
     private static String getBaseBoardInfo() {
         StringBuilder builder = new StringBuilder();
         Baseboard baseboard = App.si.getHardware().getComputerSystem().getBaseboard();
-
+        builder.append("<b>Manufacturer: </b>").append(baseboard.getManufacturer());
+        builder.append("<br/><b>Model: </b>").append(baseboard.getModel());
+        builder.append("<br/><b>Version: </b>").append(baseboard.getVersion());
+        builder.append("<br/><b>SerialNumber: </b>").append(baseboard.getSerialNumber());
 
         return builder.toString();
     }
