@@ -130,7 +130,7 @@ public class PowerSourceForm {
 
     }
 
-    private static String getPowerInfoText(List<PowerSource> powerSources) {
+    public static String getPowerInfoText(List<PowerSource> powerSources) {
         StringBuilder powerInfoBuilder = new StringBuilder();
 
         for (PowerSource powerSource : powerSources) {
