@@ -258,6 +258,8 @@ public class CpuForm {
             BigDecimal divide = new BigDecimal(currentFreq[i]).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP);
             String freqStr = divide + " GHz";
             textField.setText(freqStr);
+
+            // TODO to fix
             cpuForm.getFreqLabel().setText(freqStr);
         }
 
