@@ -10,6 +10,7 @@ import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.Sensors;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,6 +49,9 @@ public class CpuForm {
     private JLabel contextSwitchesLabel;
     private JScrollPane scrollPaneLeft;
     private JScrollPane scrollPaneRight;
+    private JLabel temperatureLabel;
+    private JLabel voltageLabel;
+    private JLabel fanSpeedsLabel;
 
     private static final Log logger = LogFactory.get();
 
@@ -92,6 +97,9 @@ public class CpuForm {
         Style.emphaticIndicatorFont(cpuForm.getFreqLabel());
         Style.emphaticIndicatorFont(cpuForm.getInterruptsLabel());
         Style.emphaticIndicatorFont(cpuForm.getContextSwitchesLabel());
+        Style.emphaticIndicatorFont(cpuForm.getTemperatureLabel());
+        Style.emphaticIndicatorFont(cpuForm.getVoltageLabel());
+        Style.emphaticIndicatorFont(cpuForm.getFanSpeedsLabel());
 
         ScrollUtil.smoothPane(cpuForm.getScrollPaneLeft());
         ScrollUtil.smoothPane(cpuForm.getScrollPaneRight());
@@ -261,7 +269,11 @@ public class CpuForm {
         cpuForm.getInterruptsLabel().setText(String.valueOf(processor.getInterrupts()));
         cpuForm.getContextSwitchesLabel().setText(String.valueOf(processor.getContextSwitches()));
 
-        System.err.println(App.si.getHardware().getSensors().toString());
+        Sensors sensors = App.si.getHardware().getSensors();
+
+        cpuForm.getTemperatureLabel().setText(String.format("%.1f°C", sensors.getCpuTemperature()));
+        cpuForm.getVoltageLabel().setText(String.valueOf(sensors.getCpuVoltage()));
+        cpuForm.getFanSpeedsLabel().setText(Arrays.toString(sensors.getFanSpeeds()));
     }
 
     {
@@ -339,7 +351,7 @@ public class CpuForm {
         final Spacer spacer2 = new Spacer();
         panel5.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(3, 2, new Insets(10, 10, 10, 10), -1, -1));
+        panel7.setLayout(new GridLayoutManager(4, 3, new Insets(10, 10, 10, 10), -1, -1));
         panel5.add(panel7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -370,13 +382,40 @@ public class CpuForm {
         panel10.add(InterruptsLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel7.add(panel11, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel7.add(panel11, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("Context Switches");
+        label4.setText("Temperature");
         panel11.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        temperatureLabel = new JLabel();
+        temperatureLabel.setText("Label");
+        panel11.add(temperatureLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel7.add(panel12, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText("Context Switches");
+        panel12.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         contextSwitchesLabel = new JLabel();
         contextSwitchesLabel.setText("Label");
-        panel11.add(contextSwitchesLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel12.add(contextSwitchesLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel13 = new JPanel();
+        panel13.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel7.add(panel13, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label6 = new JLabel();
+        label6.setText("Voltage");
+        panel13.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        voltageLabel = new JLabel();
+        voltageLabel.setText("Label");
+        panel13.add(voltageLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel14 = new JPanel();
+        panel14.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel7.add(panel14, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label7 = new JLabel();
+        label7.setText("Fan Speeds");
+        panel14.add(label7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fanSpeedsLabel = new JLabel();
+        fanSpeedsLabel.setText("Label");
+        panel14.add(fanSpeedsLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
