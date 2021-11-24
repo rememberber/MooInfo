@@ -146,7 +146,7 @@ public class OverviewForm {
             totalCapacity += physicalMemory.getCapacity();
             detailBuilder.append(physicalMemory.getManufacturer());
             detailBuilder.append(" ").append(physicalMemory.getMemoryType());
-            detailBuilder.append(" ").append(new BigDecimal(physicalMemory.getClockSpeed()).divide(new BigDecimal(1000000), 0, RoundingMode.HALF_UP)).append("MHZ");
+            detailBuilder.append(" ").append(new BigDecimal(physicalMemory.getClockSpeed()).divide(new BigDecimal(1000000), 0, RoundingMode.HALF_UP)).append("MHz");
             detailBuilder.append(" ").append(DataSizeUtil.format(physicalMemory.getCapacity()));
             detailList.add(detailBuilder.toString());
         }

@@ -16,6 +16,8 @@ import oshi.hardware.VirtualMemory;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,9 +51,9 @@ public class MemoryForm {
     private JProgressBar jvmProgressBar;
     private JLabel jvmUsedLabel;
     private JLabel jvmAvailableLabel;
-    private JTextPane physicalMemoryInfoTextPane;
     private JLabel physicalMemoryInfoLabel;
     private JScrollPane scrollPane;
+    private JTextPane physicalMemoryInfoTextPane;
 
     public static MemoryForm getInstance() {
         if (memoryForm == null) {
@@ -69,12 +71,10 @@ public class MemoryForm {
         ScheduledExecutorService serviceStartPerSecond = Executors.newSingleThreadScheduledExecutor();
         serviceStartPerSecond.scheduleAtFixedRate(MemoryForm::initMemoryProgressInfo, 0, 1, TimeUnit.SECONDS);
 
-        ScrollUtil.smoothPane(memoryForm.getScrollPane());
-
     }
 
     private static void initPhysicalMemoryInfo() {
-        memoryForm.getPhysicalMemoryInfoTextPane().setText(updateMemoryText());
+        memoryForm.getPhysicalMemoryInfoTextPane().setText(getMemoryInfo());
     }
 
     private static void initUi() {
@@ -89,6 +89,11 @@ public class MemoryForm {
 
         Dimension d = new Dimension(-1, 100);
         memoryForm.getPhysicalMemoryProgressBar().setMinimumSize(d);
+
+        ScrollUtil.smoothPane(memoryForm.getScrollPane());
+
+        String contentType = "text/html; charset=utf-8";
+        memoryForm.getPhysicalMemoryInfoTextPane().setContentType(contentType);
 
     }
 
@@ -154,14 +159,32 @@ public class MemoryForm {
 
     }
 
-    private static String updateMemoryText() {
-        StringBuilder sb = new StringBuilder();
-        GlobalMemory memory = App.si.getHardware().getMemory();
-        List<PhysicalMemory> pmList = memory.getPhysicalMemory();
-        for (PhysicalMemory pm : pmList) {
-            sb.append(pm.toString()).append('\n');
+    /**
+     * @return
+     */
+    public static String getMemoryInfo() {
+        StringBuilder builder = new StringBuilder();
+        GlobalMemory globalMemory = App.si.getHardware().getMemory();
+
+        builder.append("<b>Total: </b>").append(DataSizeUtil.format(globalMemory.getTotal()));
+        builder.append("<br/><b>Page Size: </b>").append(DataSizeUtil.format(globalMemory.getPageSize()));
+        builder.append("<br/>");
+
+        List<PhysicalMemory> physicalMemories = globalMemory.getPhysicalMemory();
+        for (int i = 0; i < physicalMemories.size(); i++) {
+            PhysicalMemory physicalMemory = physicalMemories.get(i);
+
+            builder.append("<br/><b>Physical Memory: </b>#").append(i);
+            builder.append("<br/><b>BankLabel: </b>").append(physicalMemory.getBankLabel());
+            builder.append("<br/><b>Manufacturer: </b>").append(physicalMemory.getManufacturer());
+            builder.append("<br/><b>Capacity: </b>").append(DataSizeUtil.format(physicalMemory.getCapacity()));
+            builder.append("<br/><b>Memory Type: </b>").append(physicalMemory.getMemoryType());
+            builder.append("<br/><b>Clock Speed: </b>").append(new BigDecimal(physicalMemory.getClockSpeed()).divide(new BigDecimal(1000000), 0, RoundingMode.HALF_UP)).append("MHz");
+
+            builder.append("<br/>");
         }
-        return sb.toString();
+
+        return builder.toString();
     }
 
     {
@@ -256,12 +279,11 @@ public class MemoryForm {
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(panel6, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        physicalMemoryInfoTextPane = new JTextPane();
-        physicalMemoryInfoTextPane.setEditable(false);
-        panel6.add(physicalMemoryInfoTextPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(1, -1), null, 0, false));
         physicalMemoryInfoLabel = new JLabel();
         physicalMemoryInfoLabel.setText("Physical Memory Info");
         panel6.add(physicalMemoryInfoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        physicalMemoryInfoTextPane = new JTextPane();
+        panel6.add(physicalMemoryInfoTextPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         panel1.add(separator1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }

@@ -9,7 +9,9 @@ import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
-import oshi.hardware.*;
+import oshi.hardware.Baseboard;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
@@ -112,6 +114,7 @@ public class DetailForm {
         detailForm.getComputerTextPane().setText(getComputerInfo());
         detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
         detailForm.getCpuTextPane().setText(CpuForm.getCpuInfo());
+        detailForm.getMemoryTextPane().setText(MemoryForm.getMemoryInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -161,16 +164,6 @@ public class DetailForm {
         builder.append("<br/><b>Model: </b>").append(baseboard.getModel());
         builder.append("<br/><b>Version: </b>").append(baseboard.getVersion());
         builder.append("<br/><b>SerialNumber: </b>").append(baseboard.getSerialNumber());
-
-        return builder.toString();
-    }
-
-    /**
-     * @return
-     */
-    private static String getMemoryInfo() {
-        StringBuilder builder = new StringBuilder();
-        GlobalMemory globalMemory = App.si.getHardware().getMemory();
 
         return builder.toString();
     }
