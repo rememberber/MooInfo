@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.util.ComponentUtil;
+import com.luoboduner.moo.info.util.ScrollUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -46,8 +47,7 @@ public class SettingDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onOK(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // Set the scroll bar speed
-        settingScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        settingScrollPane.getVerticalScrollBar().setDoubleBuffered(true);
+        ScrollUtil.smoothPane(settingScrollPane);
 
         // routine
         autoCheckUpdateCheckBox.setSelected(App.config.isAutoCheckUpdate());
