@@ -116,6 +116,7 @@ public class DetailForm {
         detailForm.getCpuTextPane().setText(CpuForm.getCpuInfo());
         detailForm.getMemoryTextPane().setText(MemoryForm.getMemoryInfo());
         detailForm.getStorageTextPane().setText(getStorageInfo());
+        detailForm.getGraphicsCardTextPane().setText(getGraphicsCardsInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -174,6 +175,8 @@ public class DetailForm {
         List<HWDiskStore> diskStores = App.si.getHardware().getDiskStores();
         for (int i = 0; i < diskStores.size(); i++) {
             HWDiskStore hwDiskStore = diskStores.get(i);
+
+            builder.append("<b>Disk Store: </b>#").append(i);
             builder.append("<br/><b>Name: </b>").append(hwDiskStore.getName());
             builder.append("<br/><b>Model: </b>").append(hwDiskStore.getModel());
             builder.append("<br/><b>Serial: </b>").append(hwDiskStore.getSerial());
@@ -184,6 +187,28 @@ public class DetailForm {
                 builder.append(partition.toString());
             }
 
+            builder.append("<br/>");
+            builder.append("<br/>");
+
+        }
+
+        return builder.toString();
+    }
+
+    private static String getGraphicsCardsInfo() {
+        StringBuilder builder = new StringBuilder();
+        List<GraphicsCard> graphicsCards = App.si.getHardware().getGraphicsCards();
+
+        for (int i = 0; i < graphicsCards.size(); i++) {
+            GraphicsCard graphicsCard = graphicsCards.get(i);
+
+            builder.append("<b>Graphics Card: </b>#").append(i);
+            builder.append("<br/><b>Name: </b>").append(graphicsCard.getName());
+            builder.append("<br/><b>Vendor: </b>").append(graphicsCard.getVendor());
+            builder.append("<br/><b>Version: </b>").append(graphicsCard.getVersionInfo());
+            builder.append("<br/><b>Device Id: </b>").append(graphicsCard.getDeviceId());
+            builder.append("<br/><b>VRam: </b>").append(DataSizeUtil.format(graphicsCard.getVRam()));
+            builder.append("<br/>");
             builder.append("<br/>");
         }
 
