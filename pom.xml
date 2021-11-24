@@ -148,7 +148,7 @@
 
                                 <!-- setup generation properties -->
                                 <setupMode>installForAllUsers</setupMode>
-                                <!--                                <createDesktopIconTask>true</createDesktopIconTask>-->
+                                                                <createDesktopIconTask>true</createDesktopIconTask>
                                 <disableDirPage>false</disableDirPage>
                                 <disableFinishedPage>false</disableFinishedPage>
                                 <setupLanguages>

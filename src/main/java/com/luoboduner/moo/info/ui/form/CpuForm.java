@@ -274,6 +274,11 @@ public class CpuForm {
         Sensors sensors = App.si.getHardware().getSensors();
 
         cpuForm.getTemperatureLabel().setText(String.format("%.1f°C", sensors.getCpuTemperature()));
+        cpuForm.getTemperatureLabel().setToolTipText("On Windows, if not running Open Hardware Monitor, \n" +
+                "requires elevated permissions and hardware BIOS that supports publishing to WMI. \n" +
+                "In this case, returns the temperature of the \"Thermal Zone\" \n" +
+                "which may be different than CPU temperature obtained from other sources. \n" +
+                "In addition, some motherboards may only refresh this value on certain events.");
         cpuForm.getVoltageLabel().setText(String.valueOf(sensors.getCpuVoltage()));
         cpuForm.getFanSpeedsLabel().setText(Arrays.toString(sensors.getFanSpeeds()));
     }
