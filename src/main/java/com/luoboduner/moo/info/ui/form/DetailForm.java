@@ -11,11 +11,13 @@ import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import oshi.hardware.*;
+import oshi.software.os.NetworkParams;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -119,6 +121,7 @@ public class DetailForm {
         detailForm.getGraphicsCardTextPane().setText(getGraphicsCardsInfo());
         detailForm.getDisplayTextPane().setText(getDisplayInfo());
         detailForm.getSoundCardTextPane().setText(getSoundCardsInfo());
+        detailForm.getNetworkTextPane().setText(getNetworkInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -246,6 +249,32 @@ public class DetailForm {
             builder.append("<br/><b>Codec: </b>").append(soundCard.getCodec());
             builder.append("<br/><b>Driver Version: </b>").append(soundCard.getDriverVersion());
 
+            builder.append("<br/>");
+            builder.append("<br/>");
+        }
+
+        return builder.toString();
+    }
+
+    private static String getNetworkInfo() {
+        StringBuilder builder = new StringBuilder();
+        NetworkParams networkParams = App.si.getOperatingSystem().getNetworkParams();
+        builder.append("<b>Domain Name: </b>").append(networkParams.getDomainName());
+        builder.append("<br/><b>Host Name: </b>").append(networkParams.getHostName());
+        builder.append("<br/><b>Ipv4 Default Gateway: </b>").append(networkParams.getIpv4DefaultGateway());
+        builder.append("<br/><b>Ipv6 Default Gateway: </b>").append(networkParams.getIpv6DefaultGateway());
+        builder.append("<br/><b>Dns Servers: </b>").append(Arrays.toString(networkParams.getDnsServers()));
+        builder.append("<br/>");
+        builder.append("<br/>");
+
+        List<NetworkIF> networkIFs = App.si.getHardware().getNetworkIFs(true);
+
+        for (int i = 0; i < networkIFs.size(); i++) {
+            NetworkIF networkIF = networkIFs.get(i);
+
+            builder.append("<b>Network Interface: </b>#").append(i);
+            builder.append("<br/>");
+            builder.append(networkIF.toString().replaceAll("\n", "<br/>"));
             builder.append("<br/>");
             builder.append("<br/>");
         }
