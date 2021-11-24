@@ -260,7 +260,6 @@ public class OverviewForm {
         for (SoundCard soundCard : soundCards) {
             detailBuilder = new StringBuilder();
             detailBuilder.append(soundCard.getName());
-            detailBuilder.append(" ").append(soundCard.getCodec());
 
             detailList.add(detailBuilder.toString());
         }
