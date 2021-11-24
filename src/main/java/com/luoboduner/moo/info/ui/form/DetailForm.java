@@ -117,6 +117,7 @@ public class DetailForm {
         detailForm.getMemoryTextPane().setText(MemoryForm.getMemoryInfo());
         detailForm.getStorageTextPane().setText(getStorageInfo());
         detailForm.getGraphicsCardTextPane().setText(getGraphicsCardsInfo());
+        detailForm.getDisplayTextPane().setText(getDisplayInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -208,6 +209,23 @@ public class DetailForm {
             builder.append("<br/><b>Version: </b>").append(graphicsCard.getVersionInfo());
             builder.append("<br/><b>Device Id: </b>").append(graphicsCard.getDeviceId());
             builder.append("<br/><b>VRam: </b>").append(DataSizeUtil.format(graphicsCard.getVRam()));
+            builder.append("<br/>");
+            builder.append("<br/>");
+        }
+
+        return builder.toString();
+    }
+
+    private static String getDisplayInfo() {
+        StringBuilder builder = new StringBuilder();
+        List<Display> displays = App.si.getHardware().getDisplays();
+
+        for (int i = 0; i < displays.size(); i++) {
+            Display display = displays.get(i);
+
+            builder.append("<b>Display: </b>#").append(i);
+            builder.append("<br/>");
+            builder.append(display.toString().replaceAll("\n", "<br/>"));
             builder.append("<br/>");
             builder.append("<br/>");
         }
