@@ -51,8 +51,6 @@ public class DetailForm {
     private JLabel networkLabel;
     private JTextPane powerSourceTextPane;
     private JLabel powerSourceLabel;
-    private JLabel sensorsLabel;
-    private JTextPane sensorsTextPane;
     private JScrollPane scrollPane;
 
     private static final Log logger = LogFactory.get();
@@ -89,7 +87,6 @@ public class DetailForm {
         Style.emphaticTitleFont(detailForm.getSoundCardLabel());
         Style.emphaticTitleFont(detailForm.getNetworkLabel());
         Style.emphaticTitleFont(detailForm.getPowerSourceLabel());
-        Style.emphaticTitleFont(detailForm.getSensorsLabel());
 
         String contentType = "text/html; charset=utf-8";
         detailForm.getOsTextPane().setContentType(contentType);
@@ -103,14 +100,12 @@ public class DetailForm {
         detailForm.getSoundCardTextPane().setContentType(contentType);
         detailForm.getNetworkTextPane().setContentType(contentType);
         detailForm.getPowerSourceTextPane().setContentType(contentType);
-        detailForm.getSensorsTextPane().setContentType(contentType);
     }
 
     private static void initInfo() {
         DetailForm detailForm = getInstance();
 
         HardwareAbstractionLayer hardware = App.si.getHardware();
-        ComputerSystem computerSystem = hardware.getComputerSystem();
 
         detailForm.getOsTextPane().setText(getOsInfo());
         detailForm.getComputerTextPane().setText(getComputerInfo());
@@ -122,7 +117,6 @@ public class DetailForm {
         detailForm.getDisplayTextPane().setText(getDisplayInfo());
         detailForm.getSoundCardTextPane().setText(getSoundCardsInfo());
         detailForm.getNetworkTextPane().setText(getNetworkInfo());
-
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
 
@@ -303,7 +297,7 @@ public class DetailForm {
         mainPanel.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(13, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.setLayout(new GridLayoutManager(12, 1, new Insets(10, 10, 10, 10), -1, -1));
         scrollPane.setViewportView(panel1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
@@ -393,16 +387,8 @@ public class DetailForm {
         panel12.add(powerSourceLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         powerSourceTextPane = new JTextPane();
         panel12.add(powerSourceTextPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JPanel panel13 = new JPanel();
-        panel13.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
-        panel1.add(panel13, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        sensorsLabel = new JLabel();
-        sensorsLabel.setText("Sensors");
-        panel13.add(sensorsLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        sensorsTextPane = new JTextPane();
-        panel13.add(sensorsTextPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel1.add(spacer1, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel1.add(spacer1, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
