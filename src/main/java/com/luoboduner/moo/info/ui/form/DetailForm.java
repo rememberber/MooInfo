@@ -118,6 +118,7 @@ public class DetailForm {
         detailForm.getStorageTextPane().setText(getStorageInfo());
         detailForm.getGraphicsCardTextPane().setText(getGraphicsCardsInfo());
         detailForm.getDisplayTextPane().setText(getDisplayInfo());
+        detailForm.getSoundCardTextPane().setText(getSoundCardsInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -226,6 +227,25 @@ public class DetailForm {
             builder.append("<b>Display: </b>#").append(i);
             builder.append("<br/>");
             builder.append(display.toString().replaceAll("\n", "<br/>"));
+            builder.append("<br/>");
+            builder.append("<br/>");
+        }
+
+        return builder.toString();
+    }
+
+    private static String getSoundCardsInfo() {
+        StringBuilder builder = new StringBuilder();
+        List<SoundCard> soundCards = App.si.getHardware().getSoundCards();
+
+        for (int i = 0; i < soundCards.size(); i++) {
+            SoundCard soundCard = soundCards.get(i);
+
+            builder.append("<b>SoundCard: </b>#").append(i);
+            builder.append("<br/><b>Name: </b>").append(soundCard.getName());
+            builder.append("<br/><b>Codec: </b>").append(soundCard.getCodec());
+            builder.append("<br/><b>Driver Version: </b>").append(soundCard.getDriverVersion());
+
             builder.append("<br/>");
             builder.append("<br/>");
         }
