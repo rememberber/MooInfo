@@ -52,6 +52,7 @@ public class CpuForm {
     private JLabel temperatureLabel;
     private JLabel voltageLabel;
     private JLabel fanSpeedsLabel;
+    private JSplitPane splitPane;
 
     private static final Log logger = LogFactory.get();
 
@@ -88,6 +89,8 @@ public class CpuForm {
 
     private static void initUi() {
         CpuForm cpuForm = getInstance();
+
+        cpuForm.getSplitPane().setDividerLocation((int) (App.mainFrame.getWidth() * 0.38));
 
         Style.emphaticTitleFont(cpuForm.getScuTitleLabel());
         Style.emphaticTitleFont(cpuForm.getPcuTitleLabel());
@@ -301,14 +304,14 @@ public class CpuForm {
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        final JSplitPane splitPane1 = new JSplitPane();
-        splitPane1.setContinuousLayout(true);
-        splitPane1.setDividerLocation(300);
-        splitPane1.setDividerSize(14);
-        mainPanel.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
+        splitPane = new JSplitPane();
+        splitPane.setContinuousLayout(true);
+        splitPane.setDividerLocation(300);
+        splitPane.setDividerSize(14);
+        mainPanel.add(splitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 0), -1, -1));
-        splitPane1.setLeftComponent(panel2);
+        splitPane.setLeftComponent(panel2);
         scrollPaneLeft = new JScrollPane();
         panel2.add(scrollPaneLeft, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
@@ -344,7 +347,7 @@ public class CpuForm {
         panel3.add(spacer1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 10, 10), -1, -1));
-        splitPane1.setRightComponent(panel4);
+        splitPane.setRightComponent(panel4);
         scrollPaneRight = new JScrollPane();
         panel4.add(scrollPaneRight, new GridConstraints(0, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
