@@ -1,5 +1,6 @@
 package com.luoboduner.moo.info.ui.form;
 
+import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -9,14 +10,13 @@ import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
-import oshi.hardware.Baseboard;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.*;
 import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.List;
 
 /**
  * DetailForm
@@ -115,6 +115,7 @@ public class DetailForm {
         detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
         detailForm.getCpuTextPane().setText(CpuForm.getCpuInfo());
         detailForm.getMemoryTextPane().setText(MemoryForm.getMemoryInfo());
+        detailForm.getStorageTextPane().setText(getStorageInfo());
 
         detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
     }
@@ -164,6 +165,27 @@ public class DetailForm {
         builder.append("<br/><b>Model: </b>").append(baseboard.getModel());
         builder.append("<br/><b>Version: </b>").append(baseboard.getVersion());
         builder.append("<br/><b>SerialNumber: </b>").append(baseboard.getSerialNumber());
+
+        return builder.toString();
+    }
+
+    private static String getStorageInfo() {
+        StringBuilder builder = new StringBuilder();
+        List<HWDiskStore> diskStores = App.si.getHardware().getDiskStores();
+        for (int i = 0; i < diskStores.size(); i++) {
+            HWDiskStore hwDiskStore = diskStores.get(i);
+            builder.append("<br/><b>Name: </b>").append(hwDiskStore.getName());
+            builder.append("<br/><b>Model: </b>").append(hwDiskStore.getModel());
+            builder.append("<br/><b>Serial: </b>").append(hwDiskStore.getSerial());
+            builder.append("<br/><b>Size: </b>").append(DataSizeUtil.format(hwDiskStore.getSize()));
+            builder.append("<br/><b>Partitions: </b>");
+            for (HWPartition partition : hwDiskStore.getPartitions()) {
+                builder.append("<br/>");
+                builder.append(partition.toString());
+            }
+
+            builder.append("<br/>");
+        }
 
         return builder.toString();
     }
