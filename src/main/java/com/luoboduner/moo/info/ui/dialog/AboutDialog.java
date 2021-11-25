@@ -30,7 +30,7 @@ public class AboutDialog extends JDialog {
     private JLabel codeGiteeLabel;
     private JLabel issueLabel;
     private JLabel hutoolLabel;
-    private JLabel vsCodeIconsLabel;
+    private JLabel iconFontLabel;
     private JLabel wePushLinkLabel;
     private JPanel wePushPanel;
     private JLabel authorLabel;
@@ -294,13 +294,13 @@ public class AboutDialog extends JDialog {
                 e.getComponent().setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
         });
-        vsCodeIconsLabel.addMouseListener(new MouseAdapter() {
+        iconFontLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 Desktop desktop = Desktop.getDesktop();
                 try {
-                    desktop.browse(new URI("https://github.com/microsoft/vscode-icons"));
+                    desktop.browse(new URI("https://www.iconfont.cn/"));
                 } catch (IOException | URISyntaxException e1) {
                     e1.printStackTrace();
                 }
@@ -432,9 +432,9 @@ public class AboutDialog extends JDialog {
         hutoolLabel = new JLabel();
         hutoolLabel.setText("<html><a href=\"https://hutool.cn/\">Hutool</a></html>");
         panel6.add(hutoolLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        vsCodeIconsLabel = new JLabel();
-        vsCodeIconsLabel.setText("<html><a href=\"https://github.com/microsoft/vscode-icons\">vscode-icons</a></html>");
-        panel6.add(vsCodeIconsLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        iconFontLabel = new JLabel();
+        iconFontLabel.setText("<html><a href=\"https://www.iconfont.cn/\">iconfont</a></html>");
+        panel6.add(iconFontLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(5, 3, 20, 0), -1, -1));
         panel1.add(panel7, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
