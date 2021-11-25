@@ -140,8 +140,8 @@ public class PowerSourceForm {
             powerInfoBuilder.append("<b>Name: </b>").append(powerSource.getName());
             powerInfoBuilder.append("<br/><b>Device Name: </b>").append(powerSource.getDeviceName());
             powerInfoBuilder.append("<br/><b>Remaining Capacity Percent: </b>").append(powerSource.getRemainingCapacityPercent() * 100).append("%");
-            powerInfoBuilder.append("<br/><b>Time Remaining: </b>").append(powerSource.getTimeRemainingEstimated());
-            powerInfoBuilder.append("<br/><b>Time Remaining Instant: </b>").append(powerSource.getTimeRemainingInstant());
+            powerInfoBuilder.append("<br/><b>Time Remaining: </b>").append(formatTimeRemaining(powerSource.getTimeRemainingEstimated()));
+            powerInfoBuilder.append("<br/><b>Time Remaining Instant: </b>").append(formatTimeRemaining(powerSource.getTimeRemainingInstant()));
             powerInfoBuilder.append("<br/><b>Power Usage Rate: </b>").append(powerSource.getPowerUsageRate());
             powerInfoBuilder.append("<br/><b>Voltage: </b>").append(powerSource.getVoltage());
             powerInfoBuilder.append("<br/><b>Amperage: </b>").append(powerSource.getAmperage());
@@ -158,6 +158,28 @@ public class PowerSourceForm {
         }
 
         return powerInfoBuilder.toString();
+    }
+
+
+    /**
+     * copied from oshi
+     * Estimated time remaining on power source, formatted as HH:mm
+     *
+     * @param timeInSeconds The time remaining, in seconds
+     * @return formatted String of time remaining
+     */
+    private static String formatTimeRemaining(double timeInSeconds) {
+        String formattedTimeRemaining;
+        if (timeInSeconds < -1.5) {
+            formattedTimeRemaining = "Charging";
+        } else if (timeInSeconds < 0) {
+            formattedTimeRemaining = "Unknown";
+        } else {
+            int hours = (int) (timeInSeconds / 3600);
+            int minutes = (int) (timeInSeconds % 3600 / 60);
+            formattedTimeRemaining = String.format("%d:%02d", hours, minutes);
+        }
+        return formattedTimeRemaining;
     }
 
     {

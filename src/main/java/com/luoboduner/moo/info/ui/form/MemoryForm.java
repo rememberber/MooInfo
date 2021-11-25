@@ -166,6 +166,7 @@ public class MemoryForm {
         StringBuilder builder = new StringBuilder();
         GlobalMemory globalMemory = App.si.getHardware().getMemory();
 
+        builder.append("<br/>");
         builder.append("<b>Total: </b>").append(DataSizeUtil.format(globalMemory.getTotal()));
         builder.append("<br/><b>Page Size: </b>").append(DataSizeUtil.format(globalMemory.getPageSize()));
         builder.append("<br/>");
