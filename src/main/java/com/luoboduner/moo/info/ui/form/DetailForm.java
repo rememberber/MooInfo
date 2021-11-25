@@ -3,6 +3,7 @@ package com.luoboduner.moo.info.ui.form;
 import cn.hutool.core.io.unit.DataSizeUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -87,6 +88,18 @@ public class DetailForm {
         Style.emphaticTitleFont(detailForm.getSoundCardLabel());
         Style.emphaticTitleFont(detailForm.getNetworkLabel());
         Style.emphaticTitleFont(detailForm.getPowerSourceLabel());
+
+        detailForm.getOsLabel().setIcon(new FlatSVGIcon("icons/system.svg"));
+        detailForm.getComputerLabel().setIcon(new FlatSVGIcon("icons/firmware.svg"));
+        detailForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg"));
+        detailForm.getMemoryLabel().setIcon(new FlatSVGIcon("icons/memory.svg"));
+        detailForm.getGraphicsCardLabel().setIcon(new FlatSVGIcon("icons/graphicsCard.svg"));
+        detailForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/baseboard.svg"));
+        detailForm.getStorageLabel().setIcon(new FlatSVGIcon("icons/hardDisk.svg"));
+        detailForm.getDisplayLabel().setIcon(new FlatSVGIcon("icons/display.svg"));
+        detailForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg"));
+        detailForm.getNetworkLabel().setIcon(new FlatSVGIcon("icons/network.svg"));
+        detailForm.getPowerSourceLabel().setIcon(new FlatSVGIcon("icons/battery.svg"));
 
         String contentType = "text/html; charset=utf-8";
         detailForm.getOsTextPane().setContentType(contentType);
