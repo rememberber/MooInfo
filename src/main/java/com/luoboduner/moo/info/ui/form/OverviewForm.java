@@ -94,8 +94,8 @@ public class OverviewForm {
         overviewForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg"));
         overviewForm.getMemoryLabel().setIcon(new FlatSVGIcon("icons/memory.svg"));
         overviewForm.getGraphicsCardLabel().setIcon(new FlatSVGIcon("icons/graphicsCard.svg"));
-        overviewForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/baseboard.svg"));
-        overviewForm.getDiskStorageLabel().setIcon(new FlatSVGIcon("icons/hardDisk.svg"));
+        overviewForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/chip.svg"));
+        overviewForm.getDiskStorageLabel().setIcon(new FlatSVGIcon("icons/storage.svg"));
         overviewForm.getDisplayLabel().setIcon(new FlatSVGIcon("icons/display.svg"));
         overviewForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg"));
         overviewForm.getPowerSourceLabel().setIcon(new FlatSVGIcon("icons/battery.svg"));

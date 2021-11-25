@@ -94,8 +94,8 @@ public class DetailForm {
         detailForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg"));
         detailForm.getMemoryLabel().setIcon(new FlatSVGIcon("icons/memory.svg"));
         detailForm.getGraphicsCardLabel().setIcon(new FlatSVGIcon("icons/graphicsCard.svg"));
-        detailForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/baseboard.svg"));
-        detailForm.getStorageLabel().setIcon(new FlatSVGIcon("icons/hardDisk.svg"));
+        detailForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/chip.svg"));
+        detailForm.getStorageLabel().setIcon(new FlatSVGIcon("icons/storage.svg"));
         detailForm.getDisplayLabel().setIcon(new FlatSVGIcon("icons/display.svg"));
         detailForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg"));
         detailForm.getNetworkLabel().setIcon(new FlatSVGIcon("icons/network.svg"));
