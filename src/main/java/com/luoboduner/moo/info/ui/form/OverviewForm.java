@@ -91,15 +91,15 @@ public class OverviewForm {
         Style.emphaticLabelFont(overviewForm.getPowerSourceLabel());
         Style.emphaticLabelFont(overviewForm.getFirmwareLabel());
 
-        overviewForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg"));
-        overviewForm.getMemoryLabel().setIcon(new FlatSVGIcon("icons/memory.svg"));
-        overviewForm.getGraphicsCardLabel().setIcon(new FlatSVGIcon("icons/graphicsCard.svg"));
-        overviewForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/chip.svg"));
-        overviewForm.getDiskStorageLabel().setIcon(new FlatSVGIcon("icons/storage.svg"));
-        overviewForm.getDisplayLabel().setIcon(new FlatSVGIcon("icons/display.svg"));
-        overviewForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg"));
-        overviewForm.getPowerSourceLabel().setIcon(new FlatSVGIcon("icons/battery.svg"));
-        overviewForm.getFirmwareLabel().setIcon(new FlatSVGIcon("icons/firmware.svg"));
+        overviewForm.getCpuLabel().setIcon(new FlatSVGIcon("icons/cpu.svg", 20, 20));
+        overviewForm.getMemoryLabel().setIcon(new FlatSVGIcon("icons/memory.svg", 20, 20));
+        overviewForm.getGraphicsCardLabel().setIcon(new FlatSVGIcon("icons/graphicsCard.svg", 20, 20));
+        overviewForm.getBaseBoardLabel().setIcon(new FlatSVGIcon("icons/chip.svg", 20, 20));
+        overviewForm.getDiskStorageLabel().setIcon(new FlatSVGIcon("icons/storage.svg", 20, 20));
+        overviewForm.getDisplayLabel().setIcon(new FlatSVGIcon("icons/display.svg", 20, 20));
+        overviewForm.getSoundCardLabel().setIcon(new FlatSVGIcon("icons/sound.svg", 20, 20));
+        overviewForm.getPowerSourceLabel().setIcon(new FlatSVGIcon("icons/battery.svg", 20, 20));
+        overviewForm.getFirmwareLabel().setIcon(new FlatSVGIcon("icons/firmware.svg", 20, 20));
 
         ScrollUtil.smoothPane(overviewForm.getScrollPane());
     }
@@ -110,7 +110,12 @@ public class OverviewForm {
         HardwareAbstractionLayer hardware = App.si.getHardware();
 
         ComputerSystem computerSystem = hardware.getComputerSystem();
-        overviewForm.getDeviceNameLabel().setText(computerSystem.getManufacturer());
+        StringBuilder deviceNameBuilder = new StringBuilder();
+        deviceNameBuilder.append(computerSystem.getManufacturer());
+        if (!"unknown".equalsIgnoreCase(computerSystem.getModel())) {
+            deviceNameBuilder.append(" ").append(computerSystem.getModel());
+        }
+        overviewForm.getDeviceNameLabel().setText(deviceNameBuilder.toString());
 
         OperatingSystem operatingSystem = App.si.getOperatingSystem();
         overviewForm.getOsNameLabel().setText(operatingSystem.toString());
