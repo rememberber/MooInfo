@@ -436,7 +436,7 @@ public class AboutDialog extends JDialog {
         iconFontLabel.setText("<html><a href=\"https://www.iconfont.cn/\">iconfont</a></html>");
         panel6.add(iconFontLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
-        label6.setText("Some codes and feature were copied from oshi's demo project.");
+        label6.setText("Some codes and feature were copied from the demo project of oshi.");
         panel6.add(label6, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(5, 3, 20, 0), -1, -1));

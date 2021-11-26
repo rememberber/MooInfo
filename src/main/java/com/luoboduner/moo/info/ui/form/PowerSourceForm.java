@@ -112,11 +112,15 @@ public class PowerSourceForm {
             powerPanel.add(spacer2, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             JLabel label1 = new JLabel();
+            label1.setHorizontalAlignment(SwingConstants.RIGHT);
+            label1.setHorizontalTextPosition(SwingConstants.RIGHT);
+
             if (powerSource.isCharging()) {
-                label1.setHorizontalAlignment(SwingConstants.RIGHT);
-                label1.setHorizontalTextPosition(SwingConstants.RIGHT);
                 label1.setIcon(new FlatSVGIcon("icons/Charging.svg"));
                 label1.setText("Charging");
+            } else {
+                label1.setIcon(new FlatSVGIcon("icons/indicator_light.svg"));
+                label1.setText("Remaining Time: " + formatTimeRemaining(powerSource.getTimeRemainingEstimated()));
             }
 
             powerPanel.add(label1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
