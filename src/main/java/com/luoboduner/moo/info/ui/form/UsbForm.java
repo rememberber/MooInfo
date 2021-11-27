@@ -49,6 +49,12 @@ public class UsbForm {
         infoPane.setText(getUsbString(App.si.getHardware()));
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param hal
+     * @return
+     */
     private static String getUsbString(HardwareAbstractionLayer hal) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;

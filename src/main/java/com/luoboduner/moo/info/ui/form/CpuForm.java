@@ -178,6 +178,9 @@ public class CpuForm {
 
     }
 
+    /**
+     * Codes are copied from Hutool and have some modifications.
+     */
     private static void initPcuInfo() {
         CentralProcessor processor = App.si.getHardware().getProcessor();
         DecimalFormat format = new DecimalFormat("#.00");
@@ -278,6 +281,7 @@ public class CpuForm {
         Sensors sensors = App.si.getHardware().getSensors();
 
         cpuForm.getTemperatureLabel().setText(String.format("%.1f°C", sensors.getCpuTemperature()));
+        // Tips are copied from oshi.
         cpuForm.getTemperatureLabel().setToolTipText("On Windows, if not running Open Hardware Monitor, \n" +
                 "requires elevated permissions and hardware BIOS that supports publishing to WMI. \n" +
                 "In this case, returns the temperature of the \"Thermal Zone\" \n" +

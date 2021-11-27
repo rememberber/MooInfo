@@ -81,6 +81,9 @@ public class NetworkForm {
         serviceStartPerSecond.scheduleAtFixedRate(NetworkForm::initNetworkSpeed, 0, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     */
     private static void initInterfaces() {
         JTable interfacesTable = getInstance().getInterfacesTable();
 
@@ -101,6 +104,8 @@ public class NetworkForm {
         JTextPane parametersTextPane = networkForm.getParametersTextPane();
         parametersTextPane.setContentType("text/plain; charset=utf-8");
 
+        String contentType = "text/html; charset=utf-8";
+        parametersTextPane.setContentType(contentType);
         parametersTextPane.setText(buildParamsText(App.si.getOperatingSystem()));
     }
 
@@ -161,19 +166,25 @@ public class NetworkForm {
     }
 
     private static String buildParamsText(OperatingSystem os) {
-        NetworkParams params = os.getNetworkParams();
-        StringBuilder sb = new StringBuilder("Host Name: ").append(params.getHostName());
-        if (!params.getDomainName().isEmpty()) {
-            sb.append("\nDomain Name: ").append(params.getDomainName());
-        }
-        sb.append("\nIPv4 Default Gateway: ").append(params.getIpv4DefaultGateway());
-        if (!params.getIpv6DefaultGateway().isEmpty()) {
-            sb.append("\nIPv6 Default Gateway: ").append(params.getIpv6DefaultGateway());
-        }
-        sb.append("\nDNS Servers: ").append(getIPAddressesString(params.getDnsServers()));
-        return sb.toString();
+        NetworkParams networkParams = os.getNetworkParams();
+        StringBuilder builder = new StringBuilder();
+        builder.append("<br/>");
+        builder.append("<b>Domain Name: </b>").append(networkParams.getDomainName());
+        builder.append("<br/><b>Host Name: </b>").append(networkParams.getHostName());
+        builder.append("<br/><b>Ipv4 Default Gateway: </b>").append(networkParams.getIpv4DefaultGateway());
+        builder.append("<br/><b>Ipv6 Default Gateway: </b>").append(networkParams.getIpv6DefaultGateway());
+        builder.append("<br/><b>Dns Servers: </b>").append(Arrays.toString(networkParams.getDnsServers()));
+        builder.append("<br/>");
+        builder.append("<br/>");
+        return builder.toString();
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param ipAddressArr
+     * @return
+     */
     private static String getIPAddressesString(String[] ipAddressArr) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -190,6 +201,12 @@ public class NetworkForm {
         return sb.toString();
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param list
+     * @return
+     */
     private static Object[][] parseInterfaces(List<NetworkIF> list) {
         Map<NetworkIF, Integer> intfSortValueMap = new HashMap<>(INIT_HASH_SIZE);
         for (NetworkIF intf : list) {
@@ -217,6 +234,11 @@ public class NetworkForm {
         return intfArr;
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param tableColumnModel
+     */
     private static void resizeColumns(TableColumnModel tableColumnModel) {
         TableColumn column;
         int tW = tableColumnModel.getTotalColumnWidth();

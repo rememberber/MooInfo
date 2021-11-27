@@ -58,6 +58,9 @@ public class ProcessesForm {
     private static void initUi() {
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     */
     private static void initInfo() {
         OperatingSystem os = App.si.getOperatingSystem();
         TableModel model = new DefaultTableModel(parseProcesses(os.getProcesses(null, null, 0), App.si), COLUMNS);
@@ -94,6 +97,13 @@ public class ProcessesForm {
         timer.start();
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param list
+     * @param si
+     * @return
+     */
     private static Object[][] parseProcesses(List<OSProcess> list, SystemInfo si) {
         long totalMem = si.getHardware().getMemory().getTotal();
         int cpuCount = si.getHardware().getProcessor().getLogicalProcessorCount();
@@ -140,6 +150,11 @@ public class ProcessesForm {
         return procArr;
     }
 
+    /**
+     * Codes are copied from oshi and have some modifications.
+     *
+     * @param tableColumnModel
+     */
     private static void resizeColumns(TableColumnModel tableColumnModel) {
         TableColumn column;
         int tW = tableColumnModel.getTotalColumnWidth();
