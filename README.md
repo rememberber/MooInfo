@@ -14,6 +14,10 @@ Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
 ![Processes](screenshot/processes_mac.png)
 ![Storage](screenshot/storage_mac.png)
 ![Variables](screenshot/variables_mac.png)
+![USB](screenshot/usb_windows.png)
+![Theme](screenshot/theme_windows.png)
+
+[More Screenshot on Windows](screenshot/)
 ## Download
 [https://github.com/rememberber/MooInfo/releases](https://github.com/rememberber/MooInfo/releases)  
 [https://gitee.com/zhoubochina/MooInfo/releases](https://gitee.com/zhoubochina/MooInfo/releases)  
