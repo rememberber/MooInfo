@@ -15,6 +15,9 @@ Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
 ![Storage](screenshot/storage_mac.png)
 ![Variables](screenshot/variables_mac.png)
 ![USB](screenshot/usb_windows.png)
+
+More themes:
+
 ![Theme](screenshot/theme_windows.png)
 
 [More Screenshot on Windows](screenshot/)
