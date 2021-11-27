@@ -1,4 +1,6 @@
 # MooInfo
+![Overview](assets/logo/MooInfo.svg)
+
 A visual implementation of OSHI, to view information about the system and hardware.
 
 Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
@@ -14,6 +16,7 @@ Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
 ![Variables](screenshot/variables_mac.png)
 ## Download
 [https://github.com/rememberber/MooInfo/releases](https://github.com/rememberber/MooInfo/releases)  
+[https://gitee.com/zhoubochina/MooInfo/releases](https://gitee.com/zhoubochina/MooInfo/releases)  
 ## Thanks to
 [FlatLaf](https://github.com/JFormDesigner/FlatLaf)  
 [oshi](https://github.com/oshi/oshi)  
