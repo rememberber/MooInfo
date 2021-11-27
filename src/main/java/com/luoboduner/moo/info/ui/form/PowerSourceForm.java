@@ -113,11 +113,11 @@ public class PowerSourceForm {
                 temperatureLabel.setIcon(new FlatSVGIcon("icons/Charging.svg"));
                 powerTextBuilder.append("Charging");
             } else {
-                temperatureLabel.setIcon(new FlatSVGIcon("icons/indicator_light.svg"));
+                temperatureLabel.setIcon(new FlatSVGIcon("icons/indicator_light.svg", 10, 10));
                 powerTextBuilder.append("Remaining Time: " + formatTimeRemaining(powerSource.getTimeRemainingEstimated()));
             }
 
-//            powerTextBuilder.append(String.format(" / Temperature: %.1f°C", powerSource.getTemperature()));
+            powerTextBuilder.append(String.format(" / %.1f°C", powerSource.getTemperature()));
             temperatureLabel.setText(powerTextBuilder.toString());
             powerPanel.add(temperatureLabel, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
