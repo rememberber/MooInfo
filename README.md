@@ -1,5 +1,5 @@
 # MooInfo
-![Overview](assets/logo/MooInfo.svg)
+![logo](assets/logo/MooInfo.svg)
 
 A visual implementation of OSHI, to view information about the system and hardware.
 
