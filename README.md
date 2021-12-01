@@ -24,8 +24,13 @@ More themes:
 ## Download
 [https://github.com/rememberber/MooInfo/releases](https://github.com/rememberber/MooInfo/releases)  
 [https://gitee.com/zhoubochina/MooInfo/releases](https://gitee.com/zhoubochina/MooInfo/releases)  
+
 ## Thanks to
 [FlatLaf](https://github.com/JFormDesigner/FlatLaf)  
 [oshi](https://github.com/oshi/oshi)  
 [Hutool](http://hutool.cn/)  
 [iconfont](https://www.iconfont.cn/)  
+
+## Development considerations
+Before your first start, **set the IntelliJ IDEA as below**, then **maven clean**:
+![considerations](assets/material/gui_build.png)
