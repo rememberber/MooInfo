@@ -30,7 +30,7 @@
         <flatlaf-extras.version>1.6.5</flatlaf-extras.version>
         <hutool-all.version>5.7.16</hutool-all.version>
         <fastjson.version>1.2.78</fastjson.version>
-        <oshi-core.version>5.8.5</oshi-core.version>
+        <oshi-core.version>5.8.6</oshi-core.version>
     </properties>
 
     <dependencies>
