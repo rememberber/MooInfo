@@ -346,7 +346,7 @@ public class CpuForm {
      */
     private static double cpuData(CentralProcessor proc) {
         if (prevTicks == null) {
-            prevTicks = proc.getSystemCpuLoadTicks();
+            return 0;
         }
         double d = proc.getSystemCpuLoadBetweenTicks(prevTicks);
         return d;
@@ -380,7 +380,7 @@ public class CpuForm {
         scrollPaneLeft = new JScrollPane();
         panel2.add(scrollPaneLeft, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel3.setLayout(new GridLayoutManager(5, 1, new Insets(8, 0, 0, 0), -1, -1));
         scrollPaneLeft.setViewportView(panel3);
         scuPanel = new JPanel();
         scuPanel.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
