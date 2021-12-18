@@ -31,6 +31,7 @@
         <hutool-all.version>5.7.16</hutool-all.version>
         <fastjson.version>1.2.78</fastjson.version>
         <oshi-core.version>5.8.6</oshi-core.version>
+        <jfreechart.version>1.5.3</jfreechart.version>
     </properties>
 
     <dependencies>
@@ -119,6 +120,12 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>${oshi-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>${jfreechart.version}</version>
         </dependency>
     </dependencies>
 
