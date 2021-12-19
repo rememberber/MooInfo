@@ -164,9 +164,13 @@ public class CpuForm {
                 true, false);
 
         systemCpu.setBackgroundPaint(cpuForm.getChartPanel().getBackground());
+        systemCpu.setAntiAlias(true);
+        systemCpu.getXYPlot().setDomainGridlinesVisible(false);
+        systemCpu.getXYPlot().setRangeGridlinesVisible(false);
         systemCpu.getXYPlot().setBackgroundPaint(cpuForm.getScuProgressBar().getBackground());
         systemCpu.getXYPlot().setOutlinePaint(cpuForm.getScuProgressBar().getBackground());
         systemCpu.getXYPlot().getRenderer().setSeriesPaint(0, cpuForm.getScuProgressBar().getForeground());
+        systemCpu.getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(2f));
         systemCpu.getXYPlot().getDomainAxis().setVisible(false);
         systemCpu.getXYPlot().getRangeAxis().setVisible(false);
 
