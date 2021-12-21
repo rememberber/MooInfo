@@ -19,7 +19,7 @@
     {
       "version": "1.1.0",
       "title": "a little feature and optimization",
-      "log": "● update oshi-core to 5.8.6\n● update flatlaf to 2.0-rc1(Support Windows 11 snap layouts menu, macOS screen menu optimization)\n● processes sort method added same as the oshi's demo\n● add cpu usage chart\n"
+      "log": "● update oshi-core to 5.8.6\n● update flatlaf to 2.0-rc1(Support Windows 11 snap layouts menu, macOS screen menu optimization)\n● processes sort method added same as the oshi's demo\n● add cpu usage chart\n● make System Boot Time and Uptime readable\n"
     }
   ]
 }
