@@ -9,8 +9,10 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
+import com.luoboduner.moo.info.util.DateTimeUtil;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import oshi.hardware.*;
 import oshi.software.os.NetworkParams;
 import oshi.software.os.OperatingSystem;
@@ -146,8 +148,8 @@ public class DetailForm {
         builder.append("<br/><b>Open File Descriptors: </b>").append(operatingSystem.getFileSystem().getOpenFileDescriptors());
         builder.append("<br/><b>Thread Count: </b>").append(operatingSystem.getThreadCount());
         builder.append("<br/><b>Process Count: </b>").append(operatingSystem.getProcessCount());
-        builder.append("<br/><b>System Boot Time: </b>").append(operatingSystem.getSystemBootTime());
-        builder.append("<br/><b>System Uptime: </b>").append(operatingSystem.getSystemUptime());
+        builder.append("<br/><b>System Boot Time: </b>").append(DateFormatUtils.format(operatingSystem.getSystemBootTime() * 1000, "yyyy-MM-dd HH:mm:ss"));
+        builder.append("<br/><b>System Uptime: </b>").append(DateTimeUtil.toReadableTime(operatingSystem.getSystemUptime()));
 
         return builder.toString();
     }
