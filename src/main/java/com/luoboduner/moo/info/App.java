@@ -1,12 +1,17 @@
 package com.luoboduner.moo.info;
 
+import com.formdev.flatlaf.extras.FlatDesktop;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.luoboduner.moo.info.ui.Init;
+import com.luoboduner.moo.info.ui.dialog.AboutDialog;
+import com.luoboduner.moo.info.ui.dialog.SettingDialog;
 import com.luoboduner.moo.info.ui.form.LoadingForm;
 import com.luoboduner.moo.info.ui.form.MainWindow;
 import com.luoboduner.moo.info.ui.frame.MainFrame;
 import com.luoboduner.moo.info.util.ConfigUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +22,7 @@ import java.awt.*;
  * @author <a href="https://github.com/rememberber">RememBerBer</a>
  * @since 2021/11/07.
  */
+@Slf4j
 public class App {
 
     public static ConfigUtil config = ConfigUtil.getInstance();
@@ -34,6 +40,29 @@ public class App {
             System.setProperty("apple.awt.application.name", "MooInfo");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MooInfo");
             System.setProperty("apple.awt.application.appearance", "system");
+
+            FlatDesktop.setAboutHandler(() -> {
+                try {
+                    AboutDialog dialog = new AboutDialog();
+
+                    dialog.pack();
+                    dialog.setVisible(true);
+                } catch (Exception e2) {
+                    log.error(ExceptionUtils.getStackTrace(e2));
+                }
+            });
+            FlatDesktop.setPreferencesHandler(() -> {
+                try {
+                    SettingDialog dialog = new SettingDialog();
+
+                    dialog.pack();
+                    dialog.setVisible(true);
+                } catch (Exception e2) {
+                    log.error(ExceptionUtils.getStackTrace(e2));
+                }
+            });
+            FlatDesktop.setQuitHandler(FlatDesktop.QuitResponse::performQuit);
+
         }
 
         Init.initTheme();

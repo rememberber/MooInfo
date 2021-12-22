@@ -13,6 +13,11 @@
         <encoder>
             <pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} :%line - %msg%n</pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <root level="INFO">

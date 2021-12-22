@@ -8,6 +8,7 @@ import com.luoboduner.moo.info.ui.Init;
 import com.luoboduner.moo.info.ui.dialog.AboutDialog;
 import com.luoboduner.moo.info.ui.dialog.SettingDialog;
 import com.luoboduner.moo.info.ui.dialog.SystemEnvResultDialog;
+import com.luoboduner.moo.info.ui.dialog.SystemInfoTestDialog;
 import com.luoboduner.moo.info.ui.form.MainWindow;
 import com.luoboduner.moo.info.util.SystemUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
@@ -106,6 +107,12 @@ public class TopMenuBar extends JMenuBar {
         logMenuItem.setText("Show logs");
         logMenuItem.addActionListener(e -> logActionPerformed());
         appMenu.add(logMenuItem);
+
+        // System Info Test
+        JMenuItem syInfoTestMenuItem = new JMenuItem();
+        syInfoTestMenuItem.setText("System Info Test");
+        syInfoTestMenuItem.addActionListener(e -> sysInfoTestActionPerformed());
+        appMenu.add(syInfoTestMenuItem);
 
         // System environment variables
         JMenuItem sysEnvMenuItem = new JMenuItem();
@@ -332,6 +339,16 @@ public class TopMenuBar extends JMenuBar {
             dialog.setVisible(true);
         } catch (Exception e2) {
             log.error(ExceptionUtils.getStackTrace(e2));
+        }
+    }
+
+    private void sysInfoTestActionPerformed() {
+        try {
+            SystemInfoTestDialog dialog = new SystemInfoTestDialog();
+            dialog.pack();
+            dialog.setVisible(true);
+        } catch (Exception e2) {
+            log.error("Show system info test dialog failed", e2);
         }
     }
 
