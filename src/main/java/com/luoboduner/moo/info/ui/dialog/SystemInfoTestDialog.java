@@ -33,7 +33,7 @@ public class SystemInfoTestDialog extends JDialog {
 
     public SystemInfoTestDialog() {
         super(App.mainFrame, "System Info Test");
-        ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.6, 0.64);
+        ComponentUtil.setPreferSizeAndLocateToCenter(this, App.mainFrame.getWidth(), App.mainFrame.getHeight());
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
