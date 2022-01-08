@@ -79,7 +79,9 @@ public class PowerSourceForm {
             powerNameBuilder.append(powerSource.getName());
             powerNameBuilder.append(" ").append(powerSource.getManufacturer());
             powerNameBuilder.append(" ").append(powerSource.getDeviceName());
-            powerNameBuilder.append(" ").append(powerSource.getChemistry());
+            if (!"unknown".equals(powerSource.getChemistry())) {
+                powerNameBuilder.append(" ").append(powerSource.getChemistry());
+            }
             powerNameLabel.setText(powerNameBuilder.toString());
             powerPanel.add(powerNameLabel, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
@@ -100,7 +102,8 @@ public class PowerSourceForm {
             capacityBuilder.append("Current ").append(powerSource.getCurrentCapacity());
             capacityBuilder.append(" / ").append("Max ").append(powerSource.getMaxCapacity());
             capacityBuilder.append(" / ").append("Design ").append(powerSource.getDesignCapacity());
-            capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(")");
+            capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(") ");
+            capacityBuilder.append((powerSource.getDesignCapacity() - powerSource.getMaxCapacity()) * 100 / powerSource.getDesignCapacity()).append("% wastage");
             capacityLabel.setText(capacityBuilder.toString());
             powerPanel.add(capacityLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
