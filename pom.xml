@@ -26,8 +26,8 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.0.1-jre</guava.version>
         <okhttp.version>4.9.3</okhttp.version>
-        <flatlaf.version>2.0-rc1</flatlaf.version>
-        <flatlaf-extras.version>2.0-rc1</flatlaf-extras.version>
+        <flatlaf.version>2.0</flatlaf.version>
+        <flatlaf-extras.version>2.0</flatlaf-extras.version>
         <hutool-all.version>5.7.16</hutool-all.version>
         <fastjson.version>1.2.78</fastjson.version>
         <oshi-core.version>6.0.0</oshi-core.version>
