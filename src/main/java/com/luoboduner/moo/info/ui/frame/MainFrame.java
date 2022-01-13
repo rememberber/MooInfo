@@ -1,6 +1,5 @@
 package com.luoboduner.moo.info.ui.frame;
 
-import cn.hutool.core.thread.ThreadUtil;
 import com.formdev.flatlaf.extras.FlatSVGUtils;
 import com.luoboduner.moo.info.ui.UiConsts;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
@@ -26,12 +25,8 @@ public class MainFrame extends JFrame {
         topMenuBar.init();
         setJMenuBar(topMenuBar);
         ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.6, 0.8);
+
+        FrameListener.addListeners();
     }
 
-    /**
-     * add event listeners
-     */
-    public void addListeners() {
-        ThreadUtil.execute(FrameListener::addListeners);
-    }
 }
