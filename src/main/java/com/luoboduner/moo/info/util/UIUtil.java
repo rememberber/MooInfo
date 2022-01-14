@@ -59,6 +59,7 @@ public class UIUtil {
                 || "Darcula(Recommended)".equals(App.config.getTheme())
                 || "Flat Dark".equals(App.config.getTheme())
                 || "Flat Darcula".equals(App.config.getTheme())
+                || "Dark purple".equals(App.config.getTheme())
                 || "Flat Darcula(Recommended)".equals(App.config.getTheme());
     }
 }

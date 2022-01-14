@@ -79,7 +79,9 @@ public class PowerSourceForm {
             powerNameBuilder.append(powerSource.getName());
             powerNameBuilder.append(" ").append(powerSource.getManufacturer());
             powerNameBuilder.append(" ").append(powerSource.getDeviceName());
-            powerNameBuilder.append(" ").append(powerSource.getChemistry());
+            if (!"unknown".equals(powerSource.getChemistry())) {
+                powerNameBuilder.append(" ").append(powerSource.getChemistry());
+            }
             powerNameLabel.setText(powerNameBuilder.toString());
             powerPanel.add(powerNameLabel, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
@@ -100,7 +102,8 @@ public class PowerSourceForm {
             capacityBuilder.append("Current ").append(powerSource.getCurrentCapacity());
             capacityBuilder.append(" / ").append("Max ").append(powerSource.getMaxCapacity());
             capacityBuilder.append(" / ").append("Design ").append(powerSource.getDesignCapacity());
-            capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(")");
+            capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(") ");
+            capacityBuilder.append((powerSource.getDesignCapacity() - powerSource.getMaxCapacity()) * 100 / powerSource.getDesignCapacity()).append("% wastage");
             capacityLabel.setText(capacityBuilder.toString());
             powerPanel.add(capacityLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
@@ -205,12 +208,12 @@ public class PowerSourceForm {
      */
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         scrollPane = new JScrollPane();
         mainPanel.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel1.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane.setViewportView(panel1);
         powerBasePanel = new JPanel();
         powerBasePanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
