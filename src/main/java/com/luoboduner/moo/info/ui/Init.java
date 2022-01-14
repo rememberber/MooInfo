@@ -5,6 +5,7 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
 import com.luoboduner.moo.info.ui.form.*;
@@ -190,6 +191,12 @@ public class Init {
                     }
                     UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
             }
+            if (UIUtil.isDarkLaf()) {
+//                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.brighter().brighter());
+            } else {
+                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.darker().darker());
+            }
+//                    SwingUtilities.windowForComponent(App.mainFrame).repaint();
         } catch (Exception e) {
             logger.error(e);
         }

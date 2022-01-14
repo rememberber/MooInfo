@@ -9,6 +9,7 @@ import com.luoboduner.moo.info.ui.form.LoadingForm;
 import com.luoboduner.moo.info.ui.form.MainWindow;
 import com.luoboduner.moo.info.ui.frame.MainFrame;
 import com.luoboduner.moo.info.util.ConfigUtil;
+import com.luoboduner.moo.info.util.UIUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -39,7 +40,9 @@ public class App {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.application.name", "MooInfo");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MooInfo");
-            System.setProperty("apple.awt.application.appearance", "system");
+            if (UIUtil.isDarkLaf()) {
+                System.setProperty("apple.awt.application.appearance", "system");
+            }
 
             FlatDesktop.setAboutHandler(() -> {
                 try {
