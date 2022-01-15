@@ -4,6 +4,9 @@
 A visual implementation of OSHI, to view information about the system and hardware.
 
 Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
+## Supported platforms
+Windows • Linux • macOS
+
 ## Screenshot
 ![Overview](screenshot/overview_mac.png)
 ![CPU](screenshot/cpu_mac.png)
