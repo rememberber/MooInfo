@@ -3,9 +3,11 @@ package com.luoboduner.moo.info.ui;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.IntelliJTheme;
+import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatDarkPurpleIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
 import com.luoboduner.moo.info.ui.form.*;
@@ -13,7 +15,6 @@ import com.luoboduner.moo.info.util.SystemUtil;
 import com.luoboduner.moo.info.util.UIUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -86,24 +87,6 @@ public class Init {
      * init look and feel
      */
     public static void initTheme() {
-        if (SystemUtil.isMacM1()) {
-            try {
-                UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
-                logger.warn("FlatDarculaLaf theme set.");
-            } catch (Exception e) {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception e2) {
-                    logger.error(ExceptionUtils.getStackTrace(e2));
-                }
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-            return;
-        }
-
-        if (App.config.isUnifiedBackground()) {
-            UIManager.put("TitlePane.unifiedBackground", true);
-        }
 
         try {
             switch (App.config.getTheme()) {
@@ -111,92 +94,43 @@ public class Init {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     break;
                 case "Flat Light":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    FlatLightLaf.install();
+                    FlatLightLaf.setup();
                     break;
                 case "Flat IntelliJ":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    UIManager.setLookAndFeel("com.formdev.flatlaf.FlatIntelliJLaf");
+                    FlatIntelliJLaf.setup();
                     break;
                 case "Flat Dark":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
-                    break;
-                case "Darcula":
-                case "Darcula(Recommended)":
-                case "Flat Darcula(Recommended)":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
-
-                    UIManager.put("PopupMenu.background", UIManager.getColor("Panel.background"));
-
-/**
- If you don't like/want it, you can disable it with:
- UIManager.put( "TitlePane.useWindowDecorations", false );
-
- It is also possible to disable only the embedded menu bar (and keep the dark title pane) with:
- UIManager.put( "TitlePane.menuBarEmbedded", false );
-
- It is also possible to disable this on command line with following VM options:
- -Dflatlaf.useWindowDecorations=false
- -Dflatlaf.menuBarEmbedded=false
-
- If you have following code in your app, you can remove it (no longer necessary):
- // enable window decorations
- JFrame.setDefaultLookAndFeelDecorated( true );
- JDialog.setDefaultLookAndFeelDecorated( true );
- **/
+                    FlatDarkLaf.setup();
                     break;
                 case "Dark purple":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    IntelliJTheme.setup(App.class.getResourceAsStream(
-                            "/theme/DarkPurple.theme.json"));
+                    FlatDarkPurpleIJTheme.setup();
                     break;
                 case "IntelliJ Cyan":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    IntelliJTheme.setup(App.class.getResourceAsStream(
-                            "/theme/Cyan.theme.json"));
+                    FlatCyanLightIJTheme.setup();
                     break;
                 case "IntelliJ Light":
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    IntelliJTheme.setup(App.class.getResourceAsStream(
-                            "/theme/Light.theme.json"));
+                    FlatLightFlatIJTheme.setup();
                     break;
 
                 default:
-                    if (SystemUtil.isJBR()) {
-                        JFrame.setDefaultLookAndFeelDecorated(true);
-                        JDialog.setDefaultLookAndFeelDecorated(true);
-                    }
-                    UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+                    FlatDarculaLaf.setup();
             }
+
             if (UIUtil.isDarkLaf()) {
 //                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.brighter().brighter());
             } else {
                 FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.darker().darker());
+//                SwingUtilities.windowForComponent(App.mainFrame).repaint();
             }
-//                    SwingUtilities.windowForComponent(App.mainFrame).repaint();
+
+            if (App.config.isUnifiedBackground()) {
+                UIManager.put("TitlePane.unifiedBackground", true);
+            }
+
+            // top menubar background
+            UIManager.put("PopupMenu.background", UIManager.getColor("Panel.background"));
+            // arrow type
+            UIManager.put("Component.arrowType", "chevron");
         } catch (Exception e) {
             logger.error(e);
         }

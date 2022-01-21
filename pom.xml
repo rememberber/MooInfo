@@ -28,6 +28,7 @@
         <okhttp.version>4.9.3</okhttp.version>
         <flatlaf.version>2.0</flatlaf.version>
         <flatlaf-extras.version>2.0</flatlaf-extras.version>
+        <flatlaf-intellij-themes.version>2.0</flatlaf-intellij-themes.version>
         <hutool-all.version>5.7.16</hutool-all.version>
         <fastjson.version>1.2.78</fastjson.version>
         <oshi-core.version>6.1.0</oshi-core.version>
@@ -105,6 +106,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+            <version>${flatlaf-intellij-themes.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool-all.version}</version>
@@ -160,7 +167,7 @@
 
                                 <!-- setup generation properties -->
                                 <setupMode>installForAllUsers</setupMode>
-                                                                <createDesktopIconTask>true</createDesktopIconTask>
+                                <createDesktopIconTask>true</createDesktopIconTask>
                                 <disableDirPage>false</disableDirPage>
                                 <disableFinishedPage>false</disableFinishedPage>
                                 <setupLanguages>
@@ -170,30 +177,30 @@
                             </winConfig>
                         </configuration>
                     </execution>
-<!--                                        <execution>-->
-<!--                                            <id>bundling-for-linux</id>-->
-<!--                                            <phase>package</phase>-->
-<!--                                            <goals>-->
-<!--                                                <goal>package</goal>-->
-<!--                                            </goals>-->
-<!--                                            <configuration>-->
-<!--                                                <platform>linux</platform>-->
-<!--                                                <createTarball>true</createTarball>-->
-<!--&lt;!&ndash;                                                <jdkPath>X:\\path\to\linux\jdk</jdkPath>&ndash;&gt;-->
-<!--                                            </configuration>-->
-<!--                                        </execution>-->
-<!--                                                            <execution>-->
-<!--                                                                <id>bundling-for-mac</id>-->
-<!--                                                                <phase>package</phase>-->
-<!--                                                                <goals>-->
-<!--                                                                    <goal>package</goal>-->
-<!--                                                                </goals>-->
-<!--                                                                <configuration>-->
-<!--                                                                    <platform>mac</platform>-->
-<!--                                                                    <createTarball>true</createTarball>-->
-<!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
-<!--                                                                </configuration>-->
-<!--                                                            </execution>-->
+                    <!--                                        <execution>-->
+                    <!--                                            <id>bundling-for-linux</id>-->
+                    <!--                                            <phase>package</phase>-->
+                    <!--                                            <goals>-->
+                    <!--                                                <goal>package</goal>-->
+                    <!--                                            </goals>-->
+                    <!--                                            <configuration>-->
+                    <!--                                                <platform>linux</platform>-->
+                    <!--                                                <createTarball>true</createTarball>-->
+                    <!--&lt;!&ndash;                                                <jdkPath>X:\\path\to\linux\jdk</jdkPath>&ndash;&gt;-->
+                    <!--                                            </configuration>-->
+                    <!--                                        </execution>-->
+                    <!--                                                            <execution>-->
+                    <!--                                                                <id>bundling-for-mac</id>-->
+                    <!--                                                                <phase>package</phase>-->
+                    <!--                                                                <goals>-->
+                    <!--                                                                    <goal>package</goal>-->
+                    <!--                                                                </goals>-->
+                    <!--                                                                <configuration>-->
+                    <!--                                                                    <platform>mac</platform>-->
+                    <!--                                                                    <createTarball>true</createTarball>-->
+                    <!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
+                    <!--                                                                </configuration>-->
+                    <!--                                                            </execution>-->
                 </executions>
             </plugin>
         </plugins>
