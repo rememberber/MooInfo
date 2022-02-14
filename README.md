@@ -1,7 +1,7 @@
 # MooInfo
 ![logo](assets/logo/MooInfo.svg)
 
-A visual implementation of OSHI, to view information about the system and hardware.
+V****isual implementation of OSHI, to view information about the system and hardware.
 
 Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
 ## Supported platforms
@@ -11,9 +11,9 @@ Windows • Linux • macOS
 ![Overview](screenshot/overview_mac.png)
 ![CPU](screenshot/cpu_mac.png)
 ![Memory](screenshot/memory_mac.png)
-![Detail](screenshot/detail_mac.png)
+![Detail](screenshot/detail_mac.png)****
 ![Network](screenshot/network_mac.png)
-![Power](screenshot/power_mac.png)
+![Power](screenshot/power_mac.png)****
 ![Processes](screenshot/processes_mac.png)
 ![Storage](screenshot/storage_mac.png)
 ![Variables](screenshot/variables_mac.png)
