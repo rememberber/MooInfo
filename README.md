@@ -1,7 +1,7 @@
 # MooInfo
 ![logo](assets/logo/MooInfo.svg)
 
-V****isual implementation of OSHI, to view information about the system and hardware.
+Visual implementation of OSHI, to view information about the system and hardware.
 
 Such as OS, processes, memory, CPU, disks, devices, sensors, etc.
 ## Supported platforms
