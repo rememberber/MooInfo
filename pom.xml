@@ -18,19 +18,18 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <logback.version>1.2.7</logback.version>
+        <logback.version>1.2.10</logback.version>
         <forms_rt.version>7.0.3</forms_rt.version>
-        <AppleJavaExtensions.version>1.4</AppleJavaExtensions.version>
         <lombok.version>1.18.22</lombok.version>
-        <junit-jupiter-api.version>5.8.1</junit-jupiter-api.version>
+        <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.0.1-jre</guava.version>
         <okhttp.version>4.9.3</okhttp.version>
         <flatlaf.version>2.0.1</flatlaf.version>
         <flatlaf-extras.version>2.0.1</flatlaf-extras.version>
         <flatlaf-intellij-themes.version>2.0.1</flatlaf-intellij-themes.version>
-        <hutool-all.version>5.7.16</hutool-all.version>
-        <fastjson.version>1.2.78</fastjson.version>
+        <hutool-all.version>5.7.21</hutool-all.version>
+        <fastjson.version>1.2.79</fastjson.version>
         <oshi-core.version>6.1.2</oshi-core.version>
         <jfreechart.version>1.5.3</jfreechart.version>
     </properties>
@@ -54,12 +53,6 @@
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
             <version>${forms_rt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.apple</groupId>
-            <artifactId>AppleJavaExtensions</artifactId>
-            <version>${AppleJavaExtensions.version}</version>
         </dependency>
 
         <dependency>
