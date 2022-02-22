@@ -309,7 +309,7 @@ public class CpuForm {
             totalFreq = divide.add(totalFreq);
 
         }
-        cpuForm.getFreqLabel().setText(String.valueOf(totalFreq.divide(new BigDecimal(4), 2, RoundingMode.HALF_UP)));
+        cpuForm.getFreqLabel().setText(String.valueOf(totalFreq.divide(new BigDecimal(currentFreq.length), 2, RoundingMode.HALF_UP)));
 
     }
 
