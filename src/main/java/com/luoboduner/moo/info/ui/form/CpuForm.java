@@ -297,6 +297,7 @@ public class CpuForm {
         CentralProcessor processor = App.si.getHardware().getProcessor();
 
         long[] currentFreq = processor.getCurrentFreq();
+        BigDecimal totalFreq = BigDecimal.ZERO;
 
         for (int i = 0; i < currentFreq.length; i++) {
 
@@ -305,9 +306,10 @@ public class CpuForm {
             String freqStr = divide + " GHz";
             textField.setText(freqStr);
 
-            // TODO to fix
-            cpuForm.getFreqLabel().setText(freqStr);
+            totalFreq = divide.add(totalFreq);
+
         }
+        cpuForm.getFreqLabel().setText(String.valueOf(totalFreq.divide(new BigDecimal(currentFreq.length), 2, RoundingMode.HALF_UP)));
 
     }
 
