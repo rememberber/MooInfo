@@ -163,6 +163,7 @@
                                 <createDesktopIconTask>true</createDesktopIconTask>
                                 <disableDirPage>false</disableDirPage>
                                 <disableFinishedPage>false</disableFinishedPage>
+                                <removeOldLibs>true</removeOldLibs>
                                 <setupLanguages>
                                     <english>compiler:Default.isl</english>
                                     <!--                                    <spanish>compiler:Languages\Chinese.isl</spanish>-->
