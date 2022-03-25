@@ -65,11 +65,7 @@ public class ConfigUtil extends ConfigBaseUtil {
     }
 
     public String getTheme() {
-        if (SystemUtil.isLinuxOs()) {
-            return setting.getStr("theme", "setting.appearance", "System Default");
-        } else {
-            return setting.getStr("theme", "setting.appearance", "Dark purple");
-        }
+        return setting.getStr("theme", "setting.appearance", "Dark purple");
     }
 
     public void setTheme(String theme) {
