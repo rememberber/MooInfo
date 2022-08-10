@@ -1,12 +1,14 @@
 package com.luoboduner.moo.info.ui.dialog;
 
 import cn.hutool.core.thread.ThreadUtil;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.UiConsts;
 import com.luoboduner.moo.info.util.ComponentUtil;
+import com.luoboduner.moo.info.util.ScrollUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
 
 import javax.swing.*;
@@ -28,7 +30,7 @@ public class AboutDialog extends JDialog {
     private JLabel codeGiteeLabel;
     private JLabel issueLabel;
     private JLabel hutoolLabel;
-    private JLabel vsCodeIconsLabel;
+    private JLabel iconFontLabel;
     private JLabel wePushLinkLabel;
     private JPanel wePushPanel;
     private JLabel authorLabel;
@@ -36,11 +38,12 @@ public class AboutDialog extends JDialog {
     private JLabel flatLafLabel;
     private JPanel mooToolPanel;
     private JLabel httpsGithubComRememberberLabel;
+    private JLabel oshiLabel;
 
     public AboutDialog() {
 
         super(App.mainFrame, "About");
-        ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.4, 0.64);
+        ComponentUtil.setPreferSizeAndLocateToCenter(this, 0.5, 0.64);
         setContentPane(contentPane);
         setModal(true);
 
@@ -55,10 +58,10 @@ public class AboutDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onOK(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        logoLabel.setIcon(new FlatSVGIcon("icons/logo-128.svg"));
         versionLabel.setText(UiConsts.APP_VERSION);
 
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.getVerticalScrollBar().setDoubleBuffered(true);
+        ScrollUtil.smoothPane(scrollPane);
         contentPane.updateUI();
 
         logoLabel.addMouseListener(new MouseAdapter() {
@@ -199,6 +202,29 @@ public class AboutDialog extends JDialog {
                 e.getComponent().setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
         });
+        oshiLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.browse(new URI("https://github.com/oshi/oshi"));
+                } catch (IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                e.getComponent().setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+        });
         hutoolLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -268,13 +294,13 @@ public class AboutDialog extends JDialog {
                 e.getComponent().setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
         });
-        vsCodeIconsLabel.addMouseListener(new MouseAdapter() {
+        iconFontLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 Desktop desktop = Desktop.getDesktop();
                 try {
-                    desktop.browse(new URI("https://github.com/microsoft/vscode-icons"));
+                    desktop.browse(new URI("https://www.iconfont.cn/"));
                 } catch (IOException | URISyntaxException e1) {
                     e1.printStackTrace();
                 }
@@ -328,12 +354,12 @@ public class AboutDialog extends JDialog {
      */
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
-        contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(20, 20, 20, 20), -1, -1));
         scrollPane = new JScrollPane();
         contentPane.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(9, 2, new Insets(40, 40, 40, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(9, 2, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane.setViewportView(panel1);
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         logoLabel = new JLabel();
@@ -349,7 +375,7 @@ public class AboutDialog extends JDialog {
         panel1.add(panel2, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "MooInfo", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, 20, panel2.getFont()), new Color(-4425028)));
         final JLabel label1 = new JLabel();
-        label1.setText("A visual implementation of OSHI, to view information about the system and hardware");
+        label1.setText("Visual implementation of OSHI, to view information about the system and hardware");
         panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         authorLabel = new JLabel();
         authorLabel.setText("Proudly by RememBerBer 周波");
@@ -361,24 +387,21 @@ public class AboutDialog extends JDialog {
         versionLabel.setToolTipText("Check for updates");
         panel2.add(versionLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(5, 1, new Insets(5, 3, 20, 0), -1, -1));
+        panel3.setLayout(new GridLayoutManager(4, 1, new Insets(5, 3, 20, 0), -1, -1));
         panel1.add(panel3, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "About", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, panel3.getFont()), null));
         final JLabel label2 = new JLabel();
         label2.setText("Hi. Thanks to use MooInfo. \"Moo\" named from my daughter.");
         panel3.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
-        label3.setText("Less Java developer use Swing building projects, but I still love to develop by it.");
+        label3.setText("I developed this app like my daughter's building toy blocks, ");
         panel3.add(label3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("So every little free time, I had went towards the development.");
+        label4.setText("just putting the off-the-shelf open source tools together.");
         panel3.add(label4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
-        label5.setText("I did some works finaly, although there are so many same on web page.");
+        label5.setText("Hope you enjoy using it as much as I did building it.");
         panel3.add(label5, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label6 = new JLabel();
-        label6.setText("Hope you enjoy using it as much as I did building it.");
-        panel3.add(label6, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(2, 1, new Insets(5, 3, 20, 0), -1, -1));
         panel1.add(panel4, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -397,18 +420,24 @@ public class AboutDialog extends JDialog {
         issueLabel.setText("<html><a href=\"https://github.com/rememberber/MooInfo/issues\">https://github.com/rememberber/MooInfo/issues</a></html>");
         panel5.add(issueLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(3, 1, new Insets(5, 3, 20, 0), -1, -1));
+        panel6.setLayout(new GridLayoutManager(5, 1, new Insets(5, 3, 20, 0), -1, -1));
         panel1.add(panel6, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "THANKS TO", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, panel6.getFont()), null));
         flatLafLabel = new JLabel();
         flatLafLabel.setText("<html><a href=\"https://github.com/JFormDesigner/FlatLaf\">FlatLaf</a></html>");
         panel6.add(flatLafLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        oshiLabel = new JLabel();
+        oshiLabel.setText("<html><a href=\"https://github.com/oshi/oshi\">oshi</a></html>");
+        panel6.add(oshiLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hutoolLabel = new JLabel();
         hutoolLabel.setText("<html><a href=\"https://hutool.cn/\">Hutool</a></html>");
-        panel6.add(hutoolLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        vsCodeIconsLabel = new JLabel();
-        vsCodeIconsLabel.setText("<html><a href=\"https://github.com/microsoft/vscode-icons\">vscode-icons</a></html>");
-        panel6.add(vsCodeIconsLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel6.add(hutoolLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        iconFontLabel = new JLabel();
+        iconFontLabel.setText("<html><a href=\"https://www.iconfont.cn/\">iconfont</a></html>");
+        panel6.add(iconFontLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label6 = new JLabel();
+        label6.setText("Some codes and feature were copied from the demo project of oshi.");
+        panel6.add(label6, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(5, 3, 20, 0), -1, -1));
         panel1.add(panel7, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

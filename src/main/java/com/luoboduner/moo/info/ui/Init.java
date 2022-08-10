@@ -7,9 +7,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatDarkPurpleIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
+import com.formdev.flatlaf.intellijthemes.*;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
 import com.luoboduner.moo.info.util.SystemUtil;
@@ -111,6 +109,12 @@ public class Init {
                     break;
                 case "IntelliJ Light":
                     FlatLightFlatIJTheme.setup();
+                    break;
+                case "Xcode-Dark":
+                    FlatXcodeDarkIJTheme.setup();
+                    break;
+                case "Vuesion":
+                    FlatVuesionIJTheme.setup();
                     break;
 
                 default:
