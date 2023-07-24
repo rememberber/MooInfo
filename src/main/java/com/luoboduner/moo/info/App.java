@@ -42,9 +42,7 @@ public class App {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.application.name", "MooInfo");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MooInfo");
-            if (UIUtil.isDarkLaf()) {
-                System.setProperty("apple.awt.application.appearance", "system");
-            }
+            System.setProperty("apple.awt.application.appearance", "system");
 
             FlatDesktop.setAboutHandler(() -> {
                 try {
@@ -73,8 +71,8 @@ public class App {
         Init.initTheme();
 
         // install inspectors
-        FlatInspector.install( "ctrl shift alt X" );
-        FlatUIDefaultsInspector.install( "ctrl shift alt Y" );
+        FlatInspector.install("ctrl shift alt X");
+        FlatUIDefaultsInspector.install("ctrl shift alt Y");
 
         mainFrame = new MainFrame();
         mainFrame.init();

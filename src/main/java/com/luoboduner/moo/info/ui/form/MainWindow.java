@@ -1,7 +1,9 @@
 package com.luoboduner.moo.info.ui.form;
 
+import com.formdev.flatlaf.util.SystemInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.luoboduner.moo.info.util.SystemUtil;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -44,6 +46,11 @@ public class MainWindow {
 
     public void init() {
         mainWindow = getInstance();
+        if (SystemUtil.isMacOs() && SystemInfo.isMacFullWindowContentSupported) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
+            gridLayoutManager.setMargin(new Insets(20, 0, 0, 0));
+        }
+
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getDetailPanel().add(DetailForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getMemoryPanel().add(MemoryForm.getInstance().getMainPanel(), gridConstraints);

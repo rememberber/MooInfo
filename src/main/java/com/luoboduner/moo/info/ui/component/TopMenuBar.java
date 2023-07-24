@@ -53,7 +53,11 @@ public class TopMenuBar extends JMenuBar {
             "Flat Darcula(Recommended)",
             "Dark purple",
             "IntelliJ Cyan",
-            "IntelliJ Light"};
+            "IntelliJ Light",
+            "Xcode-Dark",
+            "Vuesion",
+            "Flat macOS Light",
+            "Flat macOS Dark"};
 
     private static String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
