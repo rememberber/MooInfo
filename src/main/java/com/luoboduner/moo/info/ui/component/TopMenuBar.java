@@ -55,7 +55,9 @@ public class TopMenuBar extends JMenuBar {
             "IntelliJ Cyan",
             "IntelliJ Light",
             "Xcode-Dark",
-            "Vuesion"};
+            "Vuesion",
+            "Flat macOS Light",
+            "Flat macOS Dark"};
 
     private static String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 

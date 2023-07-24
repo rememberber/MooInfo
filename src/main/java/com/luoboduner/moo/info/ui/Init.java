@@ -118,7 +118,12 @@ public class Init {
                 case "Vuesion":
                     FlatVuesionIJTheme.setup();
                     break;
-
+                case "Flat macOS Light":
+                    FlatMacLightLaf.setup();
+                    break;
+                case "Flat macOS Dark":
+                    FlatMacDarkLaf.setup();
+                    break;
                 default:
                     FlatDarculaLaf.setup();
             }
