@@ -4,11 +4,13 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.StreamProgress;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
+import com.formdev.flatlaf.util.SystemInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.util.ComponentUtil;
+import com.luoboduner.moo.info.util.SystemUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,6 +45,15 @@ public class UpdateDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        if (SystemUtil.isMacOs() && SystemInfo.isMacFullWindowContentSupported) {
+            this.getRootPane().putClientProperty("apple.awt.fullWindowContent", true);
+            this.getRootPane().putClientProperty("apple.awt.transparentTitleBar", true);
+            this.getRootPane().putClientProperty("apple.awt.fullscreenable", true);
+            this.getRootPane().putClientProperty("apple.awt.windowTitleVisible", false);
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) contentPane.getLayout();
+            gridLayoutManager.setMargin(new Insets(28, 0, 0, 0));
+        }
 
         ComponentUtil.setPreferSizeAndLocateToCenter(this, 600, 200);
 

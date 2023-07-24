@@ -9,6 +9,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.util.ComponentUtil;
 import com.luoboduner.moo.info.util.ConsoleUtil;
+import com.luoboduner.moo.info.util.SystemUtil;
 import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.*;
@@ -37,6 +38,15 @@ public class SystemInfoTestDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        if (SystemUtil.isMacOs() && com.formdev.flatlaf.util.SystemInfo.isMacFullWindowContentSupported) {
+            this.getRootPane().putClientProperty("apple.awt.fullWindowContent", true);
+            this.getRootPane().putClientProperty("apple.awt.transparentTitleBar", true);
+            this.getRootPane().putClientProperty("apple.awt.fullscreenable", true);
+            this.getRootPane().putClientProperty("apple.awt.windowTitleVisible", false);
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) contentPane.getLayout();
+            gridLayoutManager.setMargin(new Insets(28, 0, 0, 0));
+        }
 
         buttonOK.addActionListener(e -> onOK());
 
