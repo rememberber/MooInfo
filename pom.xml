@@ -30,7 +30,7 @@
         <flatlaf-intellij-themes.version>3.2</flatlaf-intellij-themes.version>
         <hutool-all.version>5.8.11</hutool-all.version>
         <fastjson.version>2.0.22</fastjson.version>
-        <oshi-core.version>6.4.4</oshi-core.version>
+        <oshi-core.version>6.4.5</oshi-core.version>
         <jfreechart.version>1.5.3</jfreechart.version>
     </properties>
 
