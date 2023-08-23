@@ -25,9 +25,9 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.1-jre</guava.version>
         <okhttp.version>4.10.0</okhttp.version>
-        <flatlaf.version>3.1.1</flatlaf.version>
-        <flatlaf-extras.version>3.1.1</flatlaf-extras.version>
-        <flatlaf-intellij-themes.version>3.1.1</flatlaf-intellij-themes.version>
+        <flatlaf.version>3.2</flatlaf.version>
+        <flatlaf-extras.version>3.2</flatlaf-extras.version>
+        <flatlaf-intellij-themes.version>3.2</flatlaf-intellij-themes.version>
         <hutool-all.version>5.8.11</hutool-all.version>
         <fastjson.version>2.0.22</fastjson.version>
         <oshi-core.version>6.4.4</oshi-core.version>
@@ -141,37 +141,37 @@
                     <generateInstaller>true</generateInstaller>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>bundling-for-windows</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
-                        <configuration>
-                            <platform>windows</platform>
-                            <createZipball>true</createZipball>
-                            <additionalModules>jdk.crypto.ec</additionalModules>
-                            <!--                            <administratorRequired>true</administratorRequired>-->
-                            <winConfig>
+<!--                    <execution>-->
+<!--                        <id>bundling-for-windows</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>package</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <platform>windows</platform>-->
+<!--                            <createZipball>true</createZipball>-->
+<!--                            <additionalModules>jdk.crypto.ec</additionalModules>-->
+<!--                            &lt;!&ndash;                            <administratorRequired>true</administratorRequired>&ndash;&gt;-->
+<!--                            <winConfig>-->
 
-                                <!-- general properties -->
-                                <generateSetup>true</generateSetup>
-                                <generateMsi>true</generateMsi>
-                                <generateMsm>true</generateMsm>
+<!--                                &lt;!&ndash; general properties &ndash;&gt;-->
+<!--                                <generateSetup>true</generateSetup>-->
+<!--                                <generateMsi>true</generateMsi>-->
+<!--                                <generateMsm>true</generateMsm>-->
 
-                                <!-- setup generation properties -->
-                                <setupMode>installForAllUsers</setupMode>
-                                <createDesktopIconTask>true</createDesktopIconTask>
-                                <disableDirPage>false</disableDirPage>
-                                <disableFinishedPage>false</disableFinishedPage>
-                                <removeOldLibs>true</removeOldLibs>
-                                <setupLanguages>
-                                    <english>compiler:Default.isl</english>
-                                    <!--                                    <spanish>compiler:Languages\Chinese.isl</spanish>-->
-                                </setupLanguages>
-                            </winConfig>
-                        </configuration>
-                    </execution>
+<!--                                &lt;!&ndash; setup generation properties &ndash;&gt;-->
+<!--                                <setupMode>installForAllUsers</setupMode>-->
+<!--                                <createDesktopIconTask>true</createDesktopIconTask>-->
+<!--                                <disableDirPage>false</disableDirPage>-->
+<!--                                <disableFinishedPage>false</disableFinishedPage>-->
+<!--                                <removeOldLibs>true</removeOldLibs>-->
+<!--                                <setupLanguages>-->
+<!--                                    <english>compiler:Default.isl</english>-->
+<!--                                    &lt;!&ndash;                                    <spanish>compiler:Languages\Chinese.isl</spanish>&ndash;&gt;-->
+<!--                                </setupLanguages>-->
+<!--                            </winConfig>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
 <!--                                                            <execution>-->
 <!--                                                                <id>bundling-for-linux</id>-->
 <!--                                                                <phase>package</phase>-->
@@ -185,19 +185,19 @@
 <!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\linux\jdk</jdkPath>&ndash;&gt;-->
 <!--                                                                </configuration>-->
 <!--                                                            </execution>-->
-                    <!--                                                            <execution>-->
-                    <!--                                                                <id>bundling-for-mac</id>-->
-                    <!--                                                                <phase>package</phase>-->
-                    <!--                                                                <goals>-->
-                    <!--                                                                    <goal>package</goal>-->
-                    <!--                                                                </goals>-->
-                    <!--                                                                <configuration>-->
-                    <!--                                                                    <platform>mac</platform>-->
-                    <!--                                                                    <createTarball>true</createTarball>-->
-<!--                    <additionalModules>jdk.crypto.ec</additionalModules>-->
-                    <!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
-                    <!--                                                                </configuration>-->
-                    <!--                                                            </execution>-->
+                                                                                <execution>
+                                                                                    <id>bundling-for-mac</id>
+                                                                                    <phase>package</phase>
+                                                                                    <goals>
+                                                                                        <goal>package</goal>
+                                                                                    </goals>
+                                                                                    <configuration>
+                                                                                        <platform>mac</platform>
+                                                                                        <createTarball>true</createTarball>
+                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                        <!--                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>-->
+                                                                                    </configuration>
+                                                                                </execution>
                 </executions>
             </plugin>
         </plugins>
