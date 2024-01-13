@@ -127,7 +127,25 @@
             <artifactId>jfreechart</artifactId>
             <version>${jfreechart.version}</version>
         </dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>1.0-alpha3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-icns</artifactId>
+			<version>3.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ru.oleg-cherednik.icoman</groupId>
+			<artifactId>icon-manager</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+	</dependencies>
 
     <build>
         <plugins>
