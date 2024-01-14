@@ -260,7 +260,7 @@ public class ProcessesForm {
 					String iconFilePath = iconPathSplit + "Resources/" + cFBundleIconFile;
 
 					// Ensure file path ends with ".icns"
-					if (!iconFilePath.contains(".icns")) {
+					if (!iconFilePath.endsWith(".icns")) {
 						iconFilePath += ".icns";
 					}
 
