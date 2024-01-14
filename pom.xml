@@ -32,6 +32,8 @@
         <fastjson.version>2.0.32</fastjson.version>
         <oshi-core.version>6.4.4</oshi-core.version>
         <jfreechart.version>1.5.4</jfreechart.version>
+		<imaging.version>1.0-alpha3</imaging.version>
+		<xmlwise.version>1.2.11</xmlwise.version>
     </properties>
 
     <dependencies>
@@ -131,18 +133,13 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-imaging</artifactId>
-			<version>1.0-alpha3</version>
+			<version>${imaging.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.twelvemonkeys.imageio</groupId>
-			<artifactId>imageio-icns</artifactId>
-			<version>3.10.1</version>
-		</dependency>
-		<dependency>
-			<groupId>ru.oleg-cherednik.icoman</groupId>
-			<artifactId>icon-manager</artifactId>
-			<version>1.0</version>
+			<groupId>xmlwise</groupId>
+			<artifactId>xmlwise</artifactId>
+			<version>${xmlwise.version}</version>
 		</dependency>
 
 	</dependencies>

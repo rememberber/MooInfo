@@ -8,14 +8,17 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.UiConsts;
 import lombok.Getter;
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.formats.icns.IcnsImageParser;
 import org.apache.commons.lang3.SystemUtils;
+import org.jetbrains.annotations.NotNull;
 import oshi.PlatformEnum;
 import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
+import xmlwise.Plist;
+
+import javax.swing.Timer;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.*;
@@ -23,10 +26,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ProcessesForm
@@ -40,9 +43,9 @@ public class ProcessesForm {
 		"Process Name"};
 	private static final double[] COLUMN_WIDTH_PERCENT = {0.01, 0.07, 0.07, 0.07, 0.07, 0.09, 0.1, 0.1, 0.08, 0.35};
 
-	private transient static Map<Integer, OSProcess> priorSnapshotMap = new HashMap<>();
+	private final static Map<Integer, OSProcess> priorSnapshotMap = new HashMap<>();
 
-	private static HashMap<String, Icon> iconCacheMap = new HashMap<>();
+	private final static HashMap<String, Icon> iconCacheMap = new HashMap<>();
 
 	private static final Log logger = LogFactory.get();
 
@@ -112,7 +115,7 @@ public class ProcessesForm {
 		TableModel model = new DefaultTableModel(parseProcesses(os.getProcesses(null, null, 0), App.si), COLUMNS) {
 			@Override
 			public Class<?> getColumnClass(int column) {
-				if (column == 0){
+				if (column == 0) {
 
 					return ImageIcon.class;
 				}
@@ -193,7 +196,7 @@ public class ProcessesForm {
 			// Matches order of COLUMNS field
 			i--;
 			int pid = p.getProcessID();
-			procArr[i][0] = getProcessIcon(p); // getProcessIcon(p.getCommandLine());
+			procArr[i][0] = getProcessIcon(p.getPath());
 			procArr[i][1] = pid;
 			procArr[i][2] = p.getParentProcessID();
 			procArr[i][3] = p.getThreadCount();
@@ -219,56 +222,78 @@ public class ProcessesForm {
 		return procArr;
 	}
 
-
-	private static Icon getProcessIcon(OSProcess p) {
-		String fullProcessPathName = p.getPath();
-		if (iconCacheMap.containsKey(fullProcessPathName)){
+	/**
+	 * Retrieves the executable's associated icon if available, or returns null.
+	 *
+	 * @param fullProcessPathName The full path of the executable process.
+	 * @return The associated icon, or null if not found.
+	 */
+	private static Icon getProcessIcon(String fullProcessPathName) {
+		if (iconCacheMap.containsKey(fullProcessPathName)) {
 			return iconCacheMap.get(fullProcessPathName);
 		}
-		File file = new File(fullProcessPathName);
-		if (!file.exists()){
-			//or add default no icon
-			return null;
-		}
-		if (SystemUtils.IS_OS_WINDOWS) {
-			try {
-				Icon icon = FileSystemView.getFileSystemView().getSystemIcon(file);
-				iconCacheMap.put(fullProcessPathName,icon);
-				return icon;
-			}catch (Exception e){
-//				e.printStackTrace();
-			}
-		}
-		if (SystemUtils.IS_OS_MAC) {
-			final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-			Icon icon = fc.getUI().getFileView(fc).getIcon(new File(fullProcessPathName));
-			/*
-							final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-				Icon icon = fc.getUI().getFileView(fc).getIcon(file);
-			* */
-			if (fullProcessPathName.contains("MacOS")) {
-				String iconPath[] = fullProcessPathName.split("MacOS");
-				if (iconPath.length > 0) {
-					//"AppIcon.icns"
-					String iconFilePath = iconPath[0] + "Resources/AppIcon.icns";
-					//Imaging.getAllBufferedImages(iconFilePath);
-					try {
-						if (file.exists()) {
-							List<BufferedImage> is = new IcnsImageParser().getAllBufferedImages(new File(iconFilePath));
-							BufferedImage bufferedImage = is.get(0);
 
-							BufferedImage bufferedImageR = resizeImage(bufferedImage, 28, 28);
-						//	Icon icon = new ImageIcon(bufferedImageR);
-						//	return icon;
-						}
-					} catch (ImageReadException | IOException e) {
-						throw new RuntimeException(e);
+		File file = new File(fullProcessPathName);
+		if (!file.exists()) {
+			// Alternatively, provide a default icon or return nul
+			return UIManager.getIcon("FileView.fileIcon");
+		}
+
+		try {
+			if (SystemUtils.IS_OS_WINDOWS) {
+				Icon icon = FileSystemView.getFileSystemView().getSystemIcon(file);
+				iconCacheMap.put(fullProcessPathName, icon);
+				return icon;
+			}
+
+			// macOS-specific icon retrieval
+			// maybe find a simple solution
+			// Todo : fix various icons like VLC ...
+			if (SystemUtils.IS_OS_MAC && fullProcessPathName.contains("MacOS")) {
+				String iconPathSplit = fullProcessPathName.split("MacOS")[0];
+				String plistFilePath = iconPathSplit + "Info.plist";
+
+				File pListFile = getFileWithSpaceUri(plistFilePath);
+				if (pListFile.exists()) {
+					Map<String, Object> properties = Plist.load(plistFilePath);
+					String cFBundleIconFile = (String) properties.get("CFBundleIconFile");
+					String iconFilePath = iconPathSplit + "Resources/" + cFBundleIconFile;
+
+					// Ensure file path ends with ".icns"
+					if (!iconFilePath.contains(".icns")) {
+						iconFilePath += ".icns";
 					}
-					//return new ImageIcon(Toolkit.getDefaultToolkit().getImage(iconFilePath));
+
+					File iconFile = getFileWithSpaceUri(iconFilePath);
+					if (iconFile.canRead()) {
+						List<BufferedImage> iconImages = new IcnsImageParser().getAllBufferedImages(iconFile);
+						Optional<BufferedImage> resultImage = iconImages
+							.stream().parallel()
+							.filter(num -> num.getRaster().getHeight() == 32).findAny();
+
+						if (resultImage.isPresent()) {
+							BufferedImage bufferedImageR = resizeImage(resultImage.get(), 26, 26);
+							return new ImageIcon(bufferedImageR);
+						}
+
+					}
 				}
 			}
+		} catch (Exception e) {
 		}
-		return null;
+		return UIManager.getIcon("FileView.fileIcon");
+	}
+
+	@NotNull
+	/**
+	 *  Workaround to open folders files with spaces
+	 *  @param filePath
+	 *  @return file
+	 */
+	private static File getFileWithSpaceUri(String filePath) throws URISyntaxException {
+		URI outputURI = new URI(("file:///" + filePath.replaceAll(" ", "%20")));
+		File outputFile = new File(outputURI);
+		return outputFile;
 	}
 
 	/**
