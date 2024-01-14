@@ -273,7 +273,9 @@ public class ProcessesForm {
 
 						if (resultImage.isPresent()) {
 							BufferedImage bufferedImageR = resizeImage(resultImage.get(), 26, 26);
-							return new ImageIcon(bufferedImageR);
+							Icon icon = new ImageIcon(bufferedImageR);
+							iconCacheMap.put(fullProcessPathName, icon);
+							return icon;
 						}
 
 					}
