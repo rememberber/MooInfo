@@ -246,8 +246,12 @@ public class ProcessesForm {
 				return icon;
 			}
 
+      if (SystemUtils.IS_OS_LINUX) {
+        // investigate why getPath or getCommandLine is "" on kali
+      }
+
 			// macOS-specific icon retrieval
-			// maybe find a simple solution
+			// maybe find a simpler solution
 			// Todo : fix various icons like VLC ...
 			if (SystemUtils.IS_OS_MAC && fullProcessPathName.contains("MacOS")) {
 				String iconPathSplit = fullProcessPathName.split("MacOS")[0];
