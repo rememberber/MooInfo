@@ -15,23 +15,25 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
-        <logback.version>1.4.5</logback.version>
+        <logback.version>1.4.7</logback.version>
         <forms_rt.version>7.0.3</forms_rt.version>
         <lombok.version>1.18.30</lombok.version>
-        <junit-jupiter-api.version>5.9.1</junit-jupiter-api.version>
+        <junit-jupiter-api.version>5.9.2</junit-jupiter-api.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.1-jre</guava.version>
-        <okhttp.version>4.10.0</okhttp.version>
-        <flatlaf.version>3.2</flatlaf.version>
-        <flatlaf-extras.version>3.2</flatlaf-extras.version>
-        <flatlaf-intellij-themes.version>3.2</flatlaf-intellij-themes.version>
-        <hutool-all.version>5.8.11</hutool-all.version>
-        <fastjson.version>2.0.22</fastjson.version>
-        <oshi-core.version>6.4.5</oshi-core.version>
-        <jfreechart.version>1.5.3</jfreechart.version>
+        <okhttp.version>5.0.0-alpha.11</okhttp.version>
+        <flatlaf.version>3.1.1</flatlaf.version>
+        <flatlaf-extras.version>3.1.1</flatlaf-extras.version>
+        <flatlaf-intellij-themes.version>3.1.1</flatlaf-intellij-themes.version>
+        <hutool-all.version>5.8.18</hutool-all.version>
+        <fastjson.version>2.0.32</fastjson.version>
+        <oshi-core.version>6.4.4</oshi-core.version>
+        <jfreechart.version>1.5.4</jfreechart.version>
+		<imaging.version>1.0-alpha3</imaging.version>
+		<xmlwise.version>1.2.11</xmlwise.version>
     </properties>
 
     <dependencies>
@@ -127,7 +129,19 @@
             <artifactId>jfreechart</artifactId>
             <version>${jfreechart.version}</version>
         </dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>${imaging.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xmlwise</groupId>
+			<artifactId>xmlwise</artifactId>
+			<version>${xmlwise.version}</version>
+		</dependency>
+	</dependencies>
 
     <build>
         <plugins>
@@ -185,19 +199,19 @@
 <!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\linux\jdk</jdkPath>&ndash;&gt;-->
 <!--                                                                </configuration>-->
 <!--                                                            </execution>-->
-<!--                                                                                <execution>-->
-<!--                                                                                    <id>bundling-for-mac</id>-->
-<!--                                                                                    <phase>package</phase>-->
-<!--                                                                                    <goals>-->
-<!--                                                                                        <goal>package</goal>-->
-<!--                                                                                    </goals>-->
-<!--                                                                                    <configuration>-->
-<!--                                                                                        <platform>mac</platform>-->
-<!--                                                                                        <createTarball>true</createTarball>-->
+                    <!--                                                            <execution>-->
+                    <!--                                                                <id>bundling-for-mac</id>-->
+                    <!--                                                                <phase>package</phase>-->
+                    <!--                                                                <goals>-->
+                    <!--                                                                    <goal>package</goal>-->
+                    <!--                                                                </goals>-->
+                    <!--                                                                <configuration>-->
+                    <!--                                                                    <platform>mac</platform>-->
+                    <!--                                                                    <createTarball>true</createTarball>-->
 <!--                    <additionalModules>jdk.crypto.ec</additionalModules>-->
-<!--                                        &lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
-<!--                                                                                    </configuration>-->
-<!--                                                                                </execution>-->
+                    <!--                    &lt;!&ndash;                                                <jdkPath>X:\\path\to\mac\jdk</jdkPath>&ndash;&gt;-->
+                    <!--                                                                </configuration>-->
+                    <!--                                                            </execution>-->
                 </executions>
             </plugin>
         </plugins>
