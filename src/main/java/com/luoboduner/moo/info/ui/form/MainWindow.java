@@ -48,7 +48,7 @@ public class MainWindow {
         mainWindow = getInstance();
         if (SystemUtil.isMacOs() && SystemInfo.isMacFullWindowContentSupported) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
-            gridLayoutManager.setMargin(new Insets(20, 0, 0, 0));
+            gridLayoutManager.setMargin(new Insets(25, 0, 0, 0));
         }
 
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
