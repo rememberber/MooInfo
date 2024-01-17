@@ -15,8 +15,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <logback.version>1.4.7</logback.version>
         <forms_rt.version>7.0.3</forms_rt.version>
@@ -32,6 +32,8 @@
         <fastjson.version>2.0.32</fastjson.version>
         <oshi-core.version>6.4.4</oshi-core.version>
         <jfreechart.version>1.5.4</jfreechart.version>
+		<imaging.version>1.0-alpha3</imaging.version>
+		<xmlwise.version>1.2.11</xmlwise.version>
     </properties>
 
     <dependencies>
@@ -127,7 +129,19 @@
             <artifactId>jfreechart</artifactId>
             <version>${jfreechart.version}</version>
         </dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>${imaging.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xmlwise</groupId>
+			<artifactId>xmlwise</artifactId>
+			<version>${xmlwise.version}</version>
+		</dependency>
+	</dependencies>
 
     <build>
         <plugins>
