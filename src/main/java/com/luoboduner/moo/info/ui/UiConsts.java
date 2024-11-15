@@ -11,7 +11,7 @@ import java.awt.*;
 public class UiConsts {
 
     public static final String APP_NAME = "MooInfo";
-    public static final String APP_VERSION = "1.1.3";
+    public static final String APP_VERSION = "1.1.4";
 
     public static final int TABLE_ROW_HEIGHT = 36;
 
