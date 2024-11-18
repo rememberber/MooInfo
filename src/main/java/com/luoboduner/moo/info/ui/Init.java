@@ -55,9 +55,9 @@ public class Init {
 
             // Initialize high-resolution screen font sizes such as Macs
             if (SystemUtil.isMacOs()) {
-                fontSize = 15;
+                fontSize = 13;
             } else {
-                fontSize = (int) (UIUtil.getScreenScale() * fontSize);
+                fontSize = 12;
             }
             App.config.setFontSize(fontSize);
 
