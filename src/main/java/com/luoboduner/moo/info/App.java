@@ -43,8 +43,9 @@ public class App {
             System.setProperty("apple.awt.application.name", "MooInfo");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MooInfo");
             System.setProperty("apple.awt.application.appearance", "system");
+            System.setProperty("flatlaf.useRoundedPopupBorder", "true");
 
-            FlatDesktop.setAboutHandler(() -> {
+          FlatDesktop.setAboutHandler(() -> {
                 try {
                     AboutDialog dialog = new AboutDialog();
 
