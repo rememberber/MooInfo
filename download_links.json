@@ -1,6 +1,6 @@
 {
-  "windows": "https://github.com/rememberber/MooInfo/releases/download/v1.1.4/MooInfo-1.1.4-windows-x64.exe",
-  "macSilicon": "https://github.com/rememberber/MooInfo/releases/download/v1.1.4/MooInfo-1.1.4-mac-apple-silicon.dmg",
-  "mac": "https://github.com/rememberber/MooInfo/releases/download/v1.1.4/MooInfo-1.1.4-mac-intel.dmg",
-  "linux": "https://github.com/rememberber/MooInfo/releases/download/v1.1.4/MooInfo-1.1.4-linux-x64.deb"
+  "windows": "https://github.com/rememberber/MooInfo/releases/download/v1.1.5/MooInfo-1.1.5-windows-x64.exe",
+  "macSilicon": "https://github.com/rememberber/MooInfo/releases/download/v1.1.5/MooInfo-1.1.5-mac-apple-silicon.dmg",
+  "mac": "https://github.com/rememberber/MooInfo/releases/download/v1.1.5/MooInfo-1.1.5-mac-intel.dmg",
+  "linux": "https://github.com/rememberber/MooInfo/releases/download/v1.1.5/MooInfo-1.1.5-linux-x64.deb"
 }
