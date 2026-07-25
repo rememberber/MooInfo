@@ -1,5 +1,6 @@
 package com.luoboduner.moo.info;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.formdev.flatlaf.extras.FlatDesktop;
 import com.formdev.flatlaf.extras.FlatInspector;
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
@@ -11,7 +12,7 @@ import com.luoboduner.moo.info.ui.form.LoadingForm;
 import com.luoboduner.moo.info.ui.form.MainWindow;
 import com.luoboduner.moo.info.ui.frame.MainFrame;
 import com.luoboduner.moo.info.util.ConfigUtil;
-import com.luoboduner.moo.info.util.UIUtil;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -45,7 +46,7 @@ public class App {
             System.setProperty("apple.awt.application.appearance", "system");
             System.setProperty("flatlaf.useRoundedPopupBorder", "true");
 
-          FlatDesktop.setAboutHandler(() -> {
+            FlatDesktop.setAboutHandler(() -> EdtUtil.run(() -> {
                 try {
                     AboutDialog dialog = new AboutDialog();
 
@@ -54,8 +55,8 @@ public class App {
                 } catch (Exception e2) {
                     log.error(ExceptionUtils.getStackTrace(e2));
                 }
-            });
-            FlatDesktop.setPreferencesHandler(() -> {
+            }));
+            FlatDesktop.setPreferencesHandler(() -> EdtUtil.run(() -> {
                 try {
                     SettingDialog dialog = new SettingDialog();
 
@@ -64,7 +65,7 @@ public class App {
                 } catch (Exception e2) {
                     log.error(ExceptionUtils.getStackTrace(e2));
                 }
-            });
+            }));
             FlatDesktop.setQuitHandler(FlatDesktop.QuitResponse::performQuit);
 
         }
@@ -75,30 +76,38 @@ public class App {
         FlatInspector.install("ctrl shift alt X");
         FlatUIDefaultsInspector.install("ctrl shift alt Y");
 
-        mainFrame = new MainFrame();
-        mainFrame.init();
-        JPanel loadingPanel = new LoadingForm().getLoadingPanel();
-        mainFrame.add(loadingPanel);
-        mainFrame.pack();
-        mainFrame.setVisible(true);
+        EdtUtil.run(() -> {
+            mainFrame = new MainFrame();
+            mainFrame.init();
+            JPanel loadingPanel = new LoadingForm().getLoadingPanel();
+            mainFrame.add(loadingPanel);
+            mainFrame.pack();
+            mainFrame.setVisible(true);
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if (config.isDefaultMaxWindow() || screenSize.getWidth() <= 1366) {
-            // The window is automatically maximized at low resolution
-            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if (config.isDefaultMaxWindow() || screenSize.getWidth() <= 1366) {
+                // The window is automatically maximized at low resolution
+                mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
 
-        UpgradeUtil.smoothUpgrade();
+            mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            // Heavy work off the EDT; switch content pane when ready
+            ThreadUtil.execute(() -> {
+                UpgradeUtil.smoothUpgrade();
+                si = new oshi.SystemInfo();
 
-        si = new oshi.SystemInfo();
-
-        Init.initGlobalFont();
-        mainFrame.setContentPane(MainWindow.getInstance().getMainPanel());
-        MainWindow.getInstance().init();
-        Init.initAllTab();
-        Init.initOthers();
-        mainFrame.remove(loadingPanel);
+                EdtUtil.run(() -> {
+                    Init.initGlobalFont();
+                    mainFrame.setContentPane(MainWindow.getInstance().getMainPanel());
+                    MainWindow.getInstance().init();
+                    Init.initAllTab();
+                    Init.initOthers();
+                    mainFrame.remove(loadingPanel);
+                    mainFrame.revalidate();
+                    mainFrame.repaint();
+                });
+            });
+        });
     }
 }

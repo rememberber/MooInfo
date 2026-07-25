@@ -9,6 +9,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.util.ComponentUtil;
 import com.luoboduner.moo.info.util.ConsoleUtil;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.SystemUtil;
 import oshi.SystemInfo;
 import oshi.hardware.*;
@@ -76,80 +77,80 @@ public class SystemInfoTestDialog extends JDialog {
         OperatingSystem os = si.getOperatingSystem();
 
         printOperatingSystem(os);
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking computer system...");
         printComputerSystem(hal.getComputerSystem());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Processor...");
         printProcessor(hal.getProcessor());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Memory...");
         printMemory(hal.getMemory());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking CPU...");
         printCpu(hal.getProcessor());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Processes...");
         printProcesses(os, hal.getMemory());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Services...");
         printServices(os);
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Sensors...");
         printSensors(hal.getSensors());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Power sources...");
         printPowerSources(hal.getPowerSources());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Disks...");
         printDisks(hal.getDiskStores());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Logical Volume Groups ...");
         printLVgroups(hal.getLogicalVolumeGroups());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking File System...");
         printFileSystem(os.getFileSystem());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Network interfaces...");
         printNetworkInterfaces(hal.getNetworkIFs());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Network parameters...");
         printNetworkParameters(os.getNetworkParams());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking IP statistics...");
         printInternetProtocolStats(os.getInternetProtocolStats());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Displays...");
         printDisplays(hal.getDisplays());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking USB Devices...");
         printUsbDevices(hal.getUsbDevices(true));
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Sound Cards...");
         printSoundCards(hal.getSoundCards());
-        textArea1.append("\n");
+        ConsoleUtil.consoleOnly(textArea1, "");
 
         logger.info("Checking Graphics Cards...");
         printGraphicsCards(hal.getGraphicsCards());
 
-        JOptionPane.showMessageDialog(contentPane, "Done!\n", "Finished!", JOptionPane.PLAIN_MESSAGE);
+        EdtUtil.run(() -> JOptionPane.showMessageDialog(contentPane, "Done!\n", "Finished!", JOptionPane.PLAIN_MESSAGE));
     }
 
     private void onCancel() {
@@ -263,8 +264,8 @@ public class SystemInfoTestDialog extends JDialog {
             OSProcess p = procs.get(i);
             ConsoleUtil.consoleOnly(textArea1, String.format(" %5d %5.1f %4.1f %9s %9s %s", p.getProcessID(),
                     100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime(),
-                    100d * p.getResidentSetSize() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
-                    FormatUtil.formatBytes(p.getResidentSetSize()), p.getName()));
+                    100d * p.getResidentMemory() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
+                    FormatUtil.formatBytes(p.getResidentMemory()), p.getName()));
         }
         OSProcess p = os.getProcess(os.getProcessId());
         ConsoleUtil.consoleOnly(textArea1, "Current process arguments: ");

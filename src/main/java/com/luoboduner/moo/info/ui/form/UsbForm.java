@@ -27,7 +27,7 @@ public class UsbForm {
     private JPanel mainPanel;
     private JTextPane infoPane;
 
-    public static UsbForm getInstance() {
+    public static synchronized UsbForm getInstance() {
         if (usbForm == null) {
             usbForm = new UsbForm();
         }

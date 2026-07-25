@@ -8,6 +8,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
+import com.luoboduner.moo.info.util.EdtUtil;
 import lombok.Getter;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.NetworkParams;
@@ -17,8 +18,6 @@ import oshi.util.Constants;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -53,7 +52,7 @@ public class NetworkForm {
     private static Long uploadBefore;
     private static Long timestampBefore;
 
-    public static NetworkForm getInstance() {
+    public static synchronized NetworkForm getInstance() {
         if (networkForm == null) {
             networkForm = new NetworkForm();
         }
@@ -110,36 +109,16 @@ public class NetworkForm {
     }
 
     private static void initNetworkSpeed() {
-
-        String genericString;
-        try {
-            genericString = getDefaultNetworkInteface();
-        } catch (Exception e) {
-            logger.error("NetworkSpeed not supported");
-            return;
-        }
-
         long downloadNow = 0;
         long uploadNow = 0;
         long timestampNow = 0;
 
         List<NetworkIF> networkIFs = App.si.getHardware().getNetworkIFs();
+        if (networkIFs.isEmpty()) {
+            return;
+        }
 
-//        int i = 0;
-//        NetworkIF net = networkIFs.get(0);
-//        try {
-//            while (!networkIFs.get(i).getName().equals(genericString)) {
-//                net = networkIFs.get(i);
-//                i++;
-//            }
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            logger.error("NetworkSpeed not supported");
-//            return;
-//        }
-//        net.updateAttributes();
-
-        for (int i = 0; i < networkIFs.size(); i++) {
-            NetworkIF net = networkIFs.get(i);
+        for (NetworkIF net : networkIFs) {
             net.updateAttributes();
             downloadNow += net.getBytesRecv();
             uploadNow += net.getBytesSent();
@@ -156,13 +135,22 @@ public class NetworkForm {
             timestampBefore = timestampNow - 1;
         }
 
-        NetworkForm networkForm = getInstance();
-        networkForm.getUploadSpeedLabel().setText("↓: " + DataSizeUtil.format((downloadNow - downloadBefore) / (timestampNow - timestampBefore) * 1000) + "/s");
-        networkForm.getDownloadSpeedLabel().setText("↑: " + DataSizeUtil.format((uploadNow - uploadBefore) / (timestampNow - timestampBefore) * 1000) + "/s");
+        long downloadDelta = downloadNow - downloadBefore;
+        long uploadDelta = uploadNow - uploadBefore;
+        long timeDelta = Math.max(timestampNow - timestampBefore, 1);
+        // Multiply before divide to avoid truncating sub-KB/s rates to zero
+        String downloadSpeedText = "↓: " + DataSizeUtil.format(downloadDelta * 1000 / timeDelta) + "/s";
+        String uploadSpeedText = "↑: " + DataSizeUtil.format(uploadDelta * 1000 / timeDelta) + "/s";
 
         downloadBefore = downloadNow;
         uploadBefore = uploadNow;
         timestampBefore = timestampNow;
+
+        EdtUtil.run(() -> {
+            NetworkForm networkForm = getInstance();
+            networkForm.getUploadSpeedLabel().setText(uploadSpeedText);
+            networkForm.getDownloadSpeedLabel().setText(downloadSpeedText);
+        });
     }
 
     private static String buildParamsText(OperatingSystem os) {
@@ -223,7 +211,8 @@ public class NetworkForm {
 
             intfArr[i][0] = intf.getName();
             intfArr[i][1] = intf.getIndex();
-            intfArr[i][2] = intf.getSpeed();
+            // NetworkIF.getSpeed() returns bits/s
+            intfArr[i][2] = formatLinkSpeed(intf.getSpeed());
             intfArr[i][3] = getIPAddressesString(intf.getIPv4addr());
             intfArr[i][4] = getIPAddressesString(intf.getIPv6addr());
             intfArr[i][5] = Constants.UNKNOWN.equals(intf.getMacaddr()) ? "" : intf.getMacaddr();
@@ -251,27 +240,23 @@ public class NetworkForm {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * Format link speed from bits/s to a human-readable string.
      */
-    private static String getDefaultNetworkInteface() throws Exception {
-        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-
-        InetAddress localHost = InetAddress.getLocalHost();
-
-        while (networkInterfaces.hasMoreElements()) {
-            NetworkInterface networkInterface = networkInterfaces.nextElement();
-            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-            while (inetAddresses.hasMoreElements()) {
-                InetAddress inetAddress = inetAddresses.nextElement();
-                if (inetAddress.equals(localHost)) {
-                    return networkInterface.getName();
-                }
-            }
+    private static String formatLinkSpeed(long bitsPerSecond) {
+        if (bitsPerSecond <= 0) {
+            return "-";
         }
-        return "";
+        if (bitsPerSecond >= 1_000_000_000L) {
+            return String.format("%.1f Gbps", bitsPerSecond / 1_000_000_000d);
+        }
+        if (bitsPerSecond >= 1_000_000L) {
+            return String.format("%.0f Mbps", bitsPerSecond / 1_000_000d);
+        }
+        if (bitsPerSecond >= 1_000L) {
+            return String.format("%.0f Kbps", bitsPerSecond / 1_000d);
+        }
+        return bitsPerSecond + " bps";
     }
-
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer

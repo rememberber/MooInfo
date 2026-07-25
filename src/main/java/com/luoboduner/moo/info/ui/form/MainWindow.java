@@ -35,7 +35,7 @@ public class MainWindow {
     private MainWindow() {
     }
 
-    public static MainWindow getInstance() {
+    public static synchronized MainWindow getInstance() {
         if (mainWindow == null) {
             mainWindow = new MainWindow();
         }

@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import oshi.hardware.GlobalMemory;
@@ -55,7 +56,7 @@ public class MemoryForm {
     private JScrollPane scrollPane;
     private JTextPane physicalMemoryInfoTextPane;
 
-    public static MemoryForm getInstance() {
+    public static synchronized MemoryForm getInstance() {
         if (memoryForm == null) {
             memoryForm = new MemoryForm();
         }
@@ -103,60 +104,73 @@ public class MemoryForm {
         // global memory
         long total = memory.getTotal();
         long available = memory.getAvailable();
-        MemoryForm memoryForm = getInstance();
-        JProgressBar physicalMemoryProgressBar = memoryForm.getPhysicalMemoryProgressBar();
-        physicalMemoryProgressBar.setMaximum(100);
-        int usagePercent = (int) ((total - available) * 100 / total);
-        physicalMemoryProgressBar.setValue(usagePercent);
-        String progressStr = usagePercent + "%";
-        physicalMemoryProgressBar.setToolTipText(progressStr);
-        physicalMemoryProgressBar.setStringPainted(true);
-        physicalMemoryProgressBar.setString(progressStr);
-
-        memoryForm.getPhysicalMemoryUsed().setText("Used " + DataSizeUtil.format(total - available) + "/" + DataSizeUtil.format(total));
-        memoryForm.getPhysicalMemoryAvailable().setText(DataSizeUtil.format(available) + "/" + DataSizeUtil.format(total) + " Available");
+        int usagePercent = total == 0 ? 0 : (int) ((total - available) * 100 / total);
+        String physicalUsedText = "Used " + DataSizeUtil.format(total - available) + "/" + DataSizeUtil.format(total);
+        String physicalAvailableText = DataSizeUtil.format(available) + "/" + DataSizeUtil.format(total) + " Available";
 
         // virtual memory
         VirtualMemory virtualMemory = memory.getVirtualMemory();
         long virtualMax = virtualMemory.getVirtualMax();
         long virtualInUse = virtualMemory.getVirtualInUse();
-        JProgressBar virtualMemoryProgressBar = memoryForm.getVirtualMemoryProgressBar();
-        virtualMemoryProgressBar.setMaximum(100);
-        int virtualUsagePercent = (int) (virtualInUse * 100 / virtualMax);
-        virtualMemoryProgressBar.setValue(virtualUsagePercent);
-        virtualMemoryProgressBar.setToolTipText(virtualUsagePercent + "%");
-        memoryForm.getVirtualMemoryUsed().setText("Used " + DataSizeUtil.format(virtualInUse) + "/" + DataSizeUtil.format(virtualMax));
-        memoryForm.getVirtualMemoryAvailable().setText(DataSizeUtil.format(virtualMax - virtualInUse) + "/" + DataSizeUtil.format(virtualMax) + " Available");
+        int virtualUsagePercent = virtualMax == 0 ? 0 : (int) (virtualInUse * 100 / virtualMax);
+        String virtualUsedText = "Used " + DataSizeUtil.format(virtualInUse) + "/" + DataSizeUtil.format(virtualMax);
+        String virtualAvailableText = DataSizeUtil.format(virtualMax - virtualInUse) + "/" + DataSizeUtil.format(virtualMax) + " Available";
 
         // swap memory
         long swapTotal = virtualMemory.getSwapTotal();
         long swapUsed = virtualMemory.getSwapUsed();
-        JProgressBar swapProgressBar = memoryForm.getSwapProgressBar();
-        swapProgressBar.setMaximum(100);
-
-        int swapUsagePercent = 0;
-        if (swapTotal != 0) {
-            swapUsagePercent = (int) (swapUsed * 100 / swapTotal);
-
-        }
-        swapProgressBar.setValue(swapUsagePercent);
-        swapProgressBar.setToolTipText(swapUsagePercent + "%");
-        memoryForm.getSwapUsedLabel().setText("Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " | page in " + virtualMemory.getSwapPagesIn() + " page out " + virtualMemory.getSwapPagesOut());
-        memoryForm.getSwapAvailableLabel().setText(DataSizeUtil.format(swapTotal - swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " Available");
+        int swapUsagePercent = swapTotal == 0 ? 0 : (int) (swapUsed * 100 / swapTotal);
+        String swapUsedText = "Used " + DataSizeUtil.format(swapUsed) + "/" + DataSizeUtil.format(swapTotal)
+                + " | page in " + virtualMemory.getSwapPagesIn() + " page out " + virtualMemory.getSwapPagesOut();
+        String swapAvailableText = DataSizeUtil.format(swapTotal - swapUsed) + "/" + DataSizeUtil.format(swapTotal) + " Available";
 
         long jvmTotal = Runtime.getRuntime().totalMemory();
         long jvmMax = Runtime.getRuntime().maxMemory();
         long jvmFree = Runtime.getRuntime().freeMemory();
         long jvmUsed = jvmTotal - jvmFree;
+        int jvmUsagePercent = jvmTotal == 0 ? 0 : (int) (jvmUsed * 100 / jvmTotal);
+        String jvmUsedText = "Used " + DataSizeUtil.format(jvmUsed) + " / Total " + DataSizeUtil.format(jvmTotal)
+                + " / Max " + DataSizeUtil.format(jvmMax);
 
-        JProgressBar jvmProgressBar = memoryForm.getJvmProgressBar();
-        jvmProgressBar.setMaximum(100);
-        int jvmUsagePercent = (int) (jvmUsed * 100 / jvmTotal);
-        jvmProgressBar.setValue(jvmUsagePercent);
-        jvmProgressBar.setToolTipText(jvmUsagePercent + "%");
-        memoryForm.getJvmUsedLabel().setText("Used " + DataSizeUtil.format(jvmUsed) + " / Total " + DataSizeUtil.format(jvmTotal) + " / Max " + DataSizeUtil.format(jvmMax));
-        memoryForm.getJvmAvailableLabel().setText("");
+        final int usagePercentFinal = usagePercent;
+        final int virtualUsagePercentFinal = virtualUsagePercent;
+        final int swapUsagePercentFinal = swapUsagePercent;
+        final int jvmUsagePercentFinal = jvmUsagePercent;
 
+        EdtUtil.run(() -> {
+            MemoryForm memoryForm = getInstance();
+            JProgressBar physicalMemoryProgressBar = memoryForm.getPhysicalMemoryProgressBar();
+            physicalMemoryProgressBar.setMaximum(100);
+            physicalMemoryProgressBar.setValue(usagePercentFinal);
+            String progressStr = usagePercentFinal + "%";
+            physicalMemoryProgressBar.setToolTipText(progressStr);
+            physicalMemoryProgressBar.setStringPainted(true);
+            physicalMemoryProgressBar.setString(progressStr);
+
+            memoryForm.getPhysicalMemoryUsed().setText(physicalUsedText);
+            memoryForm.getPhysicalMemoryAvailable().setText(physicalAvailableText);
+
+            JProgressBar virtualMemoryProgressBar = memoryForm.getVirtualMemoryProgressBar();
+            virtualMemoryProgressBar.setMaximum(100);
+            virtualMemoryProgressBar.setValue(virtualUsagePercentFinal);
+            virtualMemoryProgressBar.setToolTipText(virtualUsagePercentFinal + "%");
+            memoryForm.getVirtualMemoryUsed().setText(virtualUsedText);
+            memoryForm.getVirtualMemoryAvailable().setText(virtualAvailableText);
+
+            JProgressBar swapProgressBar = memoryForm.getSwapProgressBar();
+            swapProgressBar.setMaximum(100);
+            swapProgressBar.setValue(swapUsagePercentFinal);
+            swapProgressBar.setToolTipText(swapUsagePercentFinal + "%");
+            memoryForm.getSwapUsedLabel().setText(swapUsedText);
+            memoryForm.getSwapAvailableLabel().setText(swapAvailableText);
+
+            JProgressBar jvmProgressBar = memoryForm.getJvmProgressBar();
+            jvmProgressBar.setMaximum(100);
+            jvmProgressBar.setValue(jvmUsagePercentFinal);
+            jvmProgressBar.setToolTipText(jvmUsagePercentFinal + "%");
+            memoryForm.getJvmUsedLabel().setText(jvmUsedText);
+            memoryForm.getJvmAvailableLabel().setText("");
+        });
     }
 
     /**

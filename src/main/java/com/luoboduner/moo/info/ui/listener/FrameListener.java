@@ -3,7 +3,6 @@ package com.luoboduner.moo.info.ui.listener;
 
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Init;
-import com.luoboduner.moo.info.util.SystemUtil;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -45,12 +44,7 @@ public class FrameListener {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                if (SystemUtil.isWindowsOs()) {
-                    App.mainFrame.setVisible(false);
-                } else {
-                    App.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                }
-
+                // No system tray yet — always exit cleanly on close
                 Init.shutdown();
             }
 

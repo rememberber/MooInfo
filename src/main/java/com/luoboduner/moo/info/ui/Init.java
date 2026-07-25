@@ -14,6 +14,7 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
 import com.luoboduner.moo.info.ui.form.*;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.SystemUtil;
 import com.luoboduner.moo.info.util.UIUtil;
 import com.luoboduner.moo.info.util.UpgradeUtil;
@@ -154,17 +155,18 @@ public class Init {
      * init all tab
      */
     public static void initAllTab() {
-
-        ThreadUtil.execute(OverviewForm::init);
-        ThreadUtil.execute(DetailForm::init);
-        ThreadUtil.execute(MemoryForm::init);
-        ThreadUtil.execute(CpuForm::init);
-        ThreadUtil.execute(NetworkForm::init);
-        ThreadUtil.execute(UsbForm::init);
-        ThreadUtil.execute(VariablesForm::init);
-        ThreadUtil.execute(ProcessesForm::init);
-        ThreadUtil.execute(DiskForm::init);
-        ThreadUtil.execute(PowerSourceForm::init);
+        // Form UI must be touched on the EDT; schedule each init asynchronously so
+        // one slow tab does not block others from being queued.
+        scheduleFormInit(OverviewForm::init);
+        scheduleFormInit(DetailForm::init);
+        scheduleFormInit(MemoryForm::init);
+        scheduleFormInit(CpuForm::init);
+        scheduleFormInit(NetworkForm::init);
+        scheduleFormInit(UsbForm::init);
+        scheduleFormInit(VariablesForm::init);
+        scheduleFormInit(ProcessesForm::init);
+        scheduleFormInit(DiskForm::init);
+        scheduleFormInit(PowerSourceForm::init);
 
         // Check the new version
         if (App.config.isAutoCheckUpdate()) {
@@ -173,14 +175,20 @@ public class Init {
         }
     }
 
+    private static void scheduleFormInit(Runnable init) {
+        ThreadUtil.execute(() -> EdtUtil.run(init));
+    }
+
     public static void showMainFrame() {
-        App.mainFrame.setVisible(true);
-        if (App.mainFrame.getExtendedState() == Frame.ICONIFIED) {
-            App.mainFrame.setExtendedState(Frame.NORMAL);
-        } else if (App.mainFrame.getExtendedState() == 7) {
-            App.mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        }
-        App.mainFrame.requestFocus();
+        EdtUtil.run(() -> {
+            App.mainFrame.setVisible(true);
+            if (App.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+                App.mainFrame.setExtendedState(Frame.NORMAL);
+            } else if (App.mainFrame.getExtendedState() == 7) {
+                App.mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            }
+            App.mainFrame.requestFocus();
+        });
     }
 
     public static void shutdown() {

@@ -35,7 +35,7 @@ public class VariablesForm {
 
     private static final double[] COLUMN_WIDTH_PERCENT = {0.38, 0.62};
 
-    public static VariablesForm getInstance() {
+    public static synchronized VariablesForm getInstance() {
         if (variablesForm == null) {
             variablesForm = new VariablesForm();
         }

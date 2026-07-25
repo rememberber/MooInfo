@@ -10,6 +10,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.util.ComponentUtil;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.SystemUtil;
 
 import javax.swing.*;
@@ -94,7 +95,7 @@ public class UpdateDialog extends JDialog {
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         // Get the appropriate file length
                         int fileLength = urlConnection.getContentLength();
-                        progressBarDownload.setMaximum(fileLength);
+                        EdtUtil.run(() -> progressBarDownload.setMaximum(fileLength));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -109,19 +110,23 @@ public class UpdateDialog extends JDialog {
 
                         @Override
                         public void start() {
-                            statusLabel.setText("Start downloading...");
+                            EdtUtil.run(() -> statusLabel.setText("Start downloading..."));
                         }
 
                         @Override
                         public void progress(long progressSize, long totalSize) {
-                            progressBarDownload.setValue((int) progressSize);
-                            statusLabel.setText("Already download：" + FileUtil.readableFileSize(progressSize));
+                            EdtUtil.run(() -> {
+                                progressBarDownload.setValue((int) progressSize);
+                                statusLabel.setText("Already download：" + FileUtil.readableFileSize(progressSize));
+                            });
                         }
 
                         @Override
                         public void finish() {
-                            statusLabel.setText("Download finished!");
-                            buttonOK.setEnabled(true);
+                            EdtUtil.run(() -> {
+                                statusLabel.setText("Download finished!");
+                                buttonOK.setEnabled(true);
+                            });
                         }
                     });
                 }

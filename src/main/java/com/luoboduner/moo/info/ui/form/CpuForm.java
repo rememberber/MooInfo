@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import org.jfree.chart.ChartFactory;
@@ -76,7 +77,7 @@ public class CpuForm {
 
     private static DynamicTimeSeriesCollection sysData;
 
-    public static CpuForm getInstance() {
+    public static synchronized CpuForm getInstance() {
         if (cpuForm == null) {
             cpuForm = new CpuForm();
         }
@@ -236,30 +237,20 @@ public class CpuForm {
         long steal = ticks[CentralProcessor.TickType.STEAL.getIndex()] - prevTicks[CentralProcessor.TickType.STEAL.getIndex()];
         long totalCpu = Math.max(user + nice + cSys + idle + ioWait + irq + softIrq + steal, 0);
 
-        sysData.advanceTime();
-        sysData.appendData(floatArrayPercent(cpuData(processor)));
-
+        float[] chartSample = floatArrayPercent(cpuData(processor));
         prevTicks = ticks;
 
         double free = Double.parseDouble(format.format(idle <= 0 ? 0 : (100d * idle / totalCpu)));
-
         double cpuUsage = Double.parseDouble(format.format((100 - free)));
-
-        CpuForm cpuForm = getInstance();
-        JProgressBar scuProgressBar = cpuForm.getScuProgressBar();
-        scuProgressBar.setMaximum(100);
         int cpuUsagePercent = (int) cpuUsage;
-        scuProgressBar.setValue(cpuUsagePercent);
-        scuProgressBar.setStringPainted(true);
         String cpuUsageStr = cpuUsage + "%";
-        scuProgressBar.setString(cpuUsageStr);
-        cpuForm.getUsageLabel().setText(cpuUsageStr);
 
         long[][] processorTicks = processor.getProcessorCpuLoadTicks();
         if (preProcessorTicks == null) {
             preProcessorTicks = processorTicks;
         }
 
+        double[] perCpuUsage = new double[processorTicks.length];
         for (int i = 0; i < processorTicks.length; i++) {
             long[] pTicks = processorTicks[i];
             long[] prePTicks = preProcessorTicks[i];
@@ -275,61 +266,88 @@ public class CpuForm {
             long pTotalCpu = Math.max(pUser + pNice + pCSys + pIdle + pIoWait + pIrq + pSoftIrq + pSteal, 0);
 
             double pFree = Double.parseDouble(format.format(pIdle <= 0 ? 0 : (100d * pIdle / pTotalCpu)));
-
-            double pCpuUsage = Double.parseDouble(format.format((100 - pFree)));
-
-            JProgressBar jProgressBar = processorProgressBars.get(i);
-            jProgressBar.setMaximum(100);
-            int pCpuUsagePercent = (int) pCpuUsage;
-            jProgressBar.setValue(pCpuUsagePercent);
-            jProgressBar.setStringPainted(true);
-            jProgressBar.setString(pCpuUsage + "%");
-            jProgressBar.setToolTipText(pCpuUsage + "%");
-
+            perCpuUsage[i] = Double.parseDouble(format.format((100 - pFree)));
         }
 
         preProcessorTicks = processorTicks;
 
+        EdtUtil.run(() -> {
+            if (sysData != null) {
+                sysData.advanceTime();
+                sysData.appendData(chartSample);
+            }
+
+            CpuForm cpuForm = getInstance();
+            JProgressBar scuProgressBar = cpuForm.getScuProgressBar();
+            scuProgressBar.setMaximum(100);
+            scuProgressBar.setValue(cpuUsagePercent);
+            scuProgressBar.setStringPainted(true);
+            scuProgressBar.setString(cpuUsageStr);
+            cpuForm.getUsageLabel().setText(cpuUsageStr);
+
+            if (processorProgressBars != null) {
+                for (int i = 0; i < perCpuUsage.length && i < processorProgressBars.size(); i++) {
+                    double pCpuUsage = perCpuUsage[i];
+                    JProgressBar jProgressBar = processorProgressBars.get(i);
+                    jProgressBar.setMaximum(100);
+                    jProgressBar.setValue((int) pCpuUsage);
+                    jProgressBar.setStringPainted(true);
+                    jProgressBar.setString(pCpuUsage + "%");
+                    jProgressBar.setToolTipText(pCpuUsage + "%");
+                }
+            }
+        });
     }
 
     private static void initPcfInfo() {
-        CpuForm cpuForm = getInstance();
         CentralProcessor processor = App.si.getHardware().getProcessor();
 
         long[] currentFreq = processor.getCurrentFreq();
+        String[] freqTexts = new String[currentFreq.length];
         BigDecimal totalFreq = BigDecimal.ZERO;
 
         for (int i = 0; i < currentFreq.length; i++) {
-
-            JTextField textField = processorTextFields.get(i);
             BigDecimal divide = new BigDecimal(currentFreq[i]).divide(new BigDecimal(1000000000), 2, RoundingMode.HALF_UP);
-            String freqStr = divide + " GHz";
-            textField.setText(freqStr);
-
+            freqTexts[i] = divide + " GHz";
             totalFreq = divide.add(totalFreq);
-
         }
-        cpuForm.getFreqLabel().setText(String.valueOf(totalFreq.divide(new BigDecimal(currentFreq.length), 2, RoundingMode.HALF_UP)));
+        String avgFreqText = currentFreq.length == 0 ? "0"
+                : String.valueOf(totalFreq.divide(new BigDecimal(currentFreq.length), 2, RoundingMode.HALF_UP));
 
+        EdtUtil.run(() -> {
+            if (processorTextFields != null) {
+                for (int i = 0; i < freqTexts.length && i < processorTextFields.size(); i++) {
+                    processorTextFields.get(i).setText(freqTexts[i]);
+                }
+            }
+            getInstance().getFreqLabel().setText(avgFreqText);
+        });
     }
 
     private static void initIndicatorInfo() {
-        CpuForm cpuForm = getInstance();
         CentralProcessor processor = App.si.getHardware().getProcessor();
-        cpuForm.getInterruptsLabel().setText(String.valueOf(processor.getInterrupts()));
-        cpuForm.getContextSwitchesLabel().setText(String.valueOf(processor.getContextSwitches()));
+        String interrupts = String.valueOf(processor.getInterrupts());
+        String contextSwitches = String.valueOf(processor.getContextSwitches());
 
         Sensors sensors = App.si.getHardware().getSensors();
+        String temperature = String.format("%.1f°C", sensors.getCpuTemperature());
+        String voltage = String.valueOf(sensors.getCpuVoltage());
+        String fanSpeeds = Arrays.toString(sensors.getFanSpeeds());
 
-        cpuForm.getTemperatureLabel().setText(String.format("%.1f°C", sensors.getCpuTemperature()));
-        // Tips are copied from oshi.
-        cpuForm.getTemperatureLabel().setToolTipText("On Windows, if not running Open Hardware Monitor, \n" +
-                "requires elevated permissions and hardware BIOS that supports publishing to WMI. \n" +
-                "In this case, returns the temperature of the \"Thermal Zone\" \n" +
-                "which may be different than CPU temperature obtained from other sources. \n" +
-                "In addition, some motherboards may only refresh this value on certain events.");
-        cpuForm.getVoltageLabel().setText(String.valueOf(sensors.getCpuVoltage()));
-        cpuForm.getFanSpeedsLabel().setText(Arrays.toString(sensors.getFanSpeeds()));
+        EdtUtil.run(() -> {
+            CpuForm cpuForm = getInstance();
+            cpuForm.getInterruptsLabel().setText(interrupts);
+            cpuForm.getContextSwitchesLabel().setText(contextSwitches);
+            cpuForm.getTemperatureLabel().setText(temperature);
+            // Tips are copied from oshi.
+            cpuForm.getTemperatureLabel().setToolTipText("On Windows, if not running Open Hardware Monitor, \n" +
+                    "requires elevated permissions and hardware BIOS that supports publishing to WMI. \n" +
+                    "In this case, returns the temperature of the \"Thermal Zone\" \n" +
+                    "which may be different than CPU temperature obtained from other sources. \n" +
+                    "In addition, some motherboards may only refresh this value on certain events.");
+            cpuForm.getVoltageLabel().setText(voltage);
+            cpuForm.getFanSpeedsLabel().setText(fanSpeeds);
+        });
     }
 
     /**

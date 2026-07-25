@@ -22,15 +22,20 @@ public class ConsoleUtil {
     private static final Log logger = LogFactory.get();
 
     public static void consoleWithLog(JTextArea textArea, String log) {
-        textArea.append(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS") + " ");
-        textArea.append(log + "\n");
-        textArea.setCaretPosition(textArea.getText().length());
+        String line = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS") + " " + log + "\n";
+        EdtUtil.run(() -> {
+            textArea.append(line);
+            textArea.setCaretPosition(textArea.getText().length());
+        });
         logger.warn(log);
     }
 
     public static void consoleOnly(JTextArea textArea, String log) {
-        textArea.append(log + "\n");
-        textArea.setCaretPosition(textArea.getText().length());
+        String line = log + "\n";
+        EdtUtil.run(() -> {
+            textArea.append(line);
+            textArea.setCaretPosition(textArea.getText().length());
+        });
     }
 
 }

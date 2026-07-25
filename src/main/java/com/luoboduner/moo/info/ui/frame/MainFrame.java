@@ -6,9 +6,11 @@ import com.luoboduner.moo.info.ui.UiConsts;
 import com.luoboduner.moo.info.ui.component.TopMenuBar;
 import com.luoboduner.moo.info.ui.listener.FrameListener;
 import com.luoboduner.moo.info.util.ComponentUtil;
+import com.luoboduner.moo.info.util.FrameUtil;
 import com.luoboduner.moo.info.util.SystemUtil;
 
 import javax.swing.*;
+import java.net.URL;
 
 /**
  * Main Frame
@@ -21,8 +23,13 @@ public class MainFrame extends JFrame {
     public void init() {
         this.setName(UiConsts.APP_NAME);
         this.setTitle(UiConsts.APP_NAME);
-//        FrameUtil.setFrameIcon(this);
-        setIconImages(FlatSVGUtils.createWindowIconImages("/icons/MooInfo.svg"));
+        // FlatLaf extras is modular; resolve SVG via app class, not FlatSVGUtils.class
+        URL iconUrl = MainFrame.class.getResource("/icons/MooInfo.svg");
+        if (iconUrl != null) {
+            setIconImages(FlatSVGUtils.createWindowIconImages(iconUrl));
+        } else {
+            FrameUtil.setFrameIcon(this);
+        }
         TopMenuBar topMenuBar = TopMenuBar.getInstance();
         topMenuBar.init();
         setJMenuBar(topMenuBar);

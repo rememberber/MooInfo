@@ -7,12 +7,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
-import oshi.PlatformEnum;
-import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
+import oshi.util.PlatformEnum;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -38,7 +38,7 @@ public class DiskForm {
 
     private static DiskForm diskForm;
 
-    public static DiskForm getInstance() {
+    public static synchronized DiskForm getInstance() {
         if (diskForm == null) {
             diskForm = new DiskForm();
         }
@@ -59,8 +59,14 @@ public class DiskForm {
     }
 
     private static void initInfo() {
+        // Collect filesystem data off the EDT
         FileSystem fileSystem = App.si.getOperatingSystem().getFileSystem();
         List<OSFileStore> fileStores = fileSystem.getFileStores();
+
+        EdtUtil.run(() -> applyDiskInfo(fileStores));
+    }
+
+    private static void applyDiskInfo(List<OSFileStore> fileStores) {
         JPanel diskListPanel = getInstance().getDiskListPanel();
 
         diskListPanel.removeAll();
@@ -75,7 +81,7 @@ public class DiskForm {
             JLabel title = new JLabel();
             StringBuilder titleBuilder = new StringBuilder();
             titleBuilder.append(store.getName());
-            if (SystemInfo.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
+            if (PlatformEnum.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
                 titleBuilder.append(" - ");
                 titleBuilder.append(store.getLabel());
             }
@@ -91,7 +97,7 @@ public class DiskForm {
             long usable = store.getUsableSpace();
             long total = store.getTotalSpace();
             spacePercent.setMaximum(100);
-            int usagePercent = (int) ((total - usable) * 100 / total);
+            int usagePercent = total == 0 ? 0 : (int) ((total - usable) * 100 / total);
             spacePercent.setValue(usagePercent);
             spacePercent.setToolTipText(usagePercent + "%");
 
@@ -110,6 +116,9 @@ public class DiskForm {
 
         final Spacer spacer1 = new Spacer();
         diskListPanel.add(spacer1, new GridConstraints(fileStores.size(), 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+
+        diskListPanel.revalidate();
+        diskListPanel.repaint();
     }
 
     {

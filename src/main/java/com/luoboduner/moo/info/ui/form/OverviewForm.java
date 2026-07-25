@@ -61,7 +61,7 @@ public class OverviewForm {
     private JLabel firmwareLabel;
     private JScrollPane scrollPane;
 
-    public static OverviewForm getInstance() {
+    public static synchronized OverviewForm getInstance() {
         if (overviewForm == null) {
             overviewForm = new OverviewForm();
         }
@@ -244,8 +244,20 @@ public class OverviewForm {
                 }
             }
 
-            detailBuilder.append(infoMap.get("name"));
-            detailBuilder.append(" ").append(infoMap.get("size"));
+            String name = infoMap.get("name");
+            String size = infoMap.get("size");
+            if (StringUtils.isNotBlank(name)) {
+                detailBuilder.append(name);
+            }
+            if (StringUtils.isNotBlank(size)) {
+                if (detailBuilder.length() > 0) {
+                    detailBuilder.append(" ");
+                }
+                detailBuilder.append(size);
+            }
+            if (detailBuilder.length() == 0) {
+                detailBuilder.append("Unknown Display");
+            }
 
             detailList.add(detailBuilder.toString());
 

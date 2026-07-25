@@ -60,7 +60,7 @@ public class DetailForm {
 
     private static DetailForm detailForm;
 
-    public static DetailForm getInstance() {
+    public static synchronized DetailForm getInstance() {
         if (detailForm == null) {
             detailForm = new DetailForm();
         }

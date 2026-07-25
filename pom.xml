@@ -15,25 +15,27 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
 
-        <logback.version>1.4.7</logback.version>
+        <logback.version>1.6.0</logback.version>
         <forms_rt.version>7.0.3</forms_rt.version>
-        <lombok.version>1.18.30</lombok.version>
-        <junit-jupiter-api.version>5.9.2</junit-jupiter-api.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
-        <guava.version>31.1-jre</guava.version>
-        <okhttp.version>5.0.0-alpha.11</okhttp.version>
-        <flatlaf.version>3.5.2</flatlaf.version>
-        <flatlaf-extras.version>3.5.2</flatlaf-extras.version>
-        <flatlaf-intellij-themes.version>3.5.2</flatlaf-intellij-themes.version>
-        <hutool-all.version>5.8.18</hutool-all.version>
-        <fastjson.version>2.0.32</fastjson.version>
-        <oshi-core.version>6.6.5</oshi-core.version>
-        <jfreechart.version>1.5.4</jfreechart.version>
-		<imaging.version>1.0-alpha3</imaging.version>
-		<xmlwise.version>1.2.11</xmlwise.version>
+        <lombok.version>1.18.46</lombok.version>
+        <junit-jupiter-api.version>6.1.2</junit-jupiter-api.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <okhttp.version>5.4.0</okhttp.version>
+        <flatlaf.version>3.7.2</flatlaf.version>
+        <flatlaf-extras.version>3.7.2</flatlaf-extras.version>
+        <flatlaf-intellij-themes.version>3.7.2</flatlaf-intellij-themes.version>
+        <hutool-all.version>5.8.47</hutool-all.version>
+        <fastjson.version>2.0.62</fastjson.version>
+        <oshi-core.version>7.4.2</oshi-core.version>
+        <jfreechart.version>1.5.6</jfreechart.version>
+        <imaging.version>1.0.0-alpha6</imaging.version>
+        <xmlwise.version>1.2.11</xmlwise.version>
+        <javapackager.version>1.7.6</javapackager.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
     </properties>
 
     <dependencies>
@@ -146,9 +148,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
                 <groupId>io.github.fvarrui</groupId>
                 <artifactId>javapackager</artifactId>
-                <version>1.7.5</version>
+                <version>${javapackager.version}</version>
                 <configuration>
                     <bundleJre>true</bundleJre>
                     <mainClass>com.luoboduner.moo.info.App</mainClass>

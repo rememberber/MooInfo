@@ -8,6 +8,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.Style;
+import com.luoboduner.moo.info.util.EdtUtil;
 import com.luoboduner.moo.info.util.ScrollUtil;
 import lombok.Getter;
 import oshi.hardware.PowerSource;
@@ -38,7 +39,7 @@ public class PowerSourceForm {
 
     private static PowerSourceForm powerSourceForm;
 
-    public static PowerSourceForm getInstance() {
+    public static synchronized PowerSourceForm getInstance() {
         if (powerSourceForm == null) {
             powerSourceForm = new PowerSourceForm();
         }
@@ -58,7 +59,14 @@ public class PowerSourceForm {
     }
 
     private static void initInfo() {
+        // Collect power source data off the EDT
         List<PowerSource> powerSources = App.si.getHardware().getPowerSources();
+        String powerInfoText = getPowerInfoText(powerSources);
+
+        EdtUtil.run(() -> applyPowerInfo(powerSources, powerInfoText));
+    }
+
+    private static void applyPowerInfo(List<PowerSource> powerSources, String powerInfoText) {
         PowerSourceForm powerSourceForm = getInstance();
         JPanel powerBasePanel = powerSourceForm.getPowerBasePanel();
 
@@ -103,7 +111,10 @@ public class PowerSourceForm {
             capacityBuilder.append(" / ").append("Max ").append(powerSource.getMaxCapacity());
             capacityBuilder.append(" / ").append("Design ").append(powerSource.getDesignCapacity());
             capacityBuilder.append(" (").append(powerSource.getCapacityUnits()).append(") ");
-            capacityBuilder.append((powerSource.getDesignCapacity() - powerSource.getMaxCapacity()) * 100 / powerSource.getDesignCapacity()).append("% wastage");
+            long designCapacity = powerSource.getDesignCapacity();
+            if (designCapacity > 0) {
+                capacityBuilder.append((designCapacity - powerSource.getMaxCapacity()) * 100 / designCapacity).append("% wastage");
+            }
             capacityLabel.setText(capacityBuilder.toString());
             powerPanel.add(capacityLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
@@ -117,7 +128,7 @@ public class PowerSourceForm {
                 powerTextBuilder.append("Charging");
             } else {
                 temperatureLabel.setIcon(new FlatSVGIcon("icons/indicator_light.svg", 10, 10));
-                powerTextBuilder.append("Remaining Time: " + formatTimeRemaining(powerSource.getTimeRemainingEstimated()));
+                powerTextBuilder.append("Remaining Time: ").append(formatTimeRemaining(powerSource.getTimeRemainingEstimated()));
             }
 
             powerTextBuilder.append(String.format(" / %.1f°C", powerSource.getTemperature()));
@@ -137,8 +148,10 @@ public class PowerSourceForm {
 
         // info textPane
         powerSourceForm.getPowerInfoTextPane().setContentType("text/html; charset=utf-8");
-        powerSourceForm.getPowerInfoTextPane().setText(getPowerInfoText(powerSources));
+        powerSourceForm.getPowerInfoTextPane().setText(powerInfoText);
 
+        powerBasePanel.revalidate();
+        powerBasePanel.repaint();
     }
 
     public static String getPowerInfoText(List<PowerSource> powerSources) {
@@ -164,7 +177,7 @@ public class PowerSourceForm {
             powerInfoBuilder.append("<br/><b>Manufacture Date: </b>").append(powerSource.getManufactureDate());
             powerInfoBuilder.append("<br/><b>Serial Number: </b>").append(powerSource.getSerialNumber());
 
-            powerInfoBuilder.append("<br/");
+            powerInfoBuilder.append("<br/>");
         }
 
         return powerInfoBuilder.toString();

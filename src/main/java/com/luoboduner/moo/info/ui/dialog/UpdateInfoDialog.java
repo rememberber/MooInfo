@@ -76,18 +76,19 @@ public class UpdateInfoDialog extends JDialog {
     }
 
     private void onOK() {
-        if (SystemUtil.isMacOs()) {
+        // Only Windows has a hosted .exe installer; other platforms open GitHub Releases
+        if (SystemUtil.isWindowsOs()) {
+            UpdateDialog dialog = new UpdateDialog();
+            dialog.pack();
+            dialog.downLoad(newVersion);
+            dialog.setVisible(true);
+        } else {
             Desktop desktop = Desktop.getDesktop();
             try {
                 desktop.browse(new URI("https://github.com/rememberber/MooInfo/releases"));
             } catch (IOException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
-        } else {
-            UpdateDialog dialog = new UpdateDialog();
-            dialog.pack();
-            dialog.downLoad(newVersion);
-            dialog.setVisible(true);
         }
         dispose();
     }

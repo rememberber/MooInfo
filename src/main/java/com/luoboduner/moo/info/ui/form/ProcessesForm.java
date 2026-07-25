@@ -1,5 +1,6 @@
 package com.luoboduner.moo.info.ui.form;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -7,15 +8,15 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.luoboduner.moo.info.App;
 import com.luoboduner.moo.info.ui.UiConsts;
+import com.luoboduner.moo.info.util.EdtUtil;
 import lombok.Getter;
 import org.apache.commons.imaging.formats.icns.IcnsImageParser;
 import org.apache.commons.lang3.SystemUtils;
-import org.jetbrains.annotations.NotNull;
-import oshi.PlatformEnum;
 import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
+import oshi.util.PlatformEnum;
 import xmlwise.Plist;
 
 import javax.swing.Timer;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * ProcessesForm
@@ -47,6 +49,8 @@ public class ProcessesForm {
 
 	private final static HashMap<String, Icon> iconCacheMap = new HashMap<>();
 
+	private static final AtomicBoolean refreshInFlight = new AtomicBoolean(false);
+
 	private static final Log logger = LogFactory.get();
 
 	private static ProcessesForm processesForm;
@@ -58,7 +62,7 @@ public class ProcessesForm {
 	private JRadioButton perProc;
 	private JRadioButton perSystem;
 
-	public static ProcessesForm getInstance() {
+	public static synchronized ProcessesForm getInstance() {
 		if (processesForm == null) {
 			processesForm = new ProcessesForm();
 		}
@@ -77,7 +81,7 @@ public class ProcessesForm {
 		resetSortByButtonGroup();
 
 		processesForm = getInstance();
-		if (SystemInfo.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
+		if (PlatformEnum.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
 			processesForm.perSystem.setSelected(true);
 		} else {
 			processesForm.perProc.setSelected(true);
@@ -112,7 +116,8 @@ public class ProcessesForm {
 	 */
 	private static void initInfo() {
 		OperatingSystem os = App.si.getOperatingSystem();
-		TableModel model = new DefaultTableModel(parseProcesses(os.getProcesses(null, null, 0), App.si), COLUMNS) {
+		ProcessSortOptions sortOptions = captureSortOptions();
+		TableModel model = new DefaultTableModel(parseProcesses(os.getProcesses(null, null, 0), App.si, sortOptions), COLUMNS) {
 			@Override
 			public Class<?> getColumnClass(int column) {
 				if (column == 0) {
@@ -134,27 +139,58 @@ public class ProcessesForm {
 		// The name of header column turn to left
 		hr.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 
+		// Swing Timer fires on EDT; heavy OSHI/icon work runs in background
 		Timer timer = new Timer(UiConsts.REFRESH_SLOW, e -> {
-			DefaultTableModel tableModel = (DefaultTableModel) procTable.getModel();
-			Object[][] newData = parseProcesses(os.getProcesses(null, null, 0), App.si);
-			int rowCount = tableModel.getRowCount();
-			for (int row = 0; row < newData.length; row++) {
-				if (row < rowCount) {
-					// Overwrite row
-					for (int col = 0; col < newData[row].length; col++) {
-						tableModel.setValueAt(newData[row][col], row, col);
-					}
-				} else {
-					// Add row
-					tableModel.addRow(newData[row]);
+			if (!refreshInFlight.compareAndSet(false, true)) {
+				return;
+			}
+			ProcessSortOptions options = captureSortOptions();
+			ThreadUtil.execute(() -> {
+				try {
+					Object[][] newData = parseProcesses(os.getProcesses(null, null, 0), App.si, options);
+					EdtUtil.run(() -> {
+						try {
+							applyProcessTableData(procTable, newData);
+						} finally {
+							refreshInFlight.set(false);
+						}
+					});
+				} catch (Exception ex) {
+					refreshInFlight.set(false);
+					logger.error(ex);
 				}
-			}
-			// Delete any extra rows
-			for (int row = rowCount - 1; row >= newData.length; row--) {
-				tableModel.removeRow(row);
-			}
+			});
 		});
 		timer.start();
+	}
+
+	private static ProcessSortOptions captureSortOptions() {
+		processesForm = getInstance();
+		return new ProcessSortOptions(
+			processesForm.cpuButton.isSelected(),
+			processesForm.cumulativeCpuButton.isSelected(),
+			processesForm.perProc.isSelected()
+		);
+	}
+
+	private static void applyProcessTableData(JTable procTable, Object[][] newData) {
+		DefaultTableModel tableModel = (DefaultTableModel) procTable.getModel();
+		int rowCount = tableModel.getRowCount();
+		for (int row = 0; row < newData.length; row++) {
+			if (row < rowCount) {
+				// Overwrite row
+				for (int col = 0; col < newData[row].length; col++) {
+					tableModel.setValueAt(newData[row][col], row, col);
+				}
+			} else {
+				// Add row
+				tableModel.addRow(newData[row]);
+			}
+		}
+		// Delete any extra rows
+		for (int row = rowCount - 1; row >= newData.length; row--) {
+			tableModel.removeRow(row);
+		}
 	}
 
 	/**
@@ -162,10 +198,10 @@ public class ProcessesForm {
 	 *
 	 * @param list
 	 * @param si
+	 * @param options sort / CPU% display options captured on the EDT
 	 * @return
 	 */
-	private static Object[][] parseProcesses(List<OSProcess> list, SystemInfo si) {
-		processesForm = getInstance();
+	private static Object[][] parseProcesses(List<OSProcess> list, SystemInfo si, ProcessSortOptions options) {
 		long totalMem = si.getHardware().getMemory().getTotal();
 		int cpuCount = si.getHardware().getProcessor().getLogicalProcessorCount();
 		// Build a map with a value for each process to control the sort
@@ -173,14 +209,14 @@ public class ProcessesForm {
 		for (OSProcess p : list) {
 			int pid = p.getProcessID();
 			// Ignore the Idle process on Windows
-			if (pid > 0 || !SystemInfo.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
+			if (pid > 0 || !PlatformEnum.getCurrentPlatform().equals(PlatformEnum.WINDOWS)) {
 				// Set up for appropriate sort
-				if (processesForm.cpuButton.isSelected()) {
+				if (options.sortByCpu) {
 					processSortValueMap.put(p, p.getProcessCpuLoadBetweenTicks(priorSnapshotMap.get(pid)));
-				} else if (processesForm.cumulativeCpuButton.isSelected()) {
+				} else if (options.sortByCumulativeCpu) {
 					processSortValueMap.put(p, p.getProcessCpuLoadCumulative());
 				} else {
-					processSortValueMap.put(p, (double) p.getResidentSetSize());
+					processSortValueMap.put(p, (double) p.getResidentMemory());
 				}
 			}
 		}
@@ -200,18 +236,20 @@ public class ProcessesForm {
 			procArr[i][1] = pid;
 			procArr[i][2] = p.getParentProcessID();
 			procArr[i][3] = p.getThreadCount();
-			if (processesForm.perProc.isSelected()) {
-				procArr[i][4] = String.format("%.1f",
-					100d * p.getProcessCpuLoadBetweenTicks(priorSnapshotMap.get(pid)) / cpuCount);
-				procArr[i][5] = String.format("%.1f", 100d * p.getProcessCpuLoadCumulative() / cpuCount);
-			} else {
+			// OSHI load ≈ 1.0 for one fully busy logical processor.
+			// "of one Processor" => percent of a single core; "of System" => percent of all cores.
+			if (options.perProc) {
 				procArr[i][4] = String.format("%.1f",
 					100d * p.getProcessCpuLoadBetweenTicks(priorSnapshotMap.get(pid)));
 				procArr[i][5] = String.format("%.1f", 100d * p.getProcessCpuLoadCumulative());
+			} else {
+				procArr[i][4] = String.format("%.1f",
+					100d * p.getProcessCpuLoadBetweenTicks(priorSnapshotMap.get(pid)) / cpuCount);
+				procArr[i][5] = String.format("%.1f", 100d * p.getProcessCpuLoadCumulative() / cpuCount);
 			}
 			procArr[i][6] = FormatUtil.formatBytes(p.getVirtualSize());
-			procArr[i][7] = FormatUtil.formatBytes(p.getResidentSetSize());
-			procArr[i][8] = String.format("%.1f", 100d * p.getResidentSetSize() / totalMem);
+			procArr[i][7] = FormatUtil.formatBytes(p.getResidentMemory());
+			procArr[i][8] = String.format("%.1f", 100d * p.getResidentMemory() / totalMem);
 			procArr[i][9] = p.getName();
 		}
 		// Re-populate snapshot map
@@ -220,6 +258,18 @@ public class ProcessesForm {
 			priorSnapshotMap.put(p.getProcessID(), p);
 		}
 		return procArr;
+	}
+
+	private static final class ProcessSortOptions {
+		private final boolean sortByCpu;
+		private final boolean sortByCumulativeCpu;
+		private final boolean perProc;
+
+		private ProcessSortOptions(boolean sortByCpu, boolean sortByCumulativeCpu, boolean perProc) {
+			this.sortByCpu = sortByCpu;
+			this.sortByCumulativeCpu = sortByCumulativeCpu;
+			this.perProc = perProc;
+		}
 	}
 
 	/**
@@ -286,11 +336,11 @@ public class ProcessesForm {
 				}
 			}
 		} catch (Exception e) {
+			logger.warn("Failed to load process icon for {}: {}", fullProcessPathName, e.toString());
 		}
 		return UIManager.getIcon("FileView.fileIcon");
 	}
 
-	@NotNull
 	/**
 	 *  Workaround to open folders files with spaces
 	 *  @param filePath
