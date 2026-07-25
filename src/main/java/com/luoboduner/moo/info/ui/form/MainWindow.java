@@ -3,6 +3,7 @@ package com.luoboduner.moo.info.ui.form;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.luoboduner.moo.info.ui.component.UpdateInstallPromptPanel;
 import com.luoboduner.moo.info.util.SystemUtil;
 import lombok.Getter;
 
@@ -46,10 +47,6 @@ public class MainWindow {
 
     public void init() {
         mainWindow = getInstance();
-        if (SystemUtil.isMacOs() && SystemInfo.isMacFullWindowContentSupported) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
-            gridLayoutManager.setMargin(new Insets(25, 0, 0, 0));
-        }
 
         mainWindow.getOverviewPanel().add(OverviewForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getDetailPanel().add(DetailForm.getInstance().getMainPanel(), gridConstraints);
@@ -61,7 +58,26 @@ public class MainWindow {
         mainWindow.getProcessesPanel().add(ProcessesForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getDiskPanel().add(DiskForm.getInstance().getMainPanel(), gridConstraints);
         mainWindow.getPowerPanel().add(PowerSourceForm.getInstance().getMainPanel(), gridConstraints);
+        attachUpdateInstallPrompt();
         mainWindow.getMainPanel().updateUI();
+    }
+
+    private void attachUpdateInstallPrompt() {
+        if (mainPanel.getLayout() instanceof BorderLayout) {
+            return;
+        }
+        // Keep top inset under macOS traffic lights after switching away from GridLayoutManager.
+        int topInset = (SystemUtil.isMacOs() && SystemInfo.isMacFullWindowContentSupported) ? 25 : 0;
+        mainPanel.removeAll();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(topInset, 0, 0, 0));
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+
+        UpdateInstallPromptPanel updatePrompt = new UpdateInstallPromptPanel();
+        JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 8));
+        south.setOpaque(false);
+        south.add(updatePrompt);
+        mainPanel.add(south, BorderLayout.SOUTH);
     }
 
     {

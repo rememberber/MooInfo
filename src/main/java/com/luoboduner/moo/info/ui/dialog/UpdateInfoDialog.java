@@ -17,9 +17,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Dialog of update info
@@ -76,20 +73,10 @@ public class UpdateInfoDialog extends JDialog {
     }
 
     private void onOK() {
-        // Only Windows has a hosted .exe installer; other platforms open GitHub Releases
-        if (SystemUtil.isWindowsOs()) {
-            UpdateDialog dialog = new UpdateDialog();
-            dialog.pack();
-            dialog.downLoad(newVersion);
-            dialog.setVisible(true);
-        } else {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.browse(new URI("https://github.com/rememberber/MooInfo/releases"));
-            } catch (IOException | URISyntaxException ex) {
-                ex.printStackTrace();
-            }
-        }
+        UpdateDialog dialog = new UpdateDialog();
+        dialog.pack();
+        dialog.downLoad(newVersion);
+        dialog.setVisible(true);
         dispose();
     }
 

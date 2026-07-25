@@ -122,17 +122,18 @@ public class DetailForm {
 
         HardwareAbstractionLayer hardware = App.si.getHardware();
 
-        detailForm.getOsTextPane().setText(getOsInfo());
-        detailForm.getComputerTextPane().setText(getComputerInfo());
-        detailForm.getBaseBoardTextPane().setText(getBaseBoardInfo());
-        detailForm.getCpuTextPane().setText(CpuForm.getCpuInfo());
-        detailForm.getMemoryTextPane().setText(MemoryForm.getMemoryInfo());
-        detailForm.getStorageTextPane().setText(getStorageInfo());
-        detailForm.getGraphicsCardTextPane().setText(getGraphicsCardsInfo());
-        detailForm.getDisplayTextPane().setText(getDisplayInfo());
-        detailForm.getSoundCardTextPane().setText(getSoundCardsInfo());
-        detailForm.getNetworkTextPane().setText(getNetworkInfo());
-        detailForm.getPowerSourceTextPane().setText(PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
+        ScrollUtil.setTextAtTop(detailForm.getOsTextPane(), getOsInfo());
+        ScrollUtil.setTextAtTop(detailForm.getComputerTextPane(), getComputerInfo());
+        ScrollUtil.setTextAtTop(detailForm.getBaseBoardTextPane(), getBaseBoardInfo());
+        ScrollUtil.setTextAtTop(detailForm.getCpuTextPane(), CpuForm.getCpuInfo());
+        ScrollUtil.setTextAtTop(detailForm.getMemoryTextPane(), MemoryForm.getMemoryInfo());
+        ScrollUtil.setTextAtTop(detailForm.getStorageTextPane(), getStorageInfo());
+        ScrollUtil.setTextAtTop(detailForm.getGraphicsCardTextPane(), getGraphicsCardsInfo());
+        ScrollUtil.setTextAtTop(detailForm.getDisplayTextPane(), getDisplayInfo());
+        ScrollUtil.setTextAtTop(detailForm.getSoundCardTextPane(), getSoundCardsInfo());
+        ScrollUtil.setTextAtTop(detailForm.getNetworkTextPane(), getNetworkInfo());
+        ScrollUtil.setTextAtTop(detailForm.getPowerSourceTextPane(), PowerSourceForm.getPowerInfoText(hardware.getPowerSources()));
+        ScrollUtil.scrollToTop(detailForm.getScrollPane());
     }
 
     private static String getOsInfo() {

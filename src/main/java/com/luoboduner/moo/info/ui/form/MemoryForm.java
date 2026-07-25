@@ -75,7 +75,8 @@ public class MemoryForm {
     }
 
     private static void initPhysicalMemoryInfo() {
-        memoryForm.getPhysicalMemoryInfoTextPane().setText(getMemoryInfo());
+        ScrollUtil.setTextAtTop(memoryForm.getPhysicalMemoryInfoTextPane(), getMemoryInfo());
+        ScrollUtil.scrollToTop(memoryForm.getScrollPane());
     }
 
     private static void initUi() {

@@ -24,3 +24,11 @@ replay_pid*
 *.iml
 out
 gen
+
+# Local packaging JDK cache
+downloads/
+jdks/
+dist/
+release-assets/
+release-upload/
+release-notes/

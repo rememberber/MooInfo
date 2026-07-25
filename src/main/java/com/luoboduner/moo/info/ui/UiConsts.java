@@ -70,9 +70,21 @@ public class UiConsts {
             .getImage(UiConsts.class.getResource("/icons/logo-16.png"));
 
     /**
+     * GitHub master branch raw content root
+     */
+    public static final String GITHUB_RAW_MASTER_URL = "https://raw.githubusercontent.com/rememberber/MooInfo/master/";
+
+    /**
      * update checking url
      */
-    public static final String CHECK_VERSION_URL = "https://gitee.com/zhoubochina/MooInfo/raw/master/src/main/resources/version_summary.json";
+    public static final String CHECK_VERSION_URL = GITHUB_RAW_MASTER_URL + "src/main/resources/version_summary.json";
+
+    /**
+     * platform installer download links
+     */
+    public static final String DOWNLOAD_LINK_INFO_URL = GITHUB_RAW_MASTER_URL + "download_links.json";
+
+    public static final String GITHUB_RELEASES_URL = "https://github.com/rememberber/MooInfo/releases";
 
     public static final int REFRESH_FAST = 1000;
     public static final int REFRESH_SLOW = 5000;

@@ -168,10 +168,10 @@ public class Init {
         scheduleFormInit(DiskForm::init);
         scheduleFormInit(PowerSourceForm::init);
 
-        // Check the new version
+        // Check for updates shortly after startup, then hourly (aligned with MooTool)
         if (App.config.isAutoCheckUpdate()) {
             ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-            threadPoolExecutor.scheduleAtFixedRate(() -> UpgradeUtil.checkUpdate(true), 0, 24, TimeUnit.HOURS);
+            threadPoolExecutor.scheduleAtFixedRate(() -> UpgradeUtil.checkUpdate(true), 3, 3600, TimeUnit.SECONDS);
         }
     }
 

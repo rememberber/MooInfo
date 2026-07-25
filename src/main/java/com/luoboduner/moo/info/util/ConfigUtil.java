@@ -20,6 +20,8 @@ public class ConfigUtil extends ConfigBaseUtil {
 
     private boolean autoCheckUpdate;
 
+    private boolean autoDownloadUpdate;
+
     private boolean defaultMaxWindow;
 
     private boolean unifiedBackground;
@@ -38,6 +40,14 @@ public class ConfigUtil extends ConfigBaseUtil {
 
     public void setAutoCheckUpdate(boolean autoCheckUpdate) {
         setting.putByGroup("autoCheckUpdate", "setting.common", String.valueOf(autoCheckUpdate));
+    }
+
+    public boolean isAutoDownloadUpdate() {
+        return setting.getBool("autoDownloadUpdate", "setting.common", true);
+    }
+
+    public void setAutoDownloadUpdate(boolean autoDownloadUpdate) {
+        setting.putByGroup("autoDownloadUpdate", "setting.common", String.valueOf(autoDownloadUpdate));
     }
 
     public boolean isDefaultMaxWindow() {

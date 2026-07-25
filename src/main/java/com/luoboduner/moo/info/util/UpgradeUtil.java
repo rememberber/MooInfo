@@ -1,6 +1,7 @@
 package com.luoboduner.moo.info.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
@@ -12,8 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Upgrade tool class
@@ -23,115 +27,181 @@ import java.util.Map;
  */
 @Slf4j
 public class UpgradeUtil {
+    private static final int CHECK_TIMEOUT_MS = 10_000;
+    private static final AtomicBoolean MANUAL_CHECKING = new AtomicBoolean(false);
 
+    private static int parseVersionIndex(Map<String, String> versionIndexMap, String version) {
+        String index = versionIndexMap.get(version);
+        if (StringUtils.isBlank(index)) {
+            throw new IllegalStateException("Missing version index: " + version);
+        }
+        return Integer.parseInt(index);
+    }
+
+    static List<VersionSummary.Version> versionChangesAfter(VersionSummary versionSummary, String currentVersion) {
+        Map<String, String> versionIndexMap = JSON.parseObject(versionSummary.getVersionIndex(), Map.class);
+        int currentVersionIndex = parseVersionIndex(versionIndexMap, currentVersion);
+        int latestVersionIndex = parseVersionIndex(versionIndexMap, versionSummary.getCurrentVersion());
+        if (latestVersionIndex <= currentVersionIndex) {
+            return List.of();
+        }
+
+        List<VersionSummary.Version> versionDetailList = versionSummary.getVersionDetailList();
+        if (versionDetailList == null) {
+            throw new IllegalStateException("Missing version detail list");
+        }
+        List<VersionSummary.Version> changes = new ArrayList<>();
+        for (VersionSummary.Version version : versionDetailList) {
+            int versionIndex = parseVersionIndex(versionIndexMap, version.getVersion());
+            if (versionIndex > currentVersionIndex && versionIndex <= latestVersionIndex) {
+                changes.add(version);
+            }
+        }
+        if (changes.size() != latestVersionIndex - currentVersionIndex) {
+            throw new IllegalStateException("Incomplete version notes: "
+                    + currentVersion + " -> " + versionSummary.getCurrentVersion());
+        }
+        changes.sort(Comparator.comparingInt(version -> parseVersionIndex(versionIndexMap, version.getVersion())));
+        return changes;
+    }
+
+    /**
+     * Check for updates. Network I/O runs off the EDT; dialogs are shown on the EDT.
+     *
+     * @param initCheck true for automatic startup checks (silent when already latest);
+     *                  false for manual checks (always show a result)
+     */
     public static void checkUpdate(boolean initCheck) {
-        // current version
+        if (!initCheck && !MANUAL_CHECKING.compareAndSet(false, true)) {
+            return;
+        }
+        ThreadUtil.execute(() -> {
+            try {
+                doCheckUpdate(initCheck);
+            } catch (Exception e) {
+                log.error("Check for update failed", e);
+                if (!initCheck) {
+                    showMessage("Check for timeouts, follow GitHub Release!", "Network error");
+                }
+            } finally {
+                if (!initCheck) {
+                    MANUAL_CHECKING.set(false);
+                }
+            }
+        });
+    }
+
+    private static void doCheckUpdate(boolean initCheck) {
         String currentVersion = UiConsts.APP_VERSION;
 
-        // Get information about the latest version from github (network I/O stays off EDT)
-        String versionSummaryJsonContent = HttpUtil.get(UiConsts.CHECK_VERSION_URL);
-        if (StringUtils.isEmpty(versionSummaryJsonContent) && !initCheck) {
-            EdtUtil.run(() -> JOptionPane.showMessageDialog(App.mainFrame,
-                    "Check for timeouts, follow GitHub Release!", "Network error",
-                    JOptionPane.INFORMATION_MESSAGE));
+        String versionSummaryJsonContent;
+        try {
+            versionSummaryJsonContent = HttpUtil.get(UiConsts.CHECK_VERSION_URL, CHECK_TIMEOUT_MS);
+        } catch (Exception e) {
+            log.error("Check for update network request failed", e);
+            if (!initCheck) {
+                showMessage("Check for timeouts, follow GitHub Release!", "Network error");
+            }
             return;
-        } else if (StringUtils.isEmpty(versionSummaryJsonContent) || versionSummaryJsonContent.contains("404: Not Found")) {
+        }
+        if (StringUtils.isEmpty(versionSummaryJsonContent) || versionSummaryJsonContent.contains("404: Not Found")) {
+            if (!initCheck) {
+                showMessage("Check for timeouts, follow GitHub Release!", "Network error");
+            }
             return;
         }
         versionSummaryJsonContent = versionSummaryJsonContent.replace("\n", "");
 
         VersionSummary versionSummary = JSON.parseObject(versionSummaryJsonContent, VersionSummary.class);
-        // The latest version
         String newVersion = versionSummary.getCurrentVersion();
-        String versionIndexJsonContent = versionSummary.getVersionIndex();
-        // Version index
-        Map<String, String> versionIndexMap = JSON.parseObject(versionIndexJsonContent, Map.class);
-        // list of version details
-        List<VersionSummary.Version> versionDetailList = versionSummary.getVersionDetailList();
-
-        if (compareVersion(newVersion, currentVersion) > 0) {
-            // Version update log:
-            StringBuilder versionLogBuilder = new StringBuilder("<h1>Surprise the new version! Download it now?</h1>");
-            Integer currentVersionIndex = parseVersionIndex(versionIndexMap, currentVersion);
-            if (currentVersionIndex != null && versionDetailList != null) {
-                VersionSummary.Version version;
-                for (int i = currentVersionIndex + 1; i < versionDetailList.size(); i++) {
-                    version = versionDetailList.get(i);
-                    versionLogBuilder.append("<h2>").append(version.getVersion()).append("</h2>");
-                    versionLogBuilder.append("<b>").append(version.getTitle()).append("</b><br/>");
-                    versionLogBuilder.append("<p>").append(version.getLog().replaceAll("\\n", "</p><p>")).append("</p>");
-                }
-            } else {
-                log.warn("Missing version index for currentVersion={}, showing update dialog without changelog range",
-                        currentVersion);
-                versionLogBuilder.append("<p>New version: ").append(newVersion).append("</p>");
+        List<VersionSummary.Version> versionChanges;
+        try {
+            versionChanges = versionChangesAfter(versionSummary, currentVersion);
+        } catch (IllegalStateException | NumberFormatException e) {
+            log.error("Invalid version metadata while checking for updates", e);
+            if (!initCheck) {
+                showMessage("Failed to parse update information.", "Failure");
             }
-            String versionLog = versionLogBuilder.toString();
+            return;
+        }
 
-            EdtUtil.run(() -> {
+        if (!versionChanges.isEmpty()) {
+            if (initCheck && App.config.isAutoDownloadUpdate()) {
+                UpdateDownloadManager.getInstance().startSilentDownload(
+                        newVersion, buildVersionChangesHtml(versionChanges, null));
+                return;
+            }
+
+            String html = buildVersionChangesHtml(versionChanges, "Surprise the new version! Download it now?");
+            SwingUtilities.invokeLater(() -> {
                 UpdateInfoDialog updateInfoDialog = new UpdateInfoDialog();
-                updateInfoDialog.setHtmlText(versionLog);
+                updateInfoDialog.setHtmlText(html);
                 updateInfoDialog.setNewVersion(newVersion);
                 updateInfoDialog.pack();
                 updateInfoDialog.setVisible(true);
             });
-        } else {
-            if (!initCheck) {
-                EdtUtil.run(() -> JOptionPane.showMessageDialog(App.mainFrame,
-                        "It's the latest version!", "Congratulations",
-                        JOptionPane.INFORMATION_MESSAGE));
-            }
+        } else if (!initCheck) {
+            showMessage("It's the latest version!", "Congratulations");
         }
     }
 
+    private static void showMessage(String message, String title) {
+        SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(App.mainFrame, message, title, JOptionPane.INFORMATION_MESSAGE));
+    }
+
+    static String buildVersionChangesHtml(List<VersionSummary.Version> versionChanges, String title) {
+        StringBuilder versionLogBuilder = new StringBuilder();
+        if (StringUtils.isNotBlank(title)) {
+            versionLogBuilder.append("<h1>").append(title).append("</h1>");
+        }
+        for (VersionSummary.Version version : versionChanges) {
+            versionLogBuilder.append("<h2>").append(version.getVersion()).append("</h2>");
+            versionLogBuilder.append("<b>").append(version.getTitle()).append("</b><br/>");
+            versionLogBuilder.append("<p>").append(version.getLog().replaceAll("\\n", "</p><p>")).append("</p>");
+        }
+        return versionLogBuilder.toString();
+    }
+
     /**
-     * Smooth upgrade
-     * The version update scripts and sql methods involved are as idempotent as possible to avoid repeated upgrade operations due to unusual interruptions such as power failures and deaths during the upgrade process
+     * Smooth upgrade for local data/config migrations between installed versions.
      */
     public static void smoothUpgrade() {
-        // Get the current version
         String currentVersion = UiConsts.APP_VERSION;
-        // Get the before upgrade version
         String beforeVersion = App.config.getBeforeVersion();
 
         if (compareVersion(currentVersion, beforeVersion) <= 0) {
-            // If both are consistent, no upgrade action is performed
             return;
-        } else {
-            log.info("Smooth upgrade begins");
+        }
 
-            // Then take the index for both versions
-            String versionSummaryJsonContent = FileUtil.readString(UiConsts.class.getResource("/version_summary.json"), CharsetUtil.UTF_8);
-            versionSummaryJsonContent = versionSummaryJsonContent.replace("\n", "");
-            VersionSummary versionSummary = JSON.parseObject(versionSummaryJsonContent, VersionSummary.class);
-            String versionIndex = versionSummary.getVersionIndex();
-            Map<String, String> versionIndexMap = JSON.parseObject(versionIndex, Map.class);
-            Integer currentVersionIndex = parseVersionIndex(versionIndexMap, currentVersion);
-            Integer beforeVersionIndex = parseVersionIndex(versionIndexMap, beforeVersion);
-            if (currentVersionIndex == null || beforeVersionIndex == null) {
-                log.error("Smooth upgrade aborted: missing version index. before={}, current={}",
-                        beforeVersion, currentVersion);
-                // Still advance beforeVersion so startup is not stuck on every launch
-                App.config.setBeforeVersion(currentVersion);
-                App.config.save();
-                return;
-            }
-            log.info("Older version{}", beforeVersion);
-            log.info("Current version{}", currentVersion);
-            // Traverses the index range
-            beforeVersionIndex++;
-            for (int i = beforeVersionIndex; i <= currentVersionIndex; i++) {
-                log.info("Update the version index {} begin", i);
-                // Perform updates to each version index, from far to nearby time
-                upgrade(i);
-                log.info("Update the version index {} finished", i);
-            }
+        log.info("Smooth upgrade begins");
 
-            // If the upgrade is complete and successful, the version number prior to the upgrade is assigned to the current version
+        String versionSummaryJsonContent = FileUtil.readString(
+                UiConsts.class.getResource("/version_summary.json"), CharsetUtil.UTF_8);
+        versionSummaryJsonContent = versionSummaryJsonContent.replace("\n", "");
+        VersionSummary versionSummary = JSON.parseObject(versionSummaryJsonContent, VersionSummary.class);
+        Map<String, String> versionIndexMap = JSON.parseObject(versionSummary.getVersionIndex(), Map.class);
+        Integer currentVersionIndex = parseVersionIndexOrNull(versionIndexMap, currentVersion);
+        Integer beforeVersionIndex = parseVersionIndexOrNull(versionIndexMap, beforeVersion);
+        if (currentVersionIndex == null || beforeVersionIndex == null) {
+            log.error("Smooth upgrade aborted: missing version index. before={}, current={}",
+                    beforeVersion, currentVersion);
             App.config.setBeforeVersion(currentVersion);
             App.config.save();
-            log.info("Smooth upgrade ends");
+            return;
         }
+        log.info("Older version {}", beforeVersion);
+        log.info("Current version {}", currentVersion);
+        beforeVersionIndex++;
+        for (int i = beforeVersionIndex; i <= currentVersionIndex; i++) {
+            log.info("Update the version index {} begin", i);
+            upgrade(i);
+            log.info("Update the version index {} finished", i);
+        }
+
+        App.config.setBeforeVersion(currentVersion);
+        App.config.save();
+        log.info("Smooth upgrade ends");
     }
 
     /**
@@ -166,7 +236,6 @@ public class UpgradeUtil {
         if (StringUtils.isEmpty(part)) {
             return 0;
         }
-        // Strip non-digit suffix like "1-SNAPSHOT" / "1rc1"
         StringBuilder digits = new StringBuilder();
         for (int i = 0; i < part.length(); i++) {
             char c = part.charAt(i);
@@ -186,7 +255,7 @@ public class UpgradeUtil {
         }
     }
 
-    private static Integer parseVersionIndex(Map<String, String> versionIndexMap, String version) {
+    private static Integer parseVersionIndexOrNull(Map<String, String> versionIndexMap, String version) {
         if (versionIndexMap == null || StringUtils.isEmpty(version)) {
             return null;
         }
@@ -202,11 +271,6 @@ public class UpgradeUtil {
         }
     }
 
-    /**
-     * Execute the upgrade script
-     *
-     * @param versionIndex Version index
-     */
     private static void upgrade(int versionIndex) {
         log.info("Start with the upgrade script, version index:{}", versionIndex);
         switch (versionIndex) {
