@@ -1,5 +1,5 @@
 {
-  "currentVersion": "1.1.4",
+  "currentVersion": "1.1.5",
   "versionIndex": {
     "0.0.0": "0",
     "1.0.0": "1",
@@ -7,7 +7,8 @@
     "1.1.1": "3",
     "1.1.2": "4",
     "1.1.3": "5",
-    "1.1.4": "6"
+    "1.1.4": "6",
+    "1.1.5": "7"
   },
   "versionDetailList": [
     {
@@ -44,6 +45,11 @@
       "version": "1.1.4",
       "title": "fix startup issue in macOS 15",
       "log": "● fix startup issue in macOS 15\n● update dependencies\n"
+    },
+    {
+      "version": "1.1.5",
+      "title": "Improve update mechanism and performance",
+      "log": "● improve application update and download mechanism\n● add GitHub Actions multi-platform installer builds\n● performance optimizations and bug fixes\n● update Maven dependencies\n● optimize initial font size\n"
     }
   ]
 }
