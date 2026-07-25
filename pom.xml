@@ -77,7 +77,7 @@
                                     <macConfig>
                                         <macStartup>${packaging.mac.startup}</macStartup>
                                     </macConfig>
-                                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                    <additionalModules>jdk.crypto.ec,jdk.charsets</additionalModules>
                                     <additionalResources>
                                         <additionalResource>${name}.l4j.ini</additionalResource>
                                     </additionalResources>
@@ -116,7 +116,7 @@
                                     <macConfig>
                                         <macStartup>${packaging.mac.startup}</macStartup>
                                     </macConfig>
-                                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                    <additionalModules>jdk.crypto.ec,jdk.charsets</additionalModules>
                                     <additionalResources>
                                         <additionalResource>${name}.l4j.ini</additionalResource>
                                     </additionalResources>
@@ -155,7 +155,7 @@
                                     <macConfig>
                                         <macStartup>${packaging.mac.startup}</macStartup>
                                     </macConfig>
-                                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                    <additionalModules>jdk.crypto.ec,jdk.charsets</additionalModules>
                                     <additionalResources>
                                         <additionalResource>${name}.l4j.ini</additionalResource>
                                     </additionalResources>
@@ -190,7 +190,7 @@
                                 <configuration>
                                     <platform>windows</platform>
                                     <createZipball>true</createZipball>
-                                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                    <additionalModules>jdk.crypto.ec,jdk.charsets</additionalModules>
                                     <additionalResources>
                                         <additionalResource>${name}.l4j.ini</additionalResource>
                                     </additionalResources>
@@ -225,7 +225,7 @@
                                 <configuration>
                                     <platform>linux</platform>
                                     <createTarball>true</createTarball>
-                                    <additionalModules>jdk.crypto.ec</additionalModules>
+                                    <additionalModules>jdk.crypto.ec,jdk.charsets</additionalModules>
                                     <additionalResources>
                                         <additionalResource>${name}.l4j.ini</additionalResource>
                                     </additionalResources>
@@ -400,6 +400,19 @@
                     <jdkPath>${packaging.jdkPath}</jdkPath>
                     <mainClass>com.luoboduner.moo.info.App</mainClass>
                     <generateInstaller>true</generateInstaller>
+                    <!-- jdom-1.0 (via forms_rt) has unnamed-package classes; jdeps cannot analyze it. -->
+                    <modules>
+                        <module>java.base</module>
+                        <module>java.compiler</module>
+                        <module>java.desktop</module>
+                        <module>java.management</module>
+                        <module>java.naming</module>
+                        <module>java.prefs</module>
+                        <module>java.scripting</module>
+                        <module>java.sql</module>
+                        <module>jdk.httpserver</module>
+                        <module>jdk.unsupported</module>
+                    </modules>
                 </configuration>
             </plugin>
         </plugins>
