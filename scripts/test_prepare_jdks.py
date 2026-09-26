@@ -55,6 +55,14 @@ class PrepareJdksTests(unittest.TestCase):
             (jmods / "java.base.jmod").write_text("", encoding="utf-8")
             self.assertEqual(locate_jmods_dir(root), jmods)
 
+    def test_locate_jmods_dir_for_adoptium_archive_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            jmods = root / "jdk-25.0.4.1+1-jmods"
+            jmods.mkdir(parents=True)
+            (jmods / "java.base.jmod").write_text("", encoding="utf-8")
+            self.assertEqual(locate_jmods_dir(root), jmods)
+
     def test_locate_jmods_dir_for_macos_layout(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)

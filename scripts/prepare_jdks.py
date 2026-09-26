@@ -177,13 +177,18 @@ def locate_java_home(root: Path) -> Path:
 
 
 def locate_jmods_dir(root: Path) -> Path:
-    candidates = [
-        directory
-        for directory in root.rglob("jmods")
-        if directory.is_dir() and any(directory.glob("*.jmod"))
-    ]
+    # Temurin JDK archives nest modules in Contents/Home/jmods. The separate
+    # jmods download uses a versioned folder such as jdk-25.0.4.1+1-jmods.
+    search_roots = [root]
+    if root.exists():
+        search_roots.extend(path for path in root.rglob("*") if path.is_dir())
+    candidates = [directory for directory in search_roots if any(directory.glob("*.jmod"))]
     if not candidates:
-        raise RuntimeError(f"Could not locate a jmods directory under {root}")
+        preview = ""
+        if root.exists():
+            preview = ", ".join(sorted(path.name for path in root.iterdir())[:8])
+        detail = f" (found: {preview})" if preview else ""
+        raise RuntimeError(f"Could not locate jmods under {root}{detail}")
 
     return sorted(candidates, key=lambda item: (len(item.relative_to(root).parts), str(item)))[0]
 
