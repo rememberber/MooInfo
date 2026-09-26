@@ -4,7 +4,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.prepare_jdks import TARGETS, format_size, install_from_existing_java_home, locate_java_home, parse_targets
+from scripts.prepare_jdks import (
+    TARGETS,
+    format_size,
+    has_jmods,
+    install_from_existing_java_home,
+    install_jmods,
+    locate_java_home,
+    locate_jmods_dir,
+    parse_targets,
+)
 
 
 class PrepareJdksTests(unittest.TestCase):
@@ -37,6 +46,36 @@ class PrepareJdksTests(unittest.TestCase):
             (home / "bin").mkdir(parents=True)
             (home / "bin" / "java").write_text("", encoding="utf-8")
             self.assertEqual(locate_java_home(root), home)
+
+    def test_locate_jmods_dir_for_standard_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            jmods = root / "jdk-25" / "jmods"
+            jmods.mkdir(parents=True)
+            (jmods / "java.base.jmod").write_text("", encoding="utf-8")
+            self.assertEqual(locate_jmods_dir(root), jmods)
+
+    def test_locate_jmods_dir_for_macos_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            jmods = root / "jdk-25.jdk" / "Contents" / "Home" / "jmods"
+            jmods.mkdir(parents=True)
+            (jmods / "java.base.jmod").write_text("", encoding="utf-8")
+            self.assertEqual(locate_jmods_dir(root), jmods)
+
+    def test_install_jmods_copies_modules_into_java_home(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            source = root / "extracted" / "jmods"
+            source.mkdir(parents=True)
+            (source / "java.base.jmod").write_text("module", encoding="utf-8")
+            install_home = root / "home"
+            install_home.mkdir()
+
+            install_jmods(install_home, source)
+
+            self.assertTrue(has_jmods(install_home))
+            self.assertEqual((install_home / "jmods" / "java.base.jmod").read_text(encoding="utf-8"), "module")
 
     def test_install_from_existing_java_home(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

@@ -60,12 +60,26 @@ def build_download_url(version: str, spec: TargetSpec) -> str:
     )
 
 
+def build_jmods_download_url(version: str, spec: TargetSpec) -> str:
+    # Temurin 24+ omits jmods from the JDK archive (JEP 493). JavaPackager still
+    # needs that directory to create a customized runtime.
+    return (
+        f"https://api.adoptium.net/v3/binary/latest/{version}/ga/"
+        f"{spec.adoptium_os}/{spec.adoptium_arch}/jmods/hotspot/normal/eclipse?project=jdk"
+    )
+
+
 def java_binary_candidates(home_dir: Path) -> list[Path]:
     return [home_dir / "bin" / "java", home_dir / "bin" / "java.exe"]
 
 
 def has_java_binary(home_dir: Path) -> bool:
     return any(candidate.exists() for candidate in java_binary_candidates(home_dir))
+
+
+def has_jmods(home_dir: Path) -> bool:
+    jmods_dir = home_dir / "jmods"
+    return jmods_dir.is_dir() and any(jmods_dir.glob("*.jmod"))
 
 
 def parse_targets(raw_targets: str) -> list[TargetSpec]:
@@ -162,6 +176,28 @@ def locate_java_home(root: Path) -> Path:
     return sorted(candidates, key=lambda item: (len(item.relative_to(root).parts), str(item)))[0]
 
 
+def locate_jmods_dir(root: Path) -> Path:
+    candidates = [
+        directory
+        for directory in root.rglob("jmods")
+        if directory.is_dir() and any(directory.glob("*.jmod"))
+    ]
+    if not candidates:
+        raise RuntimeError(f"Could not locate a jmods directory under {root}")
+
+    return sorted(candidates, key=lambda item: (len(item.relative_to(root).parts), str(item)))[0]
+
+
+def install_jmods(install_home: Path, jmods_dir: Path) -> None:
+    if not any(jmods_dir.glob("*.jmod")):
+        raise RuntimeError(f"jmods directory has no modules: {jmods_dir}")
+
+    destination = install_home / "jmods"
+    if destination.exists():
+        shutil.rmtree(destination)
+    shutil.copytree(jmods_dir, destination, symlinks=True)
+
+
 def write_metadata(destination: Path, spec: TargetSpec, version: str, source_url: str) -> None:
     metadata = {
         "target": spec.key,
@@ -196,11 +232,14 @@ def prepare_target(
     java_home_override: Path | None,
 ) -> Path:
     source_url = build_download_url(version, spec)
+    jmods_url = build_jmods_download_url(version, spec)
     downloads_dir = project_root / "downloads" / "jdks"
     archive_path = downloads_dir / f"temurin-{version}-{spec.key}.{spec.archive_suffix}"
+    jmods_archive_path = downloads_dir / f"temurin-{version}-{spec.key}-jmods.{spec.archive_suffix}"
     install_home = project_root / "jdks" / spec.platform_dir / spec.arch_dir / "home"
     log(f"==> {spec.key}")
     log(f"    source: {source_url}")
+    log(f"    jmods : {jmods_url}")
     log(f"    cache : {archive_path}")
     log(f"    home  : {install_home}")
 
@@ -210,27 +249,65 @@ def prepare_target(
     if force:
         if archive_path.exists():
             archive_path.unlink()
+        if jmods_archive_path.exists():
+            jmods_archive_path.unlink()
         if install_home.exists():
             shutil.rmtree(install_home)
 
     if has_java_binary(install_home):
         log(f"    reuse : {install_home}")
-        return install_home
-
-    if java_home_override is not None:
+    elif java_home_override is not None:
         log(f"    reuse JAVA_HOME -> {java_home_override}")
         install_from_existing_java_home(install_home, java_home_override)
         write_metadata(install_home, spec, version, f"java-home:{java_home_override}")
-        log(f"    ready : {install_home}")
-        return install_home
+    else:
+        if not archive_path.exists():
+            log(f"    download -> {archive_path.name}")
+            download_file(source_url, archive_path)
+        else:
+            log(f"    archive reuse -> {archive_path.name}")
+
+        with tempfile.TemporaryDirectory(prefix=f"mooinfo-{spec.key}-") as tmp_dir:
+            extract_root = Path(tmp_dir) / "extract"
+            extract_root.mkdir(parents=True, exist_ok=True)
+            log(f"    extract -> {archive_path.name}")
+            if spec.archive_type == "zip":
+                safe_extract_zip(archive_path, extract_root)
+            else:
+                safe_extract_tar(archive_path, extract_root)
+
+            discovered_home = locate_java_home(extract_root)
+            staged_home = Path(tmp_dir) / "home"
+            log(f"    stage  -> {discovered_home}")
+            shutil.move(str(discovered_home), staged_home)
+
+            install_home.parent.mkdir(parents=True, exist_ok=True)
+            if install_home.exists():
+                shutil.rmtree(install_home)
+            shutil.move(str(staged_home), install_home)
+
+        if not has_java_binary(install_home):
+            raise RuntimeError(f"Prepared JDK is missing java executable: {install_home}")
+
+        write_metadata(install_home, spec, version, source_url)
+
+    ensure_jmods(install_home, spec, jmods_url, jmods_archive_path)
+    log(f"    ready : {install_home}")
+    return install_home
+
+
+def ensure_jmods(install_home: Path, spec: TargetSpec, jmods_url: str, archive_path: Path) -> None:
+    if has_jmods(install_home):
+        log(f"    jmods reuse : {install_home / 'jmods'}")
+        return
 
     if not archive_path.exists():
         log(f"    download -> {archive_path.name}")
-        download_file(source_url, archive_path)
+        download_file(jmods_url, archive_path)
     else:
         log(f"    archive reuse -> {archive_path.name}")
 
-    with tempfile.TemporaryDirectory(prefix=f"mooinfo-{spec.key}-") as tmp_dir:
+    with tempfile.TemporaryDirectory(prefix=f"mooinfo-{spec.key}-jmods-") as tmp_dir:
         extract_root = Path(tmp_dir) / "extract"
         extract_root.mkdir(parents=True, exist_ok=True)
         log(f"    extract -> {archive_path.name}")
@@ -239,22 +316,12 @@ def prepare_target(
         else:
             safe_extract_tar(archive_path, extract_root)
 
-        discovered_home = locate_java_home(extract_root)
-        staged_home = Path(tmp_dir) / "home"
-        log(f"    stage  -> {discovered_home}")
-        shutil.move(str(discovered_home), staged_home)
+        discovered_jmods = locate_jmods_dir(extract_root)
+        log(f"    jmods  -> {discovered_jmods}")
+        install_jmods(install_home, discovered_jmods)
 
-        install_home.parent.mkdir(parents=True, exist_ok=True)
-        if install_home.exists():
-            shutil.rmtree(install_home)
-        shutil.move(str(staged_home), install_home)
-
-    if not has_java_binary(install_home):
-        raise RuntimeError(f"Prepared JDK is missing java executable: {install_home}")
-
-    write_metadata(install_home, spec, version, source_url)
-    log(f"    ready : {install_home}")
-    return install_home
+    if not has_jmods(install_home):
+        raise RuntimeError(f"Prepared JDK is missing jmods: {install_home / 'jmods'}")
 
 
 def main(argv: Iterable[str] | None = None) -> int:

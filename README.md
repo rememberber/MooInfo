@@ -41,7 +41,8 @@ Build with **JDK 25** and Maven; set IntelliJ IDEA's Project SDK and language le
 Run `mvn clean test` to compile and test the project.
 
 Installer builds bundle Temurin 25, prepared by `scripts/prepare_jdks.py`.
-If you previously prepared JDK 21 in the local `jdks/` cache, refresh it before packaging:
+Temurin 25 no longer ships `jmods` inside the JDK archive, so the script also downloads the matching jmods package. JavaPackager needs that directory to build the bundled runtime.
+If you previously prepared JDK 21, or a JDK 25 cache without `jmods`, refresh it before packaging:
 
 ```sh
 python3 scripts/prepare_jdks.py --targets all --force
