@@ -37,5 +37,17 @@ More themes:
 [iconfont](https://www.iconfont.cn/)  
 
 ## Development considerations
+Build with **JDK 25** and Maven; set IntelliJ IDEA's Project SDK and language level to **25**.
+Run `mvn clean test` to compile and test the project.
+
+Installer builds bundle Temurin 25, prepared by `scripts/prepare_jdks.py`.
+If you previously prepared JDK 21 in the local `jdks/` cache, refresh it before packaging:
+
+```sh
+python3 scripts/prepare_jdks.py --targets all --force
+```
+
+You can replace `all` with `mac-arm64`, `mac-x64`, `windows-x64`, or `linux-x64` for a single target.
+
 Before your first start, **set the IntelliJ IDEA as below**, then **maven clean**:
 ![considerations](assets/material/gui_build.png)

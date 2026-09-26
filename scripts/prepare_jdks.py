@@ -264,7 +264,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         required=True,
         help="Comma-separated targets to prepare. Supported: mac-x64, mac-arm64, windows-x64, linux-x64, all",
     )
-    parser.add_argument("--version", default="21", help="Temurin feature version to download. Default: 21")
+    parser.add_argument("--version", default="25", help="Temurin feature version to download. Default: 25")
     parser.add_argument(
         "--project-root",
         default=Path(__file__).resolve().parents[1],

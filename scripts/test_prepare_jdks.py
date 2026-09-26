@@ -25,7 +25,7 @@ class PrepareJdksTests(unittest.TestCase):
     def test_locate_java_home_for_standard_layout(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
-            home = root / "jdk-21"
+            home = root / "jdk-25"
             (home / "bin").mkdir(parents=True)
             (home / "bin" / "java").write_text("", encoding="utf-8")
             self.assertEqual(locate_java_home(root), home)
@@ -33,7 +33,7 @@ class PrepareJdksTests(unittest.TestCase):
     def test_locate_java_home_for_macos_layout(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
-            home = root / "temurin-21.jdk" / "Contents" / "Home"
+            home = root / "temurin-25.jdk" / "Contents" / "Home"
             (home / "bin").mkdir(parents=True)
             (home / "bin" / "java").write_text("", encoding="utf-8")
             self.assertEqual(locate_java_home(root), home)
